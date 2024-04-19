@@ -5,6 +5,12 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  font-family:
+    '__notoBengali_2f1964',
+    '__notoBengali_Fallback_2f1964' !important;
+}
+
 p {
   font-family: "Lato", sans-serif;
   color: #666;
@@ -22,6 +28,8 @@ body ::selection {
 body {
   color: #333333;
 }
+
+
 
 .instaIcon:hover {
   background: linear-gradient(135deg, #f9ce34, #ee2a7b, #6228d7);
@@ -81,8 +89,10 @@ body {
   background: #555;
   /* Color of the scrollbar on hover */
 }
+
 .css-12i7wg6-MuiPaper-root-MuiDrawer-paper {
-  scrollbar-width: thin; /* "auto" or "thin" */
+  scrollbar-width: thin;
+  /* "auto" or "thin" */
 }
 
 .css-12i7wg6-MuiPaper-root-MuiDrawer-paper::-webkit-scrollbar {
@@ -135,4 +145,12 @@ body {
 .css-168noda,
 .css-vwd6ro {
   background-color: #ffffff !important;
+}
+
+.css-10hburv-MuiTypography-root{
+  font-weight: 500 !important;
+}
+
+.menuItems{
+  margin-top: 40px !important;
 }
