@@ -1,17 +1,19 @@
-import { Montserrat } from "next/font/google";
+import localFont from "next/font/local"
 import "./globals.css";
 
-const montserrat = Montserrat({ subsets: ["latin"] });
+const notoBengali = localFont({
+  src: "../../node_modules/next/font/local/NotoSansBengali-Regular.ttf",
+  display: "swap",
+});
 
 export const metadata = {
-  title: "Walletio - Expense in control",
-  description: "Expense in control",
+  title: "প্রাথমিক বিদ্যালয়ের তথ্য ব্যবস্থাপনা সিস্টেম",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={montserrat.className}>{children}</body>
+      <body className={notoBengali.className}>{children}</body>
     </html>
   );
 }

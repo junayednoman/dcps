@@ -1,17 +1,18 @@
+"use client"
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 
 const validationSchema = Yup.object().shape({
-    email: Yup.string().email("Invalid email address").required("Email is required"),
-    password: Yup.string().required("Password is required"),
+    email: Yup.string().email("ইমেইল অ্যাড্রেস সঠিক নয়").required("ইমেইল আবশ্যক"),
+    password: Yup.string().required("পাসওয়ার্ড আবশ্যক"),
 });
 
 const handleSubmit = () => {
     console.log("clicking");
 };
 
-const LoginForm = ({ setIsLoginModalShow }) => {
+const LoginForm = () => {
     return (
         <>
             <Formik
@@ -22,19 +23,19 @@ const LoginForm = ({ setIsLoginModalShow }) => {
                 {({ isSubmitting }) => (
                     <Form>
                         <div className="mb-4">
-                            <label className="font-medium" htmlFor="email">Email*</label>
-                            <Field className="h-[40px] px-3 border border-textColor rounded-md w-full mt-1" type="email" name="email" id="email" />
-                            <ErrorMessage name="email" component="div" className="text-red-600 text-sm" />
+                            <label className="font-bold" htmlFor="email">ইমেইল*</label>
+                            <Field className="md:h-[50px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1" type="email" name="email" id="email" placeholder="আপনার ইমেইল অ্যাড্রেস দিন" />
+                            <ErrorMessage name="email" component="div" className="text-[#ED1C24] text-sm mt-1" />
                         </div>
 
                         <div className="mb-4">
-                            <label className="font-medium" htmlFor="password">Password*</label>
-                            <Field className="h-[40px] px-3 border border-textColor rounded-md w-full mt-1" type="password" name="password" id="password" />
-                            <ErrorMessage name="password" component="div" className="text-red-600 text-sm" />
+                            <label className="font-bold" htmlFor="password">পাসওয়ার্ড*</label>
+                            <Field className="md:h-[50px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1" type="password" name="password" id="password" placeholder="আপনার পাসওয়ার্ড দিন" />
+                            <ErrorMessage name="password" component="div" className="text-[#ED1C24] text-sm mt-1" />
                         </div>
 
                         <div>
-                            <button className="px-4 py-[6px] bg-primaryColor border border-primaryColor hover:bg-textColor text-white rounded-md font-medium capitalize">{isSubmitting ? "loading..." : "Login"}</button>
+                            <button type="submit" className="px-6 md:py-[10px] py-[6px] md:pt-[15px] pt-[10px] bg-primaryColor border border-primaryColor hover:bg-textColor text-white rounded-md font-bold capitalize mt-1">{isSubmitting ? "লোড হচ্ছে..." : "সাইন ইন"}</button>
                         </div>
                     </Form>
                 )}
