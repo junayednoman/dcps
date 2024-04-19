@@ -2,7 +2,12 @@ import localFont from "next/font/local"
 import "./globals.css";
 
 const notoBengali = localFont({
-  src: "../../public/fonts/NotoSansBengali-Regular.ttf",
+  src: [
+    { path: "../../public/fonts/NotoSansBengali-Regular.ttf", weight: "400" },
+    { path: "../../public/fonts/NotoSansBengali-Medium.ttf", weight: "500" },
+    { path: "../../public/fonts/NotoSansBengali-SemiBold.ttf", weight: "600" },
+    { path: "../../public/fonts/NotoSansBengali-Bold.ttf", weight: "700" },
+  ],
   display: "swap",
 });
 // const notoBengali = localFont({

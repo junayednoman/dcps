@@ -19,7 +19,7 @@ module.exports = {
         textColor: "#2c3e50"
       },
       fontFamily: {
-        montserrat: ['montserrat', 'sans-serif'],
+        noto: ['var(----font-noto)'],
       },
     },
   },

@@ -21,7 +21,7 @@ export default function Home() {
             <h1 className="md:text-[45px] text-3xl font-bold w-full md:w-[500px] mx-auto md:leading-[50px] ">প্রাথমিক বিদ্যালয়ের তথ্য ব্যবস্থাপনা সিস্টেম</h1>
           </div>
           <div className=" w-full md:w-[550px] mx-auto md:pt-[80px] pt-14">
-            <h4 className="md:text-[27px] text-2xl mb-3 font-bold ">সাইন ইন করুন</h4>
+            <h4 className="md:text-[27px] text-2xl mb-3 font-semibold">সাইন ইন করুন</h4>
             <div>
               <LoginForm />
             </div>

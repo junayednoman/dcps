@@ -23,19 +23,19 @@ const LoginForm = () => {
                 {({ isSubmitting }) => (
                     <Form>
                         <div className="mb-4">
-                            <label className="font-bold" htmlFor="email">ইমেইল*</label>
+                            <label className="font-semibold" htmlFor="email">ইমেইল*</label>
                             <Field className="md:h-[50px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1" type="email" name="email" id="email" placeholder="আপনার ইমেইল অ্যাড্রেস দিন" />
                             <ErrorMessage name="email" component="div" className="text-[#ED1C24] text-sm mt-1" />
                         </div>
 
                         <div className="mb-4">
-                            <label className="font-bold" htmlFor="password">পাসওয়ার্ড*</label>
+                            <label className="font-semibold" htmlFor="password">পাসওয়ার্ড*</label>
                             <Field className="md:h-[50px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1" type="password" name="password" id="password" placeholder="আপনার পাসওয়ার্ড দিন" />
                             <ErrorMessage name="password" component="div" className="text-[#ED1C24] text-sm mt-1" />
                         </div>
 
                         <div>
-                            <button type="submit" className="px-6 md:py-[10px] py-[6px] md:pt-[15px] pt-[10px] bg-primaryColor border border-primaryColor hover:bg-textColor text-white rounded-md font-bold capitalize mt-1">{isSubmitting ? "লোড হচ্ছে..." : "সাইন ইন"}</button>
+                            <button type="submit" className="px-6 md:py-[10px] py-[6px] md:pt-[15px] pt-[10px] bg-primaryColor border border-primaryColor hover:bg-textColor text-white rounded-md font-semibold capitalize mt-1">{isSubmitting ? "লোড হচ্ছে..." : "সাইন ইন"}</button>
                         </div>
                     </Form>
                 )}
