@@ -144,13 +144,37 @@ body {
 
 .css-168noda,
 .css-vwd6ro {
-  background-color: #ffffff !important;
+  background-color: #fff !important;
 }
 
-.css-10hburv-MuiTypography-root{
+.css-10hburv-MuiTypography-root {
   font-weight: 500 !important;
 }
 
-.menuItems{
+.menuItems {
   margin-top: 40px !important;
+}
+
+select {
+  color: #00000073;
+  font-weight: 500;
+}
+
+select option {
+  color: #000;
+}
+
+.css-1h9z7r5-MuiButtonBase-root-MuiTab-root {
+  font-size: 17px !important;
+}
+
+.css-o9k5xi-MuiInputBase-root-MuiOutlinedInput-root {
+  height: 45px !important;
+  border-radius: 4px !important;
+  margin-top: 4px;
+  border-color: #2c3e50 !important;
+}
+
+.css-z3c6am-MuiFormControl-root-MuiTextField-root {
+  width: 100% !important;
 }

@@ -201,7 +201,7 @@ export default function DashboardLayout({ children }) {
 
                     <div className='menuItems'>
                         <List>
-                            <ListItem  onClick={() => setActiveMenuItem("submit")} disablePadding sx={{ display: 'block' }}>
+                            <ListItem onClick={() => setActiveMenuItem("submit")} disablePadding sx={{ display: 'block' }}>
                                 <Link href={'/dashboard/bil-return-submit'}>
                                     <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }}>
                                         <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', }}>
@@ -211,7 +211,7 @@ export default function DashboardLayout({ children }) {
                                     </ListItemButton>
                                 </Link>
                             </ListItem>
-                            <ListItem  onClick={() => setActiveMenuItem("history")} disablePadding sx={{ display: 'block' }}>
+                            <ListItem onClick={() => setActiveMenuItem("history")} disablePadding sx={{ display: 'block' }}>
                                 <Link href={'/dashboard/bil-return-history'}>
                                     <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }}>
                                         <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', }}>
@@ -254,7 +254,7 @@ export default function DashboardLayout({ children }) {
                         </List>
                     </div>
                 </Drawer>
-                <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+                <Box className='bg-[#FAFAFA] min-h-screen' component="main" sx={{ flexGrow: 1, p: 3 }}>
                     <DrawerHeader />
                     {children}
                 </Box>
