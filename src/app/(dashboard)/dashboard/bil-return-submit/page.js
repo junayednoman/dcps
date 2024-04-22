@@ -88,19 +88,27 @@ const BilReturnSubmit = () => {
     const handleTeacherTabValueChange = (event, newTabValue) => {
         setTeacherTabValue(newTabValue);
     };
+    const [studentTabValue, setStudentTabValue] = React.useState(0);
+
+    const handleStudentTabValueChange = (event, newTabValue) => {
+        setStudentTabValue(newTabValue);
+    };
 
     const handleFormSubmit = (values) => {
         console.log(values);
     };
 
 
-    const [accordionActive, setAccordionActive] = React.useState();
-    const togglePara = (value) => {
-        setAccordionActive((oldValue) => (oldValue === value ? 0 : value));
+    const [schoolAccordionActive, setSchoolAccordionActive] = React.useState('');
+    const schoolTogglePara = (value) => {
+        setSchoolAccordionActive((oldValue) => (oldValue === value ? 0 : value));
     };
 
-
-    console.log(accordionActive);
+    const [studentAccordionActive, setStudentAccordionActive] = React.useState('nursery_four_plus');
+    const studentTogglePara = (value) => {
+        setStudentAccordionActive((oldValue) => (oldValue === value ? 0 : value));
+    };
+    console.log(studentAccordionActive);
     return (
         <div className='bg-[#FAFAFA]'>
             <h2 className='md:text-2xl text-xl font-semibold md:mb-20 mb-12'>বিল রিটার্ন সাবমিট</h2>
@@ -109,6 +117,18 @@ const BilReturnSubmit = () => {
                     budgets: [{ name: '', year: '', amount: '' }],
                     teachers: [{}],
                     vacations: [{}],
+                    nursery_four_plus: [{}],
+                    nursery_five_plus: [{}],
+                    class_one: [{}],
+                    class_two: [{}],
+                    class_three: [{}],
+                    class_four: [{}],
+                    class_five: [{}],
+                    class_six: [{}],
+                    class_seven: [{}],
+                    class_eight: [{}],
+                    class_eight: [{}],
+                    asroyon_survey: [{}],
                 }}
                 // validationSchema={validationSchema}
                 onSubmit={handleFormSubmit}
@@ -133,7 +153,7 @@ const BilReturnSubmit = () => {
                                             </Tabs>
                                         </Box>
                                         <CustomTabPanel value={schoolTabValue} index={0}>
-                                            <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-6 pt-8'>
+                                            <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-6 pt-6'>
                                                 <TextField name="school_name" label="বিদ্যালয়ের নাম" placeholder={"বিদ্যালয়ের নাম লিখুন"} />
                                                 <TextField name="village" label="গ্রামের নাম" placeholder={"গ্রামের নাম লিখুন"} />
                                                 <TextField name="word_number" label="ওয়ার্ড নাম্বার" placeholder={"ওয়ার্ড নাম্বার লিখুন"} />
@@ -343,14 +363,14 @@ const BilReturnSubmit = () => {
 
                                                 {/* others data */}
                                                 <div className='mt-8'>
-                                                    <button type="button" className={`relative border-gray-300 flex justify-between items-center w-full px-4 py-3 text-sm font-medium text-left rounded-lg border ${accordionActive === 'others_data' ? ' bg-slate-200' : '  bg-slate-100'}  ${accordionActive === 'others_data' ? 'active' : ''}`} onClick={() => togglePara('others_data')}>
+                                                    <button type="button" className={`relative border-gray-300 flex justify-between items-center w-full px-4 py-3 text-sm font-medium text-left rounded-lg border ${schoolAccordionActive === 'others_data' ? ' bg-slate-200' : '  bg-slate-100'}  ${schoolAccordionActive === 'nursery_four_plus' ? 'active' : ''}`} onClick={() => schoolTogglePara('others_data')}>
                                                         <h5 className="text-gray-900 text-[16px]">অন্যান্য তথ্য</h5>
-                                                        <svg className={`w-4 h-4 ml-2 duration-500 ${accordionActive === 'others_data' ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <svg className={`w-4 h-4 ml-2 duration-500 ${schoolAccordionActive === 'others_data' ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                             <path d="M19 9l-7 7-7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                                         </svg>
                                                     </button>
 
-                                                    <AnimateHeight duration={300} height={accordionActive === 'others_data' ? 'auto' : 0}>
+                                                    <AnimateHeight duration={300} height={schoolAccordionActive === 'others_data' ? 'auto' : 0}>
                                                         <ul className="p-5">
                                                             <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-6'>
                                                                 <div className="mb-4">
@@ -477,14 +497,14 @@ const BilReturnSubmit = () => {
                                                 </div>
 
                                                 <div className='mt-4'>
-                                                    <button type="button" className={`relative border-gray-300 flex justify-between items-center w-full px-4 py-3 text-sm font-medium text-left rounded-lg border ${accordionActive === 'water_system_data' ? ' bg-slate-200' : '  bg-slate-100'}  ${accordionActive === 'water_system_data' ? 'active' : ''}`} onClick={() => togglePara('water_system_data')}>
+                                                    <button type="button" className={`relative border-gray-300 flex justify-between items-center w-full px-4 py-3 text-sm font-medium text-left rounded-lg border ${schoolAccordionActive === 'water_system_data' ? ' bg-slate-200' : '  bg-slate-100'}  ${schoolAccordionActive === 'water_system_data' ? 'active' : ''}`} onClick={() => schoolTogglePara('water_system_data')}>
                                                         <h5 className="text-gray-900 text-[16px]">পানিয় জল সংক্রান্ত তথ্য</h5>
-                                                        <svg className={`w-4 h-4 ml-2 duration-500 ${accordionActive === 'water_system_data' ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <svg className={`w-4 h-4 ml-2 duration-500 ${schoolAccordionActive === 'water_system_data' ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                             <path d="M19 9l-7 7-7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                                         </svg>
                                                     </button>
 
-                                                    <AnimateHeight duration={300} height={accordionActive === 'water_system_data' ? 'auto' : 0}>
+                                                    <AnimateHeight duration={300} height={schoolAccordionActive === 'water_system_data' ? 'auto' : 0}>
                                                         <ul className="p-5">
                                                             <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4 mt-4'>
                                                                 <div className="mb-4">
@@ -748,6 +768,532 @@ const BilReturnSubmit = () => {
                                                     </div>
                                                 )}
                                             </FieldArray>
+                                        </CustomTabPanel>
+                                    </Box>
+                                </div>
+                            </div>
+
+                            {/* student related data */}
+                            <div className='flex lg:flex-row flex-col md:gap-8 gap-5 md:mt-8 mt-5'>
+                                <div className='xl:w-[80%] w-full border bg-white shadow-sm rounded-[4px] p-8'>
+                                    <h2 className='md:text-xl text-lg font-semibold md:mb-8'>শিক্ষার্থী সংক্রান্ত তথ্য</h2>
+                                    <Box sx={{ width: '100%' }}>
+                                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                                            <Tabs className='text-xl' variant="scrollable" scrollButtons="auto" value={studentTabValue} onChange={handleStudentTabValueChange} aria-label="basic tabs example">
+                                                <Tab label="ছাত্র/ছাত্রি ভর্তি তথ্য" {...a11yProps(0)} />
+                                                <Tab label="জরিপকৃত তথ্য(৪+...১০+)" {...a11yProps(1)} />
+                                                <Tab label="আশ্রয়ন প্রকল্পের জরিপকৃত তথ্য(৪+...১০+)" {...a11yProps(2)} />
+                                            </Tabs>
+                                        </Box>
+                                        <CustomTabPanel value={studentTabValue} index={0}>
+                                            <div className='mt-8'>
+                                                {/* data for nursery 4+ students */}
+                                                <div>
+                                                    <button type="button" className={`relative border-gray-300 flex justify-between items-center w-full px-4 py-3 text-sm font-medium text-left rounded-lg border ${studentAccordionActive === 'nursery_four_plus' ? ' bg-slate-200' : '  bg-slate-100'}  ${studentAccordionActive === 'nursery_four_plus' ? 'active' : ''}`} onClick={() => studentTogglePara('nursery_four_plus')}>
+                                                        <h5 className="text-gray-900 text-[16px]">শিশু ৪+</h5>
+                                                        <svg className={`w-4 h-4 ml-2 duration-500 ${studentAccordionActive === 'nursery_four_plus' ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M19 9l-7 7-7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                                        </svg>
+                                                    </button>
+
+                                                    <AnimateHeight duration={300} height={studentAccordionActive === 'nursery_four_plus' ? 'auto' : 0}>
+                                                        <ul className="p-5">
+                                                            {/* stipend related data */}
+                                                            <FieldArray name="nursery_four_plus">
+                                                                {() => (
+                                                                    <div>
+                                                                        {values.nursery_four_plus.map((nursery_four_plus, index) => (
+                                                                            <div key={index}>
+                                                                                <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
+                                                                                    {/* data for muslim students */}
+                                                                                    <NumberField name={`nursery_four_plus.${index}.muslim_boy_student`} label="মুসলিম ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
+                                                                                    <NumberField name={`nursery_four_plus.${index}.muslim_girl_student`} label="মুসলিম ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
+                                                                                    <NumberField name={`nursery_four_plus.${index}.muslim_total_student`} label="মুসলিম মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+
+                                                                                    {/* data for hidu students */}
+                                                                                    <NumberField name={`nursery_four_plus.${index}.hindu_boy_student`} label="হিন্দু ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
+                                                                                    <NumberField name={`nursery_four_plus.${index}.hindu_girl_student`} label="হিন্দু ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
+                                                                                    <NumberField name={`nursery_four_plus.${index}.hindu_total_student`} label="হিন্দু মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+
+                                                                                    {/* data for total students */}
+                                                                                    <NumberField name={`nursery_four_plus.${index}.total_boy_student`} label="মোট ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
+                                                                                    <NumberField name={`nursery_four_plus.${index}.total_girl_student`} label="মোট ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
+                                                                                    <NumberField name={`nursery_four_plus.${index}.total_student`} label="মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+
+
+                                                                                    <NumberField name={`nursery_four_plus.${index}.special_demanded_student`} label="বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী" placeholder='মোট সংখ্যা দিন' />
+                                                                                </div>
+
+
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                )}
+                                                            </FieldArray>
+
+                                                        </ul>
+                                                    </AnimateHeight>
+                                                </div>
+
+                                                {/* data for nursery 5+ students */}
+                                                <div className='mt-3'>
+                                                    <button type="button" className={`relative border-gray-300 flex justify-between items-center w-full px-4 py-3 text-sm font-medium text-left rounded-lg border ${studentAccordionActive === 'nursery_five_plus' ? ' bg-slate-200' : '  bg-slate-100'}  ${studentAccordionActive === 'nursery_five_plus' ? 'active' : ''}`} onClick={() => studentTogglePara('nursery_five_plus')}>
+                                                        <h5 className="text-gray-900 text-[16px]">শিশু ৫+</h5>
+                                                        <svg className={`w-4 h-4 ml-2 duration-500 ${studentAccordionActive === 'nursery_five_plus' ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M19 9l-7 7-7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                                        </svg>
+                                                    </button>
+
+                                                    <AnimateHeight duration={300} height={studentAccordionActive === 'nursery_five_plus' ? 'auto' : 0}>
+                                                        <ul className="p-5">
+                                                            <FieldArray name="nursery_five_plus">
+                                                                {() => (
+                                                                    <div>
+                                                                        {values.nursery_five_plus.map((nursery_five_plus, index) => (
+                                                                            <div key={index}>
+                                                                                <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
+                                                                                    {/* data for muslim students */}
+                                                                                    <NumberField name={`nursery_five_plus.${index}.muslim_boy_student`} label="মুসলিম ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
+                                                                                    <NumberField name={`nursery_five_plus.${index}.muslim_girl_student`} label="মুসলিম ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
+                                                                                    <NumberField name={`nursery_five_plus.${index}.muslim_total_student`} label="মুসলিম মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+
+                                                                                    {/* data for hidu students */}
+                                                                                    <NumberField name={`nursery_five_plus.${index}.hindu_boy_student`} label="হিন্দু ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
+                                                                                    <NumberField name={`nursery_five_plus.${index}.hindu_girl_student`} label="হিন্দু ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
+                                                                                    <NumberField name={`nursery_five_plus.${index}.hindu_total_student`} label="হিন্দু মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+
+                                                                                    {/* data for total students */}
+                                                                                    <NumberField name={`nursery_five_plus.${index}.total_boy_student`} label="মোট ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
+                                                                                    <NumberField name={`nursery_five_plus.${index}.total_girl_student`} label="মোট ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
+                                                                                    <NumberField name={`nursery_five_plus.${index}.total_student`} label="মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+
+
+                                                                                    <NumberField name={`nursery_five_plus.${index}.special_demanded_student`} label="বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী" placeholder='মোট সংখ্যা দিন' />
+                                                                                </div>
+
+
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                )}
+                                                            </FieldArray>
+
+                                                        </ul>
+                                                    </AnimateHeight>
+                                                </div>
+
+                                                {/* data for class one students */}
+                                                <div className='mt-3'>
+                                                    <button type="button" className={`relative border-gray-300 flex justify-between items-center w-full px-4 py-3 text-sm font-medium text-left rounded-lg border ${studentAccordionActive === 'class_one' ? ' bg-slate-200' : '  bg-slate-100'}  ${studentAccordionActive === 'class_one' ? 'active' : ''}`} onClick={() => studentTogglePara('class_one')}>
+                                                        <h5 className="text-gray-900 text-[16px]">প্রথম শ্রেণি</h5>
+                                                        <svg className={`w-4 h-4 ml-2 duration-500 ${studentAccordionActive === 'class_one' ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M19 9l-7 7-7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                                        </svg>
+                                                    </button>
+
+                                                    <AnimateHeight duration={300} height={studentAccordionActive === 'class_one' ? 'auto' : 0}>
+                                                        <ul className="p-5">
+                                                            <FieldArray name="class_one">
+                                                                {() => (
+                                                                    <div>
+                                                                        {values.class_one.map((class_one, index) => (
+                                                                            <div key={index}>
+                                                                                <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
+                                                                                    {/* data for muslim students */}
+                                                                                    <NumberField name={`class_one.${index}.muslim_boy_student`} label="মুসলিম ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_one.${index}.muslim_girl_student`} label="মুসলিম ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_one.${index}.muslim_total_student`} label="মুসলিম মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+
+                                                                                    {/* data for hidu students */}
+                                                                                    <NumberField name={`class_one.${index}.hindu_boy_student`} label="হিন্দু ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_one.${index}.hindu_girl_student`} label="হিন্দু ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_one.${index}.hindu_total_student`} label="হিন্দু মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+
+                                                                                    {/* data for total students */}
+                                                                                    <NumberField name={`class_one.${index}.total_boy_student`} label="মোট ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_one.${index}.total_girl_student`} label="মোট ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_one.${index}.total_student`} label="মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+
+
+                                                                                    <NumberField name={`class_one.${index}.special_demanded_student`} label="বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী" placeholder='মোট সংখ্যা দিন' />
+                                                                                </div>
+
+
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                )}
+                                                            </FieldArray>
+
+                                                        </ul>
+                                                    </AnimateHeight>
+                                                </div>
+
+                                                {/* data for class_two students */}
+                                                <div className='mt-3'>
+                                                    <button type="button" className={`relative border-gray-300 flex justify-between items-center w-full px-4 py-3 text-sm font-medium text-left rounded-lg border ${studentAccordionActive === 'class_two' ? ' bg-slate-200' : '  bg-slate-100'}  ${studentAccordionActive === 'class_two' ? 'active' : ''}`} onClick={() => studentTogglePara('class_two')}>
+                                                        <h5 className="text-gray-900 text-[16px]">দ্বিতীয় শ্রেণি</h5>
+                                                        <svg className={`w-4 h-4 ml-2 duration-500 ${studentAccordionActive === 'class_two' ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M19 9l-7 7-7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                                        </svg>
+                                                    </button>
+
+                                                    <AnimateHeight duration={300} height={studentAccordionActive === 'class_two' ? 'auto' : 0}>
+                                                        <ul className="p-5">
+                                                            <FieldArray name="class_two">
+                                                                {() => (
+                                                                    <div>
+                                                                        {values.class_two.map((class_two, index) => (
+                                                                            <div key={index}>
+                                                                                <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
+                                                                                    {/* data for muslim students */}
+                                                                                    <NumberField name={`class_two.${index}.muslim_boy_student`} label="মুসলিম ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_two.${index}.muslim_girl_student`} label="মুসলিম ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_two.${index}.muslim_total_student`} label="মুসলিম মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+
+                                                                                    {/* data for hidu students */}
+                                                                                    <NumberField name={`class_two.${index}.hindu_boy_student`} label="হিন্দু ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_two.${index}.hindu_girl_student`} label="হিন্দু ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_two.${index}.hindu_total_student`} label="হিন্দু মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+
+                                                                                    {/* data for total students */}
+                                                                                    <NumberField name={`class_two.${index}.total_boy_student`} label="মোট ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_two.${index}.total_girl_student`} label="মোট ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_two.${index}.total_student`} label="মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+
+
+                                                                                    <NumberField name={`class_two.${index}.special_demanded_student`} label="বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী" placeholder='মোট সংখ্যা দিন' />
+                                                                                </div>
+
+
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                )}
+                                                            </FieldArray>
+
+                                                        </ul>
+                                                    </AnimateHeight>
+                                                </div>
+
+                                                {/* data for class_three students */}
+                                                <div className='mt-3'>
+                                                    <button type="button" className={`relative border-gray-300 flex justify-between items-center w-full px-4 py-3 text-sm font-medium text-left rounded-lg border ${studentAccordionActive === 'class_three' ? ' bg-slate-200' : '  bg-slate-100'}  ${studentAccordionActive === 'class_three' ? 'active' : ''}`} onClick={() => studentTogglePara('class_three')}>
+                                                        <h5 className="text-gray-900 text-[16px]">তৃতীয় শ্রেণি</h5>
+                                                        <svg className={`w-4 h-4 ml-2 duration-500 ${studentAccordionActive === 'class_three' ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M19 9l-7 7-7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                                        </svg>
+                                                    </button>
+
+                                                    <AnimateHeight duration={300} height={studentAccordionActive === 'class_three' ? 'auto' : 0}>
+                                                        <ul className="p-5">
+                                                            <FieldArray name="class_three">
+                                                                {() => (
+                                                                    <div>
+                                                                        {values.class_three.map((class_three, index) => (
+                                                                            <div key={index}>
+                                                                                <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
+                                                                                    {/* data for muslim students */}
+                                                                                    <NumberField name={`class_three.${index}.muslim_boy_student`} label="মুসলিম ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_three.${index}.muslim_girl_student`} label="মুসলিম ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_three.${index}.muslim_total_student`} label="মুসলিম মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+
+                                                                                    {/* data for hidu students */}
+                                                                                    <NumberField name={`class_three.${index}.hindu_boy_student`} label="হিন্দু ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_three.${index}.hindu_girl_student`} label="হিন্দু ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_three.${index}.hindu_total_student`} label="হিন্দু মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+
+                                                                                    {/* data for total students */}
+                                                                                    <NumberField name={`class_three.${index}.total_boy_student`} label="মোট ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_three.${index}.total_girl_student`} label="মোট ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_three.${index}.total_student`} label="মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+
+
+                                                                                    <NumberField name={`class_three.${index}.special_demanded_student`} label="বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী" placeholder='মোট সংখ্যা দিন' />
+                                                                                </div>
+
+
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                )}
+                                                            </FieldArray>
+
+                                                        </ul>
+                                                    </AnimateHeight>
+                                                </div>
+
+                                                {/* data for class_four students */}
+                                                <div className='mt-3'>
+                                                    <button type="button" className={`relative border-gray-300 flex justify-between items-center w-full px-4 py-3 text-sm font-medium text-left rounded-lg border ${studentAccordionActive === 'class_four' ? ' bg-slate-200' : '  bg-slate-100'}  ${studentAccordionActive === 'class_four' ? 'active' : ''}`} onClick={() => studentTogglePara('class_four')}>
+                                                        <h5 className="text-gray-900 text-[16px]">চতুর্থ শ্রেণি</h5>
+                                                        <svg className={`w-4 h-4 ml-2 duration-500 ${studentAccordionActive === 'class_four' ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M19 9l-7 7-7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                                        </svg>
+                                                    </button>
+
+                                                    <AnimateHeight duration={300} height={studentAccordionActive === 'class_four' ? 'auto' : 0}>
+                                                        <ul className="p-5">
+                                                            <FieldArray name="class_four">
+                                                                {() => (
+                                                                    <div>
+                                                                        {values.class_four.map((class_four, index) => (
+                                                                            <div key={index}>
+                                                                                <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
+                                                                                    {/* data for muslim students */}
+                                                                                    <NumberField name={`class_four.${index}.muslim_boy_student`} label="মুসলিম ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_four.${index}.muslim_girl_student`} label="মুসলিম ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_four.${index}.muslim_total_student`} label="মুসলিম মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+
+                                                                                    {/* data for hidu students */}
+                                                                                    <NumberField name={`class_four.${index}.hindu_boy_student`} label="হিন্দু ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_four.${index}.hindu_girl_student`} label="হিন্দু ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_four.${index}.hindu_total_student`} label="হিন্দু মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+
+                                                                                    {/* data for total students */}
+                                                                                    <NumberField name={`class_four.${index}.total_boy_student`} label="মোট ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_four.${index}.total_girl_student`} label="মোট ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_four.${index}.total_student`} label="মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+
+
+                                                                                    <NumberField name={`class_four.${index}.special_demanded_student`} label="বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী" placeholder='মোট সংখ্যা দিন' />
+                                                                                </div>
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                )}
+                                                            </FieldArray>
+
+                                                        </ul>
+                                                    </AnimateHeight>
+                                                </div>
+
+                                                {/* data for class_five students */}
+                                                <div className='mt-3'>
+                                                    <button type="button" className={`relative border-gray-300 flex justify-between items-center w-full px-4 py-3 text-sm font-medium text-left rounded-lg border ${studentAccordionActive === 'class_five' ? ' bg-slate-200' : '  bg-slate-100'}  ${studentAccordionActive === 'class_five' ? 'active' : ''}`} onClick={() => studentTogglePara('class_five')}>
+                                                        <h5 className="text-gray-900 text-[16px]">পঞ্চম শ্রেণি</h5>
+                                                        <svg className={`w-4 h-4 ml-2 duration-500 ${studentAccordionActive === 'class_five' ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M19 9l-7 7-7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                                        </svg>
+                                                    </button>
+
+                                                    <AnimateHeight duration={300} height={studentAccordionActive === 'class_five' ? 'auto' : 0}>
+                                                        <ul className="p-5">
+                                                            <FieldArray name="class_five">
+                                                                {() => (
+                                                                    <div>
+                                                                        {values.class_five.map((class_five, index) => (
+                                                                            <div key={index}>
+                                                                                <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
+                                                                                    {/* data for muslim students */}
+                                                                                    <NumberField name={`class_five.${index}.muslim_boy_student`} label="মুসলিম ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_five.${index}.muslim_girl_student`} label="মুসলিম ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_five.${index}.muslim_total_student`} label="মুসলিম মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+
+                                                                                    {/* data for hidu students */}
+                                                                                    <NumberField name={`class_five.${index}.hindu_boy_student`} label="হিন্দু ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_five.${index}.hindu_girl_student`} label="হিন্দু ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_five.${index}.hindu_total_student`} label="হিন্দু মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+
+                                                                                    {/* data for total students */}
+                                                                                    <NumberField name={`class_five.${index}.total_boy_student`} label="মোট ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_five.${index}.total_girl_student`} label="মোট ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_five.${index}.total_student`} label="মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+
+
+                                                                                    <NumberField name={`class_five.${index}.special_demanded_student`} label="বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী" placeholder='মোট সংখ্যা দিন' />
+                                                                                </div>
+
+
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                )}
+                                                            </FieldArray>
+
+                                                        </ul>
+                                                    </AnimateHeight>
+                                                </div>
+
+                                                {/* data for class_six students */}
+                                                <div className='mt-3'>
+                                                    <button type="button" className={`relative border-gray-300 flex justify-between items-center w-full px-4 py-3 text-sm font-medium text-left rounded-lg border ${studentAccordionActive === 'class_six' ? ' bg-slate-200' : '  bg-slate-100'}  ${studentAccordionActive === 'class_six' ? 'active' : ''}`} onClick={() => studentTogglePara('class_six')}>
+                                                        <h5 className="text-gray-900 text-[16px]">ষষ্ঠ শ্রেণি</h5>
+                                                        <svg className={`w-4 h-4 ml-2 duration-500 ${studentAccordionActive === 'class_six' ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M19 9l-7 7-7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                                        </svg>
+                                                    </button>
+
+                                                    <AnimateHeight duration={300} height={studentAccordionActive === 'class_six' ? 'auto' : 0}>
+                                                        <ul className="p-5">
+                                                            <FieldArray name="class_six">
+                                                                {() => (
+                                                                    <div>
+                                                                        {values.class_six.map((class_six, index) => (
+                                                                            <div key={index}>
+                                                                                <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
+                                                                                    {/* data for muslim students */}
+                                                                                    <NumberField name={`class_six.${index}.muslim_boy_student`} label="মুসলিম ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_six.${index}.muslim_girl_student`} label="মুসলিম ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_six.${index}.muslim_total_student`} label="মুসলিম মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+
+                                                                                    {/* data for hidu students */}
+                                                                                    <NumberField name={`class_six.${index}.hindu_boy_student`} label="হিন্দু ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_six.${index}.hindu_girl_student`} label="হিন্দু ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_six.${index}.hindu_total_student`} label="হিন্দু মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+
+                                                                                    {/* data for total students */}
+                                                                                    <NumberField name={`class_six.${index}.total_boy_student`} label="মোট ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_six.${index}.total_girl_student`} label="মোট ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_six.${index}.total_student`} label="মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+
+
+                                                                                    <NumberField name={`class_six.${index}.special_demanded_student`} label="বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী" placeholder='মোট সংখ্যা দিন' />
+                                                                                </div>
+
+
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                )}
+                                                            </FieldArray>
+
+                                                        </ul>
+                                                    </AnimateHeight>
+                                                </div>
+
+                                                {/* data for class_seven students */}
+                                                <div className='mt-3'>
+                                                    <button type="button" className={`relative border-gray-300 flex justify-between items-center w-full px-4 py-3 text-sm font-medium text-left rounded-lg border ${studentAccordionActive === 'class_seven' ? ' bg-slate-200' : '  bg-slate-100'}  ${studentAccordionActive === 'class_seven' ? 'active' : ''}`} onClick={() => studentTogglePara('class_seven')}>
+                                                        <h5 className="text-gray-900 text-[16px]">সপ্তম শ্রেণি</h5>
+                                                        <svg className={`w-4 h-4 ml-2 duration-500 ${studentAccordionActive === 'class_seven' ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M19 9l-7 7-7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                                        </svg>
+                                                    </button>
+
+                                                    <AnimateHeight duration={300} height={studentAccordionActive === 'class_seven' ? 'auto' : 0}>
+                                                        <ul className="p-5">
+                                                            <FieldArray name="class_seven">
+                                                                {() => (
+                                                                    <div>
+                                                                        {values.class_seven.map((class_seven, index) => (
+                                                                            <div key={index}>
+                                                                                <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
+                                                                                    {/* data for muslim students */}
+                                                                                    <NumberField name={`class_seven.${index}.muslim_boy_student`} label="মুসলিম ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_seven.${index}.muslim_girl_student`} label="মুসলিম ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_seven.${index}.muslim_total_student`} label="মুসলিম মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+
+                                                                                    {/* data for hidu students */}
+                                                                                    <NumberField name={`class_seven.${index}.hindu_boy_student`} label="হিন্দু ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_seven.${index}.hindu_girl_student`} label="হিন্দু ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_seven.${index}.hindu_total_student`} label="হিন্দু মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+
+                                                                                    {/* data for total students */}
+                                                                                    <NumberField name={`class_seven.${index}.total_boy_student`} label="মোট ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_seven.${index}.total_girl_student`} label="মোট ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_seven.${index}.total_student`} label="মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+
+
+                                                                                    <NumberField name={`class_seven.${index}.special_demanded_student`} label="বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী" placeholder='মোট সংখ্যা দিন' />
+                                                                                </div>
+
+
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                )}
+                                                            </FieldArray>
+
+                                                        </ul>
+                                                    </AnimateHeight>
+                                                </div>
+
+                                                {/* data for class_eight students */}
+                                                <div className='mt-3'>
+                                                    <button type="button" className={`relative border-gray-300 flex justify-between items-center w-full px-4 py-3 text-sm font-medium text-left rounded-lg border ${studentAccordionActive === 'class_eight' ? ' bg-slate-200' : '  bg-slate-100'}  ${studentAccordionActive === 'class_eight' ? 'active' : ''}`} onClick={() => studentTogglePara('class_eight')}>
+                                                        <h5 className="text-gray-900 text-[16px]">অষ্টম শ্রেণি</h5>
+                                                        <svg className={`w-4 h-4 ml-2 duration-500 ${studentAccordionActive === 'class_eight' ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M19 9l-7 7-7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                                        </svg>
+                                                    </button>
+
+                                                    <AnimateHeight duration={300} height={studentAccordionActive === 'class_eight' ? 'auto' : 0}>
+                                                        <ul className="p-5">
+                                                            <FieldArray name="class_eight">
+                                                                {() => (
+                                                                    <div>
+                                                                        {values.class_eight.map((class_eight, index) => (
+                                                                            <div key={index}>
+                                                                                <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
+                                                                                    {/* data for muslim students */}
+                                                                                    <NumberField name={`class_eight.${index}.muslim_boy_student`} label="মুসলিম ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_eight.${index}.muslim_girl_student`} label="মুসলিম ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_eight.${index}.muslim_total_student`} label="মুসলিম মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+
+                                                                                    {/* data for hidu students */}
+                                                                                    <NumberField name={`class_eight.${index}.hindu_boy_student`} label="হিন্দু ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_eight.${index}.hindu_girl_student`} label="হিন্দু ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_eight.${index}.hindu_total_student`} label="হিন্দু মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+
+                                                                                    {/* data for total students */}
+                                                                                    <NumberField name={`class_eight.${index}.total_boy_student`} label="মোট ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_eight.${index}.total_girl_student`} label="মোট ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
+                                                                                    <NumberField name={`class_eight.${index}.total_student`} label="মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+
+
+                                                                                    <NumberField name={`class_eight.${index}.special_demanded_student`} label="বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী" placeholder='মোট সংখ্যা দিন' />
+                                                                                </div>
+
+
+                                                                            </div>
+                                                                        ))}
+                                                                    </div>
+                                                                )}
+                                                            </FieldArray>
+
+                                                        </ul>
+                                                    </AnimateHeight>
+                                                </div>
+                                            </div>
+                                        </CustomTabPanel>
+                                        <CustomTabPanel value={studentTabValue} index={1}>
+                                            <div className='pt-8'>
+                                                {/* school building related data */}
+                                                <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
+                                                    <NumberField name="sallary_scale" label="বেতন স্কেল" placeholder="বেতন স্কেল দিন" />
+                                                    <NumberField name="main_sallary" label="মূল বেতন" placeholder="মূল বেতন দিন" />
+                                                    <NumberField name="educational_allowance" label="শিক্ষা ভাতা" placeholder="শিক্ষা ভাতা দিন" />
+                                                    <NumberField name="bank_account" label="ব্যাংক হিসাব নং" placeholder="ব্যাংক হিসাব নং দিন" />
+                                                    <NumberField name="gpf" label="জিপিএফ নং" placeholder="জিপিএফ নং দিন" />
+                                                    <NumberField name="mobile_number" label="সক্রিয় মোবাইল নং" placeholder="সক্রিয় মোবাইল নং দিন" />
+                                                    <NumberField name="current_year_occasional_vacation" label="চলতি বছরে মোট নৈমিত্তিক ছুটি" placeholder="চলতি বছরে মোট নৈমিত্তিক ছুটি সংখ্যা দিন" />
+                                                    <ImageInput name="signature" label='সাক্ষর' placeholder='সাক্ষর দিন' />
+                                                </div>
+
+                                            </div>
+
+                                        </CustomTabPanel>
+                                        <CustomTabPanel value={studentTabValue} index={2}>
+                                            <div className='pt-8'>
+
+                                                <FieldArray name='asroyon_survey'>
+                                                    {() => (
+                                                        <div>
+                                                            {values.asroyon_survey.map((survery, index) => (
+                                                                <div key={index}>
+                                                                    <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
+                                                                        <NumberField name={`asroyon_survey.${index}.survayed_students`} label="মোট জরিপকৃত শিক্ষার্থী" placeholder="শিক্ষার্থী সংখ্যা দিন" />
+                                                                        <NumberField name={`asroyon_survey.${index}.admitted_releted_school_students`} label="সংশ্লিষ্ট বিদ্যালয়ে ভর্তিকৃত শিক্ষার্থী" placeholder="শিক্ষার্থী সংখ্যা দিন" />
+                                                                        <NumberField name={`asroyon_survey.${index}.unadmitted_students`} label="অভর্তিকৃত শিক্ষার্থী" placeholder="শিক্ষার্থী সংখ্যা দিন" />
+                                                                    </div>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                </FieldArray>
+                                                
+                                            </div>
                                         </CustomTabPanel>
                                     </Box>
                                 </div>
