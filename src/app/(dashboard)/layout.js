@@ -120,7 +120,7 @@ export default function DashboardLayout({ children }) {
 
         if (location.includes("submit")) {
             setActiveMenuItem("submit");
-        } else {
+        } else if (location.includes("history")) {
             setActiveMenuItem("history");
         }
     }, []);
