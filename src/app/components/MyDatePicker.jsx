@@ -1,16 +1,11 @@
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import React from 'react';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { Field } from 'formik';
 
 const MyDatePicker = ({ name, label }) => {
     return (
         <div className='mb-4'>
             <label className='font-semibold' htmlFor={name}>{label}*</label>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DatePicker
-                    className='border-black h-3'
-                />
-            </LocalizationProvider>
+            <Field id={name} name={name} type="date" className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" />
         </div>
     );
 };

@@ -1,7 +1,7 @@
 "use client"
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import TextField from '@/app/components/TextField';
-import { Field, Form, Formik } from 'formik';
+import { Field, FieldArray, Form, Formik } from 'formik';
 import * as React from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -11,7 +11,7 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import NumberField from '@/app/components/NumberField';
 import MyDatePicker from '@/app/components/MyDatePicker';
 import AnimateHeight from 'react-animate-height';
-
+import ImageInput from '@/app/components/ImageInput';
 
 const BilReturnSubmit = () => {
     const [buildingNumber, setBuildingNumber] = React.useState(0)
@@ -77,10 +77,16 @@ const BilReturnSubmit = () => {
         };
     }
 
-    const [tabValue, setTabValue] = React.useState(0);
+    const [schoolTabValue, setSchoolTabValue] = React.useState(0);
 
-    const handleChange = (event, newTabValue) => {
-        setTabValue(newTabValue);
+    const handleSchoolTabValueChange = (event, newTabValue) => {
+        setSchoolTabValue(newTabValue);
+    };
+
+    const [teacherTabValue, setTeacherTabValue] = React.useState(0);
+
+    const handleTeacherTabValueChange = (event, newTabValue) => {
+        setTeacherTabValue(newTabValue);
     };
 
     const handleFormSubmit = (values) => {
@@ -100,38 +106,33 @@ const BilReturnSubmit = () => {
             <h2 className='md:text-2xl text-xl font-semibold md:mb-20 mb-12'>বিল রিটার্ন সাবমিট</h2>
             <Formik
                 initialValues={{
-                    school_name: "",
-                    building_number: "",
-                    building_situation_1: "",
-                    building_type_1: "",
-                    building_situation_2: "",
-                    building_type_2: "",
-                    building_situation_3: "",
-                    building_situation_4: "",
-                    building_type_3: "",
-                    building_type_4: "",
+                    budgets: [{ name: '', year: '', amount: '' }],
+                    teachers: [{}],
+                    vacations: [{}],
                 }}
                 // validationSchema={validationSchema}
                 onSubmit={handleFormSubmit}
             >
                 {
-                    ({ isSubmitting }) => (
+                    ({ isSubmitting, values }) => (
                         <Form>
+                            {/* school related data */}
+
                             <div className='flex lg:flex-row flex-col md:gap-8 gap-5'>
-                                {/* school related data */}
                                 <div className='xl:w-[80%] w-full border bg-white shadow-sm rounded-[4px] p-8'>
                                     <h2 className='md:text-xl text-lg font-semibold md:mb-8'>বিদ্যালয় সংক্রান্ত তথ্য</h2>
                                     <Box sx={{ width: '100%' }}>
                                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                                            <Tabs className='text-xl' variant="scrollable" scrollButtons="auto" value={tabValue} onChange={handleChange} aria-label="basic tabs example">
+                                            <Tabs className='text-xl' variant="scrollable" scrollButtons="auto" value={schoolTabValue} onChange={handleSchoolTabValueChange} aria-label="basic tabs example">
                                                 <Tab label="সাধারণ তথ্য" {...a11yProps(0)} />
                                                 <Tab label="ভৌত সুবিধাদি তথ্য" {...a11yProps(1)} />
                                                 <Tab label="ভুমি বিষয়ক তথ্য" {...a11yProps(2)} />
                                                 <Tab label="উপবৃত্তি সংক্রান্ত তথ্য" {...a11yProps(3)} />
                                                 <Tab label="সভা সংক্রান্ত তথ্য" {...a11yProps(4)} />
+                                                <Tab label="উন্নয়ন কার্যক্রম সংক্রান্ত তথ্য" {...a11yProps(5)} />
                                             </Tabs>
                                         </Box>
-                                        <CustomTabPanel value={tabValue} index={0}>
+                                        <CustomTabPanel value={schoolTabValue} index={0}>
                                             <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-6 pt-8'>
                                                 <TextField name="school_name" label="বিদ্যালয়ের নাম" placeholder={"বিদ্যালয়ের নাম লিখুন"} />
                                                 <TextField name="village" label="গ্রামের নাম" placeholder={"গ্রামের নাম লিখুন"} />
@@ -164,7 +165,7 @@ const BilReturnSubmit = () => {
                                                 {/* <TextField name="cluster" label="ক্লাস্টার" placeholder={"ক্লাস্টার লিখুন"} /> */}
                                             </div>
                                         </CustomTabPanel>
-                                        <CustomTabPanel value={tabValue} index={1}>
+                                        <CustomTabPanel value={schoolTabValue} index={1}>
                                             <div className='pt-8'>
                                                 {/* school building related data */}
                                                 <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
@@ -532,7 +533,7 @@ const BilReturnSubmit = () => {
                                             </div>
 
                                         </CustomTabPanel>
-                                        <CustomTabPanel value={tabValue} index={2}>
+                                        <CustomTabPanel value={schoolTabValue} index={2}>
                                             {/* land related data */}
                                             <div className='pt-8 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
                                                 <NumberField name="land_amount" label="ভুমির পরিমান(শতাংশ)" placeholder="ভুমির পরিমান দিন" />
@@ -576,7 +577,7 @@ const BilReturnSubmit = () => {
                                                 </div>
                                             </div>
                                         </CustomTabPanel>
-                                        <CustomTabPanel value={tabValue} index={3}>
+                                        <CustomTabPanel value={schoolTabValue} index={3}>
                                             {/* stipend related data */}
                                             <div className='pt-8 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
                                                 <NumberField name="total_stipend_consumers" label="সর্বশেষ প্রান্তিকে মোট সুবিধাভোগি" placeholder="সর্বশেষ প্রান্তিকে মোট সুবিধাভোগির সংখ্যা দিন" />
@@ -584,7 +585,7 @@ const BilReturnSubmit = () => {
                                                 <NumberField name="stipend_received_money" label="উপবৃত্তির প্রাপ্ত অর্থ" placeholder="উপবৃত্তির প্রাপ্ত অর্থ দিন" />
                                             </div>
                                         </CustomTabPanel>
-                                        <CustomTabPanel value={tabValue} index={4}>
+                                        <CustomTabPanel value={schoolTabValue} index={4}>
                                             {/* stipend related data */}
                                             <div className='pt-8 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
                                                 <NumberField name="smc" label="এসএমসি" placeholder="এসএমসি সভার সংখ্যা দিন" />
@@ -595,11 +596,163 @@ const BilReturnSubmit = () => {
                                                 <NumberField name="yard_assembly" label="উঠান বৈঠক" placeholder="উঠান বৈঠক এর সংখ্যা দিন" />
                                             </div>
                                         </CustomTabPanel>
+                                        <CustomTabPanel value={schoolTabValue} index={5}>
+                                            {/* stipend related data */}
+                                            <FieldArray name="budgets">
+                                                {arrayHelpers => (
+                                                    <div>
+                                                        {values.budgets.map((budget, index) => (
+                                                            <div key={index}>
+                                                                <div className='pt-8 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
+                                                                    <div className="mb-4">
+                                                                        <label className='font-semibold' htmlFor={`budgets.${index}.name`}>বরাদ্দের ধরন</label>
+                                                                        <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`budgets.${index}.name`} id={`budgets.${index}.name`}>
+                                                                            <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
+                                                                            <option value='স্লিপ'>স্লিপ</option>
+                                                                            <option value='রুটিন মেরামত'>রুটিন মেরামত</option>
+                                                                            <option value='মেজর মেরামত'>মেজর মেরামত</option>
+                                                                            <option value='মাইনর মেরামত'>মাইনর মেরামত</option>
+                                                                            <option value='প্রাক-প্রাথমিক'>প্রাক-প্রাথমিক</option>
+                                                                            <option value='ওয়াশব্লক'>ওয়াশব্লক</option>
+                                                                            <option value='প্লেয়িং এক্সেসরিস'>প্লেয়িং এক্সেসরিস</option>
+                                                                        </Field>
+                                                                    </div>
+                                                                    <TextField name={`budgets.${index}.year`} label="অর্থ বছর" placeholder="অর্থ বছর লিখুন" />
+                                                                    <NumberField name={`budgets.${index}.amount`} label="অর্থের পরিমান" placeholder="অর্থের পরিমান লিখুন" />
+                                                                </div>
+                                                                <button className={`text-[#ED1C24] font-semibold`} type="button" onClick={() => arrayHelpers.remove(index)}>
+                                                                    ডিলিট করুন
+                                                                </button>
+                                                            </div>
+                                                        ))}
+                                                        <button className='mt-3 text-[#008B4C] underline font-semibold' type="button" onClick={() => arrayHelpers.push({ name: '', year: '', amount: '' })}>
+                                                            আরও যোগ করুন
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </FieldArray>
+                                        </CustomTabPanel>
                                     </Box>
                                 </div>
                                 {/* student and teacher related data */}
                             </div>
-                            {/* <button type='submit'>submit</button> */}
+
+                            {/* teacher related data */}
+                            <div className='flex lg:flex-row flex-col md:gap-8 gap-5 md:mt-8 mt-5'>
+                                <div className='xl:w-[80%] w-full border bg-white shadow-sm rounded-[4px] p-8'>
+                                    <h2 className='md:text-xl text-lg font-semibold md:mb-8'>শিক্ষক সংক্রান্ত তথ্য</h2>
+                                    <Box sx={{ width: '100%' }}>
+                                        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                                            <Tabs className='text-xl' variant="scrollable" scrollButtons="auto" value={teacherTabValue} onChange={handleTeacherTabValueChange} aria-label="basic tabs example">
+                                                <Tab label="সাধারণ তথ্য" {...a11yProps(0)} />
+                                                <Tab label="বেতন সংক্রান্ত তথ্য" {...a11yProps(1)} />
+                                                <Tab label="ছুটি সংক্রান্ত তথ্য" {...a11yProps(2)} />
+                                            </Tabs>
+                                        </Box>
+                                        {/* general data */}
+                                        <CustomTabPanel value={teacherTabValue} index={0}>
+                                            <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-6 pt-8'>
+                                                <NumberField name="permitted_post" label="অনুমোদিত পদ" placeholder={'অনুমোদিত পদের সংখ্যা দিন'} />
+                                                <NumberField name="working_post" label="কর্মরত" placeholder={'কর্মরত পদের সংখ্যা দিন'} />
+                                                <NumberField name="teacher_number" label="শিক্ষক" placeholder={'শিক্ষক সংখ্যা দিন'} />
+                                                <NumberField name="women_teacher_number" label="শিক্ষকা" placeholder={'শিক্ষকা সংখ্যা দিন'} />
+                                                <NumberField name="vacency" label="শূন্য পদ" placeholder={'শূন্য পদের সংখ্যা দিন'} />
+                                            </div>
+                                            <div>
+                                                <FieldArray name="teachers">
+                                                    {arrayHelpers1 => (
+                                                        <div>
+                                                            {values.teachers.map((teacher, index) => (
+                                                                <div key={index}>
+                                                                    <div className='pt-8 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
+                                                                        <TextField name={`teachers.${index}.name`} label="শিক্ষকের নাম" placeholder="শিক্ষকের নাম লিখুন" />
+                                                                        <TextField name={`teachers.${index}.designation`} label="শিক্ষকের পদবি" placeholder="শিক্ষকের পদবি লিখুন" />
+                                                                        <TextField name={`teachers.${index}.educational_qualification`} label="সর্বশেষ শিক্ষাগত যোগ্যতা" placeholder="সর্বশেষ শিক্ষাগত যোগ্যতা লিখুন" />
+                                                                        <div className="mb-4">
+                                                                            <label className='font-semibold' htmlFor={`teachers.${index}.divisional_training`}>বিভাগীয় প্রশিক্ষিন</label>
+                                                                            <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`teachers.${index}.divisional_training`} id={`teachers.${index}.divisional_training`}>
+                                                                                <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
+                                                                                <option value='ডিপিএড'>ডিপিএড</option>
+                                                                                <option value='সিইএনএড'>সিইএনএড</option>
+                                                                                <option value='বিটিপিটি'>বিটিপিটি</option>
+                                                                            </Field>
+                                                                        </div>
+                                                                        <MyDatePicker name={`teachers.${index}.date_of_birth`} label={'জন্ম তারিখ'} />
+                                                                        <MyDatePicker name={`teachers.${index}.first_joining_date`} label={'প্রথম যোগদানের তারিখ'} />
+                                                                        <MyDatePicker name={`teachers.${index}.mentioned_post_joining_date`} label={'উক্ত পদে যোগদানের তারিখ'} />
+                                                                        <MyDatePicker name={`teachers.${index}.this_school_joining_date`} label={'এই বিদ্যালয়ে যোগদানের তারিখ'} />
+                                                                    </div>
+                                                                    <button className={`text-[#ED1C24] font-semibold`} type="button" onClick={() => arrayHelpers1.remove(index)}>
+                                                                        ডিলিট করুন
+                                                                    </button>
+                                                                </div>
+                                                            ))}
+                                                            <button className='mt-3 text-[#008B4C] underline font-semibold' type="button" onClick={() => arrayHelpers1.push({ name: '', designation: '', educational_qualification: '', divisional_training: '', date_of_birth: '', first_joining_date: '', mentioned_post_joining_date: '', this_school_joining_date: '' })}>
+                                                                আরও যোগ করুন
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                </FieldArray>
+                                            </div>
+                                        </CustomTabPanel>
+                                        <CustomTabPanel value={teacherTabValue} index={1}>
+                                            <div className='pt-8'>
+                                                {/* school building related data */}
+                                                <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
+                                                    <NumberField name="sallary_scale" label="বেতন স্কেল" placeholder="বেতন স্কেল দিন" />
+                                                    <NumberField name="main_sallary" label="মূল বেতন" placeholder="মূল বেতন দিন" />
+                                                    <NumberField name="educational_allowance" label="শিক্ষা ভাতা" placeholder="শিক্ষা ভাতা দিন" />
+                                                    <NumberField name="bank_account" label="ব্যাংক হিসাব নং" placeholder="ব্যাংক হিসাব নং দিন" />
+                                                    <NumberField name="gpf" label="জিপিএফ নং" placeholder="জিপিএফ নং দিন" />
+                                                    <NumberField name="mobile_number" label="সক্রিয় মোবাইল নং" placeholder="সক্রিয় মোবাইল নং দিন" />
+                                                    <NumberField name="current_year_occasional_vacation" label="চলতি বছরে মোট নৈমিত্তিক ছুটি" placeholder="চলতি বছরে মোট নৈমিত্তিক ছুটি সংখ্যা দিন" />
+                                                    <ImageInput name="signature" label='সাক্ষর' placeholder='সাক্ষর দিন' />
+                                                </div>
+
+                                            </div>
+
+                                        </CustomTabPanel>
+                                        <CustomTabPanel value={teacherTabValue} index={2}>
+                                            {/* land related data */}
+                                            {/* stipend related data */}
+                                            <FieldArray name="vacations">
+                                                {arrayHelpers => (
+                                                    <div>
+                                                        {values.vacations.map((vacation, index) => (
+                                                            <div key={index}>
+                                                                <div className='pt-8 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
+                                                                    <TextField name={`vacations.${index}.teacher_name`} label="শিক্ষকের নাম" placeholder="শিক্ষকের নাম লিখুন" />
+                                                                    <div className="mb-4">
+                                                                        <label className='font-semibold' htmlFor={`vacations.${index}.type`}>বরাদ্দের ধরন</label>
+                                                                        <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`vacations.${index}.type`} id={`vacations.${index}.type`}>
+                                                                            <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
+                                                                            <option value='চিকিৎসা'>চিকিৎসা</option>
+                                                                            <option value='বহিঃবাংলাদেশ'>বহিঃবাংলাদেশ</option>
+                                                                            <option value='মাতৃত্ত্ব'>মাতৃত্ত্ব</option>
+                                                                            <option value='অননুমোদিত'>অননুমোদিত</option>
+                                                                        </Field>
+                                                                    </div>
+
+                                                                    <MyDatePicker name={`vacations.${index}.start_date`} label='ছুটি শুরু' />
+                                                                    <MyDatePicker name={`vacations.${index}.end_date`} label='ছুটি শেষ' />
+
+                                                                </div>
+                                                                <button className={`text-[#ED1C24] font-semibold`} type="button" onClick={() => arrayHelpers.remove(index)}>
+                                                                    ডিলিট করুন
+                                                                </button>
+                                                            </div>
+                                                        ))}
+                                                        <button className='mt-3 text-[#008B4C] underline font-semibold' type="button" onClick={() => arrayHelpers.push({ teacher_name: '', type: '', start_date: '', end_date: '' })}>
+                                                            আরও যোগ করুন
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </FieldArray>
+                                        </CustomTabPanel>
+                                    </Box>
+                                </div>
+                            </div>
+                            <button type='submit'>submit</button>
                         </Form>
                     )
                 }
