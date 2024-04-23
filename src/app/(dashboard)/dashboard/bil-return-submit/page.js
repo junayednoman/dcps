@@ -12,6 +12,7 @@ import NumberField from '@/app/components/NumberField';
 import MyDatePicker from '@/app/components/MyDatePicker';
 import AnimateHeight from 'react-animate-height';
 import ImageInput from '@/app/components/ImageInput';
+import PrimaryBtn from '@/app/components/PrimaryBtn';
 
 const BilReturnSubmit = () => {
     const [buildingNumber, setBuildingNumber] = React.useState(0)
@@ -1279,7 +1280,7 @@ const BilReturnSubmit = () => {
                                     </Box>
                                 </div>
                             </div>
-                            <button type='submit'>submit</button>
+                            <button type="submit" className="px-6 md:py-[10px] py-[6px] md:pt-[15px] pt-[10px] bg-primaryColor border border-primaryColor hover:bg-textColor text-white rounded-md font-semibold capitalize mt-5">সাবমিট করুন</button>
                         </Form>
                     )
                 }
