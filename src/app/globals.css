@@ -30,7 +30,9 @@ body {
   overflow-x: hidden !important;
 }
 
-
+.css-1q2h7u5{
+  font-size: 17px !important;
+}
 
 .instaIcon:hover {
   background: linear-gradient(135deg, #f9ce34, #ee2a7b, #6228d7);
