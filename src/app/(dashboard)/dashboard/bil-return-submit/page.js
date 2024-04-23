@@ -162,7 +162,8 @@ const BilReturnSubmit = () => {
                                                 <TextField name="union_corporation" label="ইউনিয়ন/পৌরসভা" placeholder={"ইউনিয়ন/পৌরসভা লিখুন"} />
                                                 <TextField name="emis_code" label="EMIS কোড" placeholder={"EMIS কোড লিখুন"} />
                                                 <TextField name="school_email" label="বিদ্যালয়ের ইমেইল" placeholder={"বিদ্যালয়ের ইমেইল লিখুন"} />
-                                                <TextField name="found_date" label="প্রতিষ্ঠার সন" placeholder={"প্রতিষ্ঠার সন লিখুন"} />
+                                                {/* <TextField name="found_date" label="প্রতিষ্ঠার সন" placeholder={"প্রতিষ্ঠার সন লিখুন"} /> */}
+                                                <MyDatePicker name="founded_date" label="প্রতিষ্ঠার সন" />
 
                                                 <div className="mb-4">
                                                     <label className='font-semibold' htmlFor="grade">গ্রেড*</label>
@@ -198,14 +199,7 @@ const BilReturnSubmit = () => {
 
                                                     {buildingNumber >= 1 &&
                                                         <div className='mt-3 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-6'>
-                                                            <div className='mb-4'>
-                                                                <label className='font-semibold' htmlFor={`building_date_1`}>ভবন ১ এর নির্মাণ সন*</label>
-                                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                                    <DatePicker
-                                                                        className='border-black h-3'
-                                                                    />
-                                                                </LocalizationProvider>
-                                                            </div>
+                                                            <MyDatePicker name={'building_date_1'} label={'ভবন ১ নির্মাণের সন '} />
                                                             <div className="mb-4">
                                                                 <label className='font-semibold' htmlFor={`building_situation_1`}>ভবন ১ এর বর্তমান অবস্থা*</label>
                                                                 <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`building_situation_1`} id={`building_situation_1`}>
@@ -229,14 +223,7 @@ const BilReturnSubmit = () => {
 
                                                     {buildingNumber >= 2 &&
                                                         <div className='mt-3 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-6'>
-                                                            <div className='mb-4'>
-                                                                <label className='font-semibold' htmlFor={`building_date_2`}>ভবন 2 এর নির্মাণ সন*</label>
-                                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                                    <DatePicker
-                                                                        className='border-black h-3'
-                                                                    />
-                                                                </LocalizationProvider>
-                                                            </div>
+                                                            <MyDatePicker name={'building_date_2'} label={'ভবন ২ নির্মাণের সন '} />
                                                             <div className="mb-4">
                                                                 <label className='font-semibold' htmlFor={`building_situation_2`}>ভবন 2 এর বর্তমান অবস্থা*</label>
                                                                 <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`building_situation_2`} id={`building_situation_2`}>
@@ -260,14 +247,7 @@ const BilReturnSubmit = () => {
 
                                                     {buildingNumber >= 3 &&
                                                         <div className='mt-3 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-6'>
-                                                            <div className='mb-4'>
-                                                                <label className='font-semibold' htmlFor={`building_date_3`}>ভবন ৩ এর নির্মাণ সন*</label>
-                                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                                    <DatePicker
-                                                                        className='border-black h-3'
-                                                                    />
-                                                                </LocalizationProvider>
-                                                            </div>
+                                                            <MyDatePicker name={'building_date_3'} label={'ভবন ৩ নির্মাণের সন '} />
                                                             <div className="mb-4">
                                                                 <label className='font-semibold' htmlFor={`building_situation_3`}>ভবন ৩ এর বর্তমান অবস্থা*</label>
                                                                 <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`building_situation_3`} id={`building_situation_3`}>
@@ -291,14 +271,7 @@ const BilReturnSubmit = () => {
 
                                                     {buildingNumber >= 4 &&
                                                         <div className='mt-3 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-6'>
-                                                            <div className='mb-4'>
-                                                                <label className='font-semibold' htmlFor={`building_date_4`}>ভবন ৪ এর নির্মাণ সন*</label>
-                                                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                                                    <DatePicker
-                                                                        className='border-black h-3'
-                                                                    />
-                                                                </LocalizationProvider>
-                                                            </div>
+                                                            <MyDatePicker name={'building_date_4'} label={'ভবন ৪ নির্মাণের সন '} />
                                                             <div className="mb-4">
                                                                 <label className='font-semibold' htmlFor={`building_situation_4`}>ভবন ৪ এর বর্তমান অবস্থা*</label>
                                                                 <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`building_situation_4`} id={`building_situation_4`}>
@@ -328,7 +301,16 @@ const BilReturnSubmit = () => {
                                                     <NumberField label="অফিস কক্ষ" placeholder="অফিস কক্ষ সংখ্যা দিন" name="office_room" />
                                                     <NumberField label="শ্রেণী কক্ষ" placeholder="শ্রেণী কক্ষের সংখ্যা দিন" name="class_room" />
                                                     <NumberField label="মাল্টিমিডিয়া কক্ষ" placeholder="মাল্টিমিডিয়া কক্ষ সংখ্যা দিন" name="multimedia_room" />
-                                                    <NumberField label="শিশু শ্রেণী" placeholder="শিশু শ্রেণী সংখ্যা দিন" name="nursery_class" />
+                                                    {/* <NumberField label="শিশু শ্রেণী" placeholder="শিশু শ্রেণী সংখ্যা দিন" name="nursery_class" /> */}
+
+                                                    <div className="mb-4">
+                                                        <label className='font-semibold' htmlFor="have_nursery_class">শিশু শ্রেণী*</label>
+                                                        <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name="have_nursery_class" id="have_nursery_class">
+                                                            <option className='text-gray-300' value="Select an option" selected>একটি অপশন সিলেক্ট করুন</option>
+                                                            <option value="আছে">আছে</option>
+                                                            <option value="নাই">নাই</option>
+                                                        </Field>
+                                                    </div>
 
                                                     <div className="mb-4">
                                                         <label className='font-semibold' htmlFor="border_wall">সিমানা প্রাচীর*</label>
@@ -357,8 +339,6 @@ const BilReturnSubmit = () => {
                                                     {washBlock === "আছে" &&
                                                         <MyDatePicker label="ওয়াশ ব্লক নির্মাণের সন" name="wash_block_building_data" />
                                                     }
-
-                                                    <NumberField label="প্রধান" placeholder="প্রধান শিক্ষকের কক্ষ সংখ্যা দিন" name="head_master_room" />
                                                 </div>
 
                                                 {/* others data */}
@@ -1260,7 +1240,7 @@ const BilReturnSubmit = () => {
                                         <CustomTabPanel value={studentTabValue} index={1}>
                                             <div className='pt-8'>
                                                 {/* school building related data */}
-                                                <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
+                                                {/* <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
                                                     <NumberField name="sallary_scale" label="বেতন স্কেল" placeholder="বেতন স্কেল দিন" />
                                                     <NumberField name="main_sallary" label="মূল বেতন" placeholder="মূল বেতন দিন" />
                                                     <NumberField name="educational_allowance" label="শিক্ষা ভাতা" placeholder="শিক্ষা ভাতা দিন" />
@@ -1269,7 +1249,8 @@ const BilReturnSubmit = () => {
                                                     <NumberField name="mobile_number" label="সক্রিয় মোবাইল নং" placeholder="সক্রিয় মোবাইল নং দিন" />
                                                     <NumberField name="current_year_occasional_vacation" label="চলতি বছরে মোট নৈমিত্তিক ছুটি" placeholder="চলতি বছরে মোট নৈমিত্তিক ছুটি সংখ্যা দিন" />
                                                     <ImageInput name="signature" label='সাক্ষর' placeholder='সাক্ষর দিন' />
-                                                </div>
+                                                </div> */}
+                                                catchment
 
                                             </div>
 
@@ -1292,7 +1273,7 @@ const BilReturnSubmit = () => {
                                                         </div>
                                                     )}
                                                 </FieldArray>
-                                                
+
                                             </div>
                                         </CustomTabPanel>
                                     </Box>
