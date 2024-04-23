@@ -112,7 +112,7 @@ const BilReturnSubmit = () => {
     console.log(studentAccordionActive);
     return (
         <div className='bg-[#FAFAFA]'>
-            <h2 className='md:text-2xl text-xl font-semibold md:mb-20 mb-12'>বিল রিটার্ন সাবমিট</h2>
+            <h2 className='md:text-2xl text-xl font-semibold md:mb-14 mb-8'>বিল রিটার্ন সাবমিট</h2>
             <Formik
                 initialValues={{
                     budgets: [{ name: '', year: '', amount: '' }],
