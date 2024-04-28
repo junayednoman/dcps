@@ -1,5 +1,4 @@
 "use client"
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import TextField from '@/app/components/TextField';
 import { Field, FieldArray, Form, Formik } from 'formik';
 import * as React from 'react';
@@ -7,12 +6,11 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import CustomTabPanel from '@/app/components/CutomTabPanel';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import NumberField from '@/app/components/NumberField';
 import MyDatePicker from '@/app/components/MyDatePicker';
 import AnimateHeight from 'react-animate-height';
 import ImageInput from '@/app/components/ImageInput';
-import PrimaryBtn from '@/app/components/PrimaryBtn';
+import { Checkbox, FormControl, InputLabel, ListItemText, MenuItem, OutlinedInput, Select } from '@mui/material';
 
 const BilReturnSubmit = () => {
     const [buildingNumber, setBuildingNumber] = React.useState(0)
@@ -70,6 +68,18 @@ const BilReturnSubmit = () => {
     const handleDeepTubeWellChange = (event) => {
         setDeepTubeWell(event.target.value);
     };
+    const [registration, setRegistration] = React.useState('');
+
+    // Function to handle change in the border_wall select element
+    const handleRegistrationChange = (event) => {
+        setRegistration(event.target.value);
+    };
+    const [namjari, setNamjari] = React.useState('');
+
+    // Function to handle change in the border_wall select element
+    const handleNamjariChange = (event) => {
+        setNamjari(event.target.value);
+    };
 
     function a11yProps(index) {
         return {
@@ -80,24 +90,21 @@ const BilReturnSubmit = () => {
 
     const [schoolTabValue, setSchoolTabValue] = React.useState(0);
 
-    const handleSchoolTabValueChange = (event, newTabValue) => {
-        setSchoolTabValue(newTabValue);
+    const handleSchoolTabValueChange = (event, newValue) => {
+        setSchoolTabValue(newValue);
     };
 
     const [teacherTabValue, setTeacherTabValue] = React.useState(0);
 
-    const handleTeacherTabValueChange = (event, newTabValue) => {
-        setTeacherTabValue(newTabValue);
+    const handleTeacherTabValueChange = (event, newValue) => {
+        setTeacherTabValue(newValue);
     };
+
     const [studentTabValue, setStudentTabValue] = React.useState(0);
-
-    const handleStudentTabValueChange = (event, newTabValue) => {
-        setStudentTabValue(newTabValue);
+    const handleStudentTabValueChange = (event, newValue) => {
+        setStudentTabValue(newValue);
     };
 
-    const handleFormSubmit = (values) => {
-        console.log(values);
-    };
 
 
     const [schoolAccordionActive, setSchoolAccordionActive] = React.useState('');
@@ -109,7 +116,26 @@ const BilReturnSubmit = () => {
     const studentTogglePara = (value) => {
         setStudentAccordionActive((oldValue) => (oldValue === value ? 0 : value));
     };
-    console.log(studentAccordionActive);
+
+    const [personName, setPersonName] = React.useState([]);
+    const [internetLabel, setInternetLabel] = React.useState(true);
+    const handleChange = (event) => {
+        const {
+            target: { value },
+        } = event;
+        setPersonName(
+            // On autofill we get a stringified value.
+            typeof value === 'string' ? value.split(',') : value,
+        );
+    };
+
+
+    const handleFormSubmit = (values) => {
+        console.log(values);
+    };
+
+    const internetTypes = ['মডেম', 'সিম', 'রাউটার'];
+
     return (
         <div className='bg-[#FAFAFA]'>
             <h2 className='md:text-2xl text-xl font-semibold md:mb-14 mb-8'>বিল রিটার্ন সাবমিট</h2>
@@ -130,6 +156,11 @@ const BilReturnSubmit = () => {
                     class_eight: [{}],
                     class_eight: [{}],
                     asroyon_survey: [{}],
+                    survey_total: [{}],
+                    survey_admitted: [{}],
+                    survey_unadmitted: [{}],
+                    survey_admitted_to_other_school: [{}],
+                    unauthorized_teacher: [{}],
                 }}
                 // validationSchema={validationSchema}
                 onSubmit={handleFormSubmit}
@@ -138,27 +169,40 @@ const BilReturnSubmit = () => {
                     ({ isSubmitting, values }) => (
                         <Form>
                             {/* school related data */}
-
                             <div className='flex lg:flex-row flex-col md:gap-8 gap-5'>
                                 <div className='xl:w-[80%] w-full border bg-white shadow-sm rounded-[4px] p-8'>
                                     <h2 className='md:text-xl text-lg font-semibold md:mb-8'>বিদ্যালয় সংক্রান্ত তথ্য</h2>
                                     <Box sx={{ width: '100%' }}>
                                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                                            <Tabs className='text-xl' variant="scrollable" scrollButtons="auto" value={schoolTabValue} onChange={handleSchoolTabValueChange} aria-label="basic tabs example">
+                                            <Tabs indicatorColor="#000" className='text-xl' variant="scrollable" scrollButtons="auto" value={schoolTabValue} onChange={handleSchoolTabValueChange} aria-label="basic tabs example">
                                                 <Tab label="সাধারণ তথ্য" {...a11yProps(0)} />
-                                                <Tab label="ভৌত সুবিধাদি তথ্য" {...a11yProps(1)} />
-                                                <Tab label="ভুমি বিষয়ক তথ্য" {...a11yProps(2)} />
+                                                <Tab label="ভৌত অবকাঠামো তথ্য" {...a11yProps(1)} />
+                                                <Tab label="ভূমি বিষয়ক তথ্য" {...a11yProps(2)} />
                                                 <Tab label="উপবৃত্তি সংক্রান্ত তথ্য" {...a11yProps(3)} />
                                                 <Tab label="সভা সংক্রান্ত তথ্য" {...a11yProps(4)} />
                                                 <Tab label="উন্নয়ন কার্যক্রম সংক্রান্ত তথ্য" {...a11yProps(5)} />
+
                                             </Tabs>
                                         </Box>
                                         <CustomTabPanel value={schoolTabValue} index={0}>
                                             <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-6 pt-6'>
                                                 <TextField name="school_name" label="বিদ্যালয়ের নাম" placeholder={"বিদ্যালয়ের নাম লিখুন"} />
-                                                <TextField name="village" label="গ্রামের নাম" placeholder={"গ্রামের নাম লিখুন"} />
+                                                <div className="mb-4">
+                                                    <label className='font-semibold' htmlFor="cluster">ক্লাস্টার*</label>
+                                                    <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name="cluster" id="cluster">
+                                                        <option className='text-gray-300' value="Select an option" selected>ক্লাস্টার সিলেক্ট করুন</option>
+                                                        <option value="সাধুহাটি ক্লাস্টার">সাধুহাটি</option>
+                                                        <option value="কামালপুর">কামালপুর</option>
+                                                        <option value="ভাঁদ‌গাঁও">ভাঁদ‌গাঁও</option>
+                                                        <option value="শ্যামরারবাজার">শ্যামরারবাজার</option>
+                                                        <option value="আমতৈল">আমতৈল</option>
+                                                        <option value="নাজিরাবাদ">নাজিরাবাদ</option>
+                                                        <option value="বাহারমর্দান">বাহারমর্দান</option>
+                                                        <option value="আকবরপুর">আকবরপুর</option>
+                                                    </Field>
+                                                </div>
+                                                <TextField name="village" label="গ্রাম/মহল্লার নাম" placeholder={"গ্রাম/মহল্লার নাম লিখুন"} />
                                                 <TextField name="word_number" label="ওয়ার্ড নাম্বার" placeholder={"ওয়ার্ড নাম্বার লিখুন"} />
-                                                <TextField name="cluster" label="ক্লাস্টার" placeholder={"ক্লাস্টার লিখুন"} />
                                                 <TextField name="post_office" label="ডাকঘর" placeholder={"ডাকঘর লিখুন"} />
                                                 <TextField name="union_corporation" label="ইউনিয়ন/পৌরসভা" placeholder={"ইউনিয়ন/পৌরসভা লিখুন"} />
                                                 <TextField name="emis_code" label="EMIS কোড" placeholder={"EMIS কোড লিখুন"} />
@@ -202,21 +246,21 @@ const BilReturnSubmit = () => {
                                                         <div className='mt-3 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-6'>
                                                             <MyDatePicker name={'building_date_1'} label={'ভবন ১ নির্মাণের সন '} />
                                                             <div className="mb-4">
+                                                                <label className='font-semibold' htmlFor={`building_type_1`}>ভবন ১ এর ধরন*</label>
+                                                                <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`building_type_1`} id={`building_type_1`}>
+                                                                    <option className='text-gray-300' value="Select an option" selected>ভবনের ধরন সিলেক্ট করুন</option>
+                                                                    <option value="পাকা">পাকা</option>
+                                                                    <option value="সেমিপাকা">সেমিপাকা</option>
+                                                                </Field>
+                                                            </div>
+                                                            <div className="mb-4">
                                                                 <label className='font-semibold' htmlFor={`building_situation_1`}>ভবন ১ এর বর্তমান অবস্থা*</label>
                                                                 <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`building_situation_1`} id={`building_situation_1`}>
                                                                     <option className='text-gray-300' value="Select an option" selected >ভবনের অবস্থা সিলেক্ট করুন</option>
                                                                     <option value="ভাল">ভাল</option>
                                                                     <option value="জরাজীর্ণ">জরাজীর্ণ</option>
                                                                     <option value="পরিত্যাক্ত">পরিত্যাক্ত</option>
-                                                                </Field>
-                                                            </div>
-                                                            <div className="mb-4">
-                                                                <label className='font-semibold' htmlFor={`building_type_1`}>ভবন ১ এর ধরন*</label>
-                                                                <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`building_type_1`} id={`building_type_1`}>
-                                                                    <option className='text-gray-300' value="Select an option" selected>ভবনের ধরন সিলেক্ট করুন</option>
-                                                                    <option value="পাকা">পাকা</option>
-                                                                    <option value="সেমিপাকা">সেমিপাকা</option>
-                                                                    <option value="টিনশেড">টিনশেড</option>
+                                                                    <option value="পরিত্যাক্ত">ঝুঁকিপূর্ণ</option>
                                                                 </Field>
                                                             </div>
                                                         </div>
@@ -301,11 +345,12 @@ const BilReturnSubmit = () => {
                                                     <NumberField label="প্রধান শিক্ষকের কক্ষ" placeholder="প্রধান শিক্ষকের কক্ষ সংখ্যা" name="head_master_room" />
                                                     <NumberField label="অফিস কক্ষ" placeholder="অফিস কক্ষ সংখ্যা দিন" name="office_room" />
                                                     <NumberField label="শ্রেণী কক্ষ" placeholder="শ্রেণী কক্ষের সংখ্যা দিন" name="class_room" />
+                                                    <NumberField label="ব্যবহারযোগ্য শ্রেণী কক্ষ" placeholder="ব্যবহারযোগ্য শ্রেণী কক্ষের সংখ্যা দিন" name="useable_class_room" />
                                                     <NumberField label="মাল্টিমিডিয়া কক্ষ" placeholder="মাল্টিমিডিয়া কক্ষ সংখ্যা দিন" name="multimedia_room" />
                                                     {/* <NumberField label="শিশু শ্রেণী" placeholder="শিশু শ্রেণী সংখ্যা দিন" name="nursery_class" /> */}
 
                                                     <div className="mb-4">
-                                                        <label className='font-semibold' htmlFor="have_nursery_class">শিশু শ্রেণী*</label>
+                                                        <label className='font-semibold' htmlFor="have_nursery_class">পৃথক শিশু শ্রেণী*</label>
                                                         <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name="have_nursery_class" id="have_nursery_class">
                                                             <option className='text-gray-300' value="Select an option" selected>একটি অপশন সিলেক্ট করুন</option>
                                                             <option value="আছে">আছে</option>
@@ -314,16 +359,27 @@ const BilReturnSubmit = () => {
                                                     </div>
 
                                                     <div className="mb-4">
-                                                        <label className='font-semibold' htmlFor="border_wall">সিমানা প্রাচীর*</label>
+                                                        <label className='font-semibold' htmlFor="border_wall">সীমানা প্রাচীর*</label>
                                                         <Field onChange={handleBorderWallChange} className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name="border_wall" id="border_wall">
                                                             <option className='text-gray-300' value="Select an option" selected>একটি অপশন সিলেক্ট করুন</option>
                                                             <option value="আছে">আছে</option>
                                                             <option value="নাই">নাই</option>
                                                         </Field>
                                                     </div>
+                                                    {borderWall === 'আছে' &&
+                                                        <div className="mb-4">
+                                                            <label className='font-semibold' htmlFor="border_wall">সীমানা প্রাচীরের অর্থায়ন ধরন*</label>
+                                                            <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name="funding_type" id="funding_type">
+                                                                <option className='text-gray-300' value="Select an option" selected>একটি অপশন সিলেক্ট করুন</option>
+                                                                <option value="ডিপিই">ডিপিই</option>
+                                                                <option value="উপজেলা">জেলা পরিষদ</option>
+                                                                <option value="অন্যান্য">অন্যান্য</option>
+                                                            </Field>
+                                                        </div>
+                                                    }
 
                                                     {borderWall === "আছে" &&
-                                                        <MyDatePicker label="সিমানা প্রাচীর নির্মাণের সন" name="border_wall_building_data" />
+                                                        <MyDatePicker label="সীমানা প্রাচীর নির্মাণের সন" name="border_wall_building_data" />
                                                     }
 
                                                     <NumberField label="টয়লেট সংখ্যা" placeholder="টয়লেট সংখ্যা দিন" name="toilet" />
@@ -382,7 +438,7 @@ const BilReturnSubmit = () => {
                                                                 </div>
 
                                                                 <div className="mb-4">
-                                                                    <label className='font-semibold' htmlFor={`roof_garden`}>ছাদ বাগান*</label>
+                                                                    <label className='font-semibold' htmlFor={`roof_garden`}>বাগান/ছাদ বাগান*</label>
                                                                     <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`roof_garden`} id={`roof_garden`}>
                                                                         <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
                                                                         <option value="আছে">আছে</option>
@@ -390,14 +446,31 @@ const BilReturnSubmit = () => {
                                                                     </Field>
                                                                 </div>
 
-                                                                <div className="mb-4">
-                                                                    <label className='font-semibold' htmlFor={`internet`}>ইন্টারনেট*</label>
-                                                                    <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`internet`} id={`internet`}>
-                                                                        <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
-                                                                        <option value="আছে">আছে</option>
-                                                                        <option value="নাই">নাই</option>
-                                                                    </Field>
+                                                                <div>
+                                                                    <label className='font-semibold' htmlFor={`internet`}>ইন্টারনেট</label>
+                                                                    <FormControl sx={{ width: 300 }}>
+                                                                        <InputLabel className={`${internetLabel ? 'block' : 'hidden'}`} id="demo-multiple-checkbox-label">ইন্টারনেট</InputLabel>
+                                                                        <Select
+                                                                            className='md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]'
+                                                                            labelId="demo-multiple-checkbox-label"
+                                                                            id="demo-multiple-checkbox"
+                                                                            multiple
+                                                                            value={personName}
+                                                                            onChange={handleChange}
+                                                                            // input={<OutlinedInput label="ইন্টারনেট" />}
+                                                                            renderValue={(selected) => selected.join(', ')}
+                                                                        // MenuProps={MenuProps}
+                                                                        >
+                                                                            {internetTypes.map((internetType) => (
+                                                                                <MenuItem key={internetType} value={internetType}>
+                                                                                    <Checkbox checked={personName.indexOf(internetType) > -1} />
+                                                                                    <ListItemText primary={internetType} />
+                                                                                </MenuItem>
+                                                                            ))}
+                                                                        </Select>
+                                                                    </FormControl>
                                                                 </div>
+
                                                             </div>
 
                                                             <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4 mt-4'>
@@ -405,20 +478,12 @@ const BilReturnSubmit = () => {
                                                                     <label className="font-semibold" htmlFor="laptop_number">ল্যাপটপ সংখ্যা*</label>
                                                                     <input placeholder="ল্যাপটপ সংখ্যা দিন" name='laptop_number' id="laptop_number" onChange={handleLaptopChange} type="number" className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" />
                                                                 </div>
+                                                                {laptop >= 1 &&
+                                                                    <NumberField placeholder={"সচল ল্যাপটপের সংখ্যা দিন"} label={'সচল ল্যাপটপের সংখ্যা'} name={"active_laptops"} />
+                                                                }
                                                             </div>
 
-                                                            {laptop >= 1 &&
-                                                                < div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-6'>
-                                                                    <div className="mb-4">
-                                                                        <label className='font-semibold' htmlFor={`laption_condition`}>ল্যাপটপ এর বর্তমান অবস্থা*</label>
-                                                                        <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`laption_condition`} id={`laption_condition`}>
-                                                                            <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
-                                                                            <option value="সচল">সচল</option>
-                                                                            <option value="নষ্ট">নষ্ট</option>
-                                                                        </Field>
-                                                                    </div>
-                                                                </div>
-                                                            }
+
 
 
                                                             <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4 mt-4'>
@@ -426,20 +491,10 @@ const BilReturnSubmit = () => {
                                                                     <label className="font-semibold" htmlFor="multimedia_number">মাল্টিমিডিয়া সংখ্যা*</label>
                                                                     <input placeholder="মাল্টিমিডিয়া সংখ্যা দিন" name='multimedia_number' id="multimedia_number" onChange={handleMultimediaChange} type="number" className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" />
                                                                 </div>
+                                                                {multimedia >= 1 &&
+                                                                    <NumberField placeholder={"সচল মাল্টিমিডিয়ার সংখ্যা দিন"} label={'সচল মাল্টিমিডিয়া সংখ্যা'} name={"active_multimedias"} />
+                                                                }
                                                             </div>
-
-                                                            {multimedia >= 1 &&
-                                                                < div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-6'>
-                                                                    <div className="mb-4">
-                                                                        <label className='font-semibold' htmlFor={`multimedia_condition`}>মাল্টিমিডিয়া এর বর্তমান অবস্থা*</label>
-                                                                        <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`multimedia_condition`} id={`multimedia_condition`}>
-                                                                            <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
-                                                                            <option value="সচল">সচল</option>
-                                                                            <option value="নষ্ট">নষ্ট</option>
-                                                                        </Field>
-                                                                    </div>
-                                                                </div>
-                                                            }
 
 
                                                             <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4 mt-4'>
@@ -447,10 +502,7 @@ const BilReturnSubmit = () => {
                                                                     <label className="font-semibold" htmlFor="piano_number">পিয়ানো সংখ্যা*</label>
                                                                     <input placeholder="পিয়ানো সংখ্যা দিন" name='piano_number' id="piano_number" onChange={handlePianoChange} type="number" className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" />
                                                                 </div>
-                                                            </div>
-
-                                                            {piano >= 1 &&
-                                                                < div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-6'>
+                                                                {piano >= 1 &&
                                                                     <div className="mb-4">
                                                                         <label className='font-semibold' htmlFor={`piano_condition`}>পিয়ানো এর বর্তমান অবস্থা*</label>
                                                                         <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`piano_condition`} id={`piano_condition`}>
@@ -459,8 +511,10 @@ const BilReturnSubmit = () => {
                                                                             <option value="নষ্ট">নষ্ট</option>
                                                                         </Field>
                                                                     </div>
-                                                                </div>
-                                                            }
+                                                                }
+                                                            </div>
+
+
 
                                                             < div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-6'>
                                                                 <div className="my-4">
@@ -501,7 +555,7 @@ const BilReturnSubmit = () => {
                                                                         <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`laption_condition`} id={`laption_condition`}>
                                                                             <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
                                                                             <option value="ভাল">ভাল</option>
-                                                                            <option value="পরিত্যক্ত">পরিত্যক্ত</option>
+                                                                            <option value="পরিত্যক্ত">মেরামতযোগ্য</option>
                                                                         </Field>
                                                                     </div>
                                                                 </div>
@@ -521,7 +575,7 @@ const BilReturnSubmit = () => {
                                                                         <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`laption_condition`} id={`laption_condition`}>
                                                                             <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
                                                                             <option value="ভাল">ভাল</option>
-                                                                            <option value="পরিত্যক্ত">পরিত্যক্ত</option>
+                                                                            <option value="পরিত্যক্ত">মেরামতযোগ্য</option>
                                                                         </Field>
                                                                     </div>
                                                                 </div>
@@ -537,29 +591,51 @@ const BilReturnSubmit = () => {
                                         <CustomTabPanel value={schoolTabValue} index={2}>
                                             {/* land related data */}
                                             <div className='pt-8 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
-                                                <NumberField name="land_amount" label="ভুমির পরিমান(শতাংশ)" placeholder="ভুমির পরিমান দিন" />
-                                                <NumberField name="take_overed_land_amount" label="দখলকৃত ভুমির পরিমান(শতাংশ)" placeholder="দখলকৃত ভুমির পরিমান দিন" />
-                                                <NumberField name="dispossessed_land" label="বেদখলকৃত ভুমির পরিমান(শতাংশ)" placeholder="বেদখলকৃত ভুমির পরিমান দিন" />
+                                                <NumberField name="land_amount" label="ভূমির পরিমান(শতাংশ)" placeholder="ভূমির পরিমান দিন" />
+                                                <NumberField name="take_overed_land_amount" label="দখলকৃত ভূমির পরিমান(শতাংশ)" placeholder="দখলকৃত ভূমির পরিমান দিন" />
+                                                <NumberField name="dispossessed_land" label="বেদখলকৃত ভূমির পরিমান(শতাংশ)" placeholder="বেদখলকৃত ভূমির পরিমান দিন" />
+
                                                 <div className="mb-4">
                                                     <label className='font-semibold' htmlFor={"is_registered"}>রেজিস্টার করা আছে কিনা*</label>
-                                                    <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={"is_registered"} id={"is_registered"}>
+                                                    <Field onChange={handleRegistrationChange} className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={"is_registered"} id={"is_registered"}>
                                                         <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
                                                         <option value='হ্যাঁ'>হ্যাঁ</option>
                                                         <option value='না'>না</option>
                                                     </Field>
                                                 </div>
+
+                                                {registration === 'হ্যাঁ' &&
+                                                    <div className="mb-4">
+                                                        <label className='font-semibold' htmlFor={"registration_ownership"}>রেজিস্ট্রেশন এর মালিকানা*</label>
+                                                        <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={"registration_ownership"} id={"registration_ownership"}>
+                                                            <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
+                                                            <option value='ডিপিই'>ডিপিই</option>
+                                                            <option value='অন্যান্য'>অন্যান্য</option>
+                                                        </Field>
+                                                    </div>
+                                                }
                                                 <NumberField name="khatian_number" label="খাতিয়ান নং" placeholder="খাতিয়ান নং দিন" />
                                                 <NumberField name="dag_number" label="দাগ নং" placeholder="দাগ নং দিন" />
                                                 <NumberField name="dolil_number" label="দলিল নং" placeholder="দলিল নং দিন" />
                                                 <MyDatePicker label="দলিল সন" name="dolil_year" />
                                                 <div className="mb-4">
                                                     <label className='font-semibold' htmlFor={"is_namjaried"}>নামজারি আছে কিনা*</label>
-                                                    <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={"is_namjaried"} id={"is_namjaried"}>
+                                                    <Field onChange={handleNamjariChange} className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={"is_namjaried"} id={"is_namjaried"}>
                                                         <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
                                                         <option value='হ্যাঁ'>হ্যাঁ</option>
                                                         <option value='না'>না</option>
                                                     </Field>
                                                 </div>
+                                                {namjari === 'হ্যাঁ' &&
+                                                    <div className="mb-4">
+                                                        <label className='font-semibold' htmlFor={"namjari_ownership"}>নামজারি এর মালিকানা*</label>
+                                                        <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={"namjari_ownership"} id={"namjari_ownership"}>
+                                                            <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
+                                                            <option value='ডিপিই'>ডিপিই</option>
+                                                            <option value='অন্যান্য'>অন্যান্য</option>
+                                                        </Field>
+                                                    </div>
+                                                }
                                                 <div className="mb-4">
                                                     <label className='font-semibold' htmlFor={"is_cased"}>মামলা আছে কিনা*</label>
                                                     <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={"is_cased"} id={"is_cased"}>
@@ -569,7 +645,7 @@ const BilReturnSubmit = () => {
                                                     </Field>
                                                 </div>
                                                 <div className="mb-4">
-                                                    <label className='font-semibold' htmlFor={"land_development_tax_paid"}>ভুমি উন্নয়ন কর*</label>
+                                                    <label className='font-semibold' htmlFor={"land_development_tax_paid"}>ভূমি উন্নয়ন কর*</label>
                                                     <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={"land_development_tax_paid"} id={"land_development_tax_paid"}>
                                                         <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
                                                         <option value='পরিশোধিত'>পরিশোধিত</option>
@@ -581,9 +657,17 @@ const BilReturnSubmit = () => {
                                         <CustomTabPanel value={schoolTabValue} index={3}>
                                             {/* stipend related data */}
                                             <div className='pt-8 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
-                                                <NumberField name="total_stipend_consumers" label="সর্বশেষ প্রান্তিকে মোট সুবিধাভোগি" placeholder="সর্বশেষ প্রান্তিকে মোট সুবিধাভোগির সংখ্যা দিন" />
+                                                <div className="mb-4">
+                                                    <label className='font-semibold' htmlFor={"land_development_tax_paid"}>সর্বশেষ প্রান্তিকের সময়কাল</label>
+                                                    <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={"land_development_tax_paid"} id={"land_development_tax_paid"}>
+                                                        <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
+                                                        <option value='প্রথম প্রান্তিক(জানুয়ারি-জুন)'>প্রথম প্রান্তিক(জানুয়ারি-জুন)</option>
+                                                        <option value='দ্বিতীয় প্রান্তিক(জুলাই-ডিসেম্বর)'>দ্বিতীয় প্রান্তিক(জুলাই-ডিসেম্বর)</option>
+                                                    </Field>
+                                                </div>
+                                                <NumberField name="total_stipend_consumers" label="সর্বশেষ প্রান্তিকে মোট সুবিধাভোগী" placeholder="সর্বশেষ প্রান্তিকে মোট সুবিধাভোগীর সংখ্যা দিন" />
                                                 <NumberField name="stipend_demand" label="উপবৃত্তির চাহিদা" placeholder="উপবৃত্তির চাহিদা দিন" />
-                                                <NumberField name="stipend_received_money" label="উপবৃত্তির প্রাপ্ত অর্থ" placeholder="উপবৃত্তির প্রাপ্ত অর্থ দিন" />
+                                                <NumberField name="stipend_received_money" label="বিতরণকৃত অর্থের পরিমান " placeholder="বিতরণকৃত অর্থের পরিমান দিন" />
                                             </div>
                                         </CustomTabPanel>
                                         <CustomTabPanel value={schoolTabValue} index={4}>
@@ -593,8 +677,8 @@ const BilReturnSubmit = () => {
                                                 <NumberField name="pta" label="পিটিএ" placeholder="পিটিএ সভার সংখ্যা দিন" />
                                                 <NumberField name="mother_conference" label="মা-সমাবেশ" placeholder="মা-সমাবেশ এর সংখ্যা দিন" />
                                                 <NumberField name="gurdian_conference" label="অভিভাবক-সমাবেশ" placeholder="অভিভাবক-সমাবেশ এর সংখ্যা দিন" />
-                                                <NumberField name="staff_meeting" label="স্টাফ মিটিং" placeholder="স্টাফ মিটিং এর সংখ্যা দিন" />
                                                 <NumberField name="yard_assembly" label="উঠান বৈঠক" placeholder="উঠান বৈঠক এর সংখ্যা দিন" />
+                                                <NumberField name="staff_meeting" label="স্টাফ মিটিং" placeholder="স্টাফ মিটিং এর সংখ্যা দিন" />
                                             </div>
                                         </CustomTabPanel>
                                         <CustomTabPanel value={schoolTabValue} index={5}>
@@ -611,14 +695,19 @@ const BilReturnSubmit = () => {
                                                                             <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
                                                                             <option value='স্লিপ'>স্লিপ</option>
                                                                             <option value='রুটিন মেরামত'>রুটিন মেরামত</option>
-                                                                            <option value='মেজর মেরামত'>মেজর মেরামত</option>
-                                                                            <option value='মাইনর মেরামত'>মাইনর মেরামত</option>
+                                                                            <option value='মেজর মেরামত'>বড় ধরণের/মেজর মেরামত</option>
+                                                                            <option value='মাইনর মেরামত'>ক্ষুদ্র/মাইনর মেরামত</option>
                                                                             <option value='প্রাক-প্রাথমিক'>প্রাক-প্রাথমিক</option>
                                                                             <option value='ওয়াশব্লক'>ওয়াশব্লক</option>
                                                                             <option value='প্লেয়িং এক্সেসরিস'>প্লেয়িং এক্সেসরিস</option>
                                                                         </Field>
                                                                     </div>
-                                                                    <TextField name={`budgets.${index}.year`} label="অর্থ বছর" placeholder="অর্থ বছর লিখুন" />
+                                                                    <div className='flex gap-3 items-center col-span-2'>
+                                                                        <MyDatePicker name={"budget_year_from"} label={'অর্থ বছর'} />
+                                                                        <p className='mt-4 w-[6px]'>-</p>
+                                                                        <MyDatePicker name={"budget_year_to"} />
+                                                                    </div>
+                                                                    {/* <TextField name={`budgets.${index}.year`} label="অর্থ বছর" placeholder="অর্থ বছর লিখুন" /> */}
                                                                     <NumberField name={`budgets.${index}.amount`} label="অর্থের পরিমান" placeholder="অর্থের পরিমান লিখুন" />
                                                                 </div>
                                                                 <button className={`text-[#ED1C24] font-semibold`} type="button" onClick={() => arrayHelpers.remove(index)}>
@@ -644,33 +733,45 @@ const BilReturnSubmit = () => {
                                     <h2 className='md:text-xl text-lg font-semibold md:mb-8'>শিক্ষক সংক্রান্ত তথ্য</h2>
                                     <Box sx={{ width: '100%' }}>
                                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                                            <Tabs className='text-xl' variant="scrollable" scrollButtons="auto" value={teacherTabValue} onChange={handleTeacherTabValueChange} aria-label="basic tabs example">
+                                            <Tabs indicatorColor="#000" className='text-xl' variant="scrollable" scrollButtons="auto" value={teacherTabValue} onChange={handleTeacherTabValueChange} aria-label="basic tabs example">
                                                 <Tab label="সাধারণ তথ্য" {...a11yProps(0)} />
                                                 <Tab label="বেতন সংক্রান্ত তথ্য" {...a11yProps(1)} />
                                                 <Tab label="ছুটি সংক্রান্ত তথ্য" {...a11yProps(2)} />
+                                                <Tab label="অননুমোদিত শিক্ষক তথ্য" {...a11yProps(3)} />
                                             </Tabs>
                                         </Box>
                                         {/* general data */}
                                         <CustomTabPanel value={teacherTabValue} index={0}>
                                             <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-6 pt-8'>
                                                 <NumberField name="permitted_post" label="অনুমোদিত পদ" placeholder={'অনুমোদিত পদের সংখ্যা দিন'} />
-                                                <NumberField name="working_post" label="কর্মরত" placeholder={'কর্মরত পদের সংখ্যা দিন'} />
-                                                <NumberField name="teacher_number" label="শিক্ষক" placeholder={'শিক্ষক সংখ্যা দিন'} />
-                                                <NumberField name="women_teacher_number" label="শিক্ষকা" placeholder={'শিক্ষকা সংখ্যা দিন'} />
+                                                <NumberField name="working_post" label="কর্মরত পদ" placeholder={'কর্মরত পদের সংখ্যা দিন'} />
                                                 <NumberField name="vacency" label="শূন্য পদ" placeholder={'শূন্য পদের সংখ্যা দিন'} />
+                                                <NumberField name="teacher_number" label="কর্মরত শিক্ষক(পুরুষ)" placeholder={'শিক্ষক সংখ্যা দিন'} />
+                                                <NumberField name="women_teacher_number" label="কর্মরত শিক্ষক(মহিলা)" placeholder={'শিক্ষকা সংখ্যা দিন'} />
                                             </div>
+                                        </CustomTabPanel>
+                                        <CustomTabPanel value={teacherTabValue} index={1}>
                                             <div>
                                                 <FieldArray name="teachers">
                                                     {arrayHelpers1 => (
                                                         <div>
                                                             {values.teachers.map((teacher, index) => (
                                                                 <div key={index}>
-                                                                    <div className='pt-8 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
+                                                                    <h3 className='mt-8 text-lg text-[#008B4C] font-semibold'>শিক্ষক {index + 1}</h3>
+                                                                    <div className='pt-4 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
                                                                         <TextField name={`teachers.${index}.name`} label="শিক্ষকের নাম" placeholder="শিক্ষকের নাম লিখুন" />
-                                                                        <TextField name={`teachers.${index}.designation`} label="শিক্ষকের পদবি" placeholder="শিক্ষকের পদবি লিখুন" />
+                                                                        <div className="mb-4">
+                                                                            <label className='font-semibold' htmlFor={`teachers.${index}.designation`}>শিক্ষকের পদবি</label>
+                                                                            <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`teachers.${index}.designation`} id={`teachers.${index}.designation`}>
+                                                                                <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
+                                                                                <option value='প্রধান শিক্ষক(চলতি দায়িত্ব)'>প্রধান শিক্ষক(চলতি দায়িত্ব)</option>
+                                                                                <option value='প্রধান শিক্ষক(ভারপ্রাপ্ত)'>প্রধান শিক্ষক(ভারপ্রাপ্ত)</option>
+                                                                                <option value='সহকারি শিক্ষক'>সহকারি শিক্ষক</option>
+                                                                            </Field>
+                                                                        </div>
                                                                         <TextField name={`teachers.${index}.educational_qualification`} label="সর্বশেষ শিক্ষাগত যোগ্যতা" placeholder="সর্বশেষ শিক্ষাগত যোগ্যতা লিখুন" />
                                                                         <div className="mb-4">
-                                                                            <label className='font-semibold' htmlFor={`teachers.${index}.divisional_training`}>বিভাগীয় প্রশিক্ষিন</label>
+                                                                            <label className='font-semibold' htmlFor={`teachers.${index}.divisional_training`}>বিভাগীয় প্রশিক্ষণ</label>
                                                                             <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`teachers.${index}.divisional_training`} id={`teachers.${index}.divisional_training`}>
                                                                                 <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
                                                                                 <option value='ডিপিএড'>ডিপিএড</option>
@@ -682,32 +783,32 @@ const BilReturnSubmit = () => {
                                                                         <MyDatePicker name={`teachers.${index}.first_joining_date`} label={'প্রথম যোগদানের তারিখ'} />
                                                                         <MyDatePicker name={`teachers.${index}.mentioned_post_joining_date`} label={'উক্ত পদে যোগদানের তারিখ'} />
                                                                         <MyDatePicker name={`teachers.${index}.this_school_joining_date`} label={'এই বিদ্যালয়ে যোগদানের তারিখ'} />
+
+                                                                        <NumberField name={`teachers.${index}.sallary_scale`} label="বেতন স্কেল" placeholder="বেতন স্কেল দিন" />
+                                                                        <NumberField name={`teachers.${index}.main_sallary`} label="মূল বেতন" placeholder="মূল বেতন দিন" />
+                                                                        <NumberField name={`teachers.${index}.educational_allowance`} label="শিক্ষা ভাতা" placeholder="শিক্ষা ভাতা দিন" />
+                                                                        <NumberField name={`teachers.${index}.bank_account`} label="ব্যাংক হিসাব নং" placeholder="ব্যাংক হিসাব নং দিন" />
+                                                                        <TextField name={`teachers.${index}.gpf`} label="জিপিএফ নং" placeholder="জিপিএফ নং দিন" />
+                                                                        <NumberField name={`teachers.${index}.mobile_number`} label="সক্রিয় মোবাইল নং" placeholder="সক্রিয় মোবাইল নং দিন" />
+                                                                        <NumberField name={`teachers.${index}.current_year_occasional_vacation`} label="চলতি বছরে মোট নৈমিত্তিক ছুটি" placeholder="চলতি বছরে মোট নৈমিত্তিক ছুটি সংখ্যা দিন" />
+                                                                        <ImageInput name={`teachers.${index}.signature`} label='স্বাক্ষর' placeholder='সাক্ষর দিন' />
                                                                     </div>
                                                                     <button className={`text-[#ED1C24] font-semibold`} type="button" onClick={() => arrayHelpers1.remove(index)}>
                                                                         ডিলিট করুন
                                                                     </button>
                                                                 </div>
                                                             ))}
-                                                            <button className='mt-3 text-[#008B4C] underline font-semibold' type="button" onClick={() => arrayHelpers1.push({ name: '', designation: '', educational_qualification: '', divisional_training: '', date_of_birth: '', first_joining_date: '', mentioned_post_joining_date: '', this_school_joining_date: '' })}>
+                                                            <button className='mt-3 text-[#008B4C] underline font-semibold' type="button" onClick={() => arrayHelpers1.push({ name: '', designation: '', educational_qualification: '', divisional_training: '', date_of_birth: '', first_joining_date: '', mentioned_post_joining_date: '', this_school_joining_date: '', educational_allowance: '', signature: '', current_year_occasional_vacation: '', mobile_number: '', gpf: '', bank_account: '', main_sallary: '', sallary_scale: '' })}>
                                                                 আরও যোগ করুন
                                                             </button>
                                                         </div>
                                                     )}
                                                 </FieldArray>
                                             </div>
-                                        </CustomTabPanel>
-                                        <CustomTabPanel value={teacherTabValue} index={1}>
-                                            <div className='pt-8'>
+                                            <div className='pt-10'>
                                                 {/* school building related data */}
                                                 <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
-                                                    <NumberField name="sallary_scale" label="বেতন স্কেল" placeholder="বেতন স্কেল দিন" />
-                                                    <NumberField name="main_sallary" label="মূল বেতন" placeholder="মূল বেতন দিন" />
-                                                    <NumberField name="educational_allowance" label="শিক্ষা ভাতা" placeholder="শিক্ষা ভাতা দিন" />
-                                                    <NumberField name="bank_account" label="ব্যাংক হিসাব নং" placeholder="ব্যাংক হিসাব নং দিন" />
-                                                    <NumberField name="gpf" label="জিপিএফ নং" placeholder="জিপিএফ নং দিন" />
-                                                    <NumberField name="mobile_number" label="সক্রিয় মোবাইল নং" placeholder="সক্রিয় মোবাইল নং দিন" />
-                                                    <NumberField name="current_year_occasional_vacation" label="চলতি বছরে মোট নৈমিত্তিক ছুটি" placeholder="চলতি বছরে মোট নৈমিত্তিক ছুটি সংখ্যা দিন" />
-                                                    <ImageInput name="signature" label='সাক্ষর' placeholder='সাক্ষর দিন' />
+
                                                 </div>
 
                                             </div>
@@ -724,13 +825,12 @@ const BilReturnSubmit = () => {
                                                                 <div className='pt-8 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
                                                                     <TextField name={`vacations.${index}.teacher_name`} label="শিক্ষকের নাম" placeholder="শিক্ষকের নাম লিখুন" />
                                                                     <div className="mb-4">
-                                                                        <label className='font-semibold' htmlFor={`vacations.${index}.type`}>বরাদ্দের ধরন</label>
+                                                                        <label className='font-semibold' htmlFor={`vacations.${index}.type`}>ছুটির ধরন</label>
                                                                         <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`vacations.${index}.type`} id={`vacations.${index}.type`}>
                                                                             <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
                                                                             <option value='চিকিৎসা'>চিকিৎসা</option>
                                                                             <option value='বহিঃবাংলাদেশ'>বহিঃবাংলাদেশ</option>
-                                                                            <option value='মাতৃত্ত্ব'>মাতৃত্ত্ব</option>
-                                                                            <option value='অননুমোদিত'>অননুমোদিত</option>
+                                                                            <option value='মাতৃত্ত্ব'>মাতৃত্ব</option>
                                                                         </Field>
                                                                     </div>
 
@@ -750,6 +850,33 @@ const BilReturnSubmit = () => {
                                                 )}
                                             </FieldArray>
                                         </CustomTabPanel>
+                                        <CustomTabPanel>
+                                            <div className='mt-8'>
+                                                <FieldArray name='unauthorized_teacher'>
+                                                    {
+                                                        arrayHelpers => (
+                                                            <>
+                                                                {values.unauthorized_teacher.map((teacher, index) => (
+                                                                    <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4' key={index}>
+                                                                        <TextField label={"শিক্ষকের নাম"} placeholder={'শিক্ষকের নাম দিন'} name={`unauthorized_teacher.${index}.name`} />
+                                                                        <div className="mb-4">
+                                                                            <label className='font-semibold' htmlFor={`unauthorized_teacher.${index}.designation`}>শিক্ষকের পদবি</label>
+                                                                            <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`unauthorized_teacher.${index}.designation`} id={`unauthorized_teacher.${index}.designation`}>
+                                                                                <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
+                                                                                <option value='প্রধান শিক্ষক(চলতি দায়িত্ব)'>প্রধান শিক্ষক(চলতি দায়িত্ব)</option>
+                                                                                <option value='প্রধান শিক্ষক(ভারপ্রাপ্ত)'>প্রধান শিক্ষক(ভারপ্রাপ্ত)</option>
+                                                                                <option value='সহকারি শিক্ষক'>সহকারি শিক্ষক</option>
+                                                                            </Field>
+                                                                        </div>
+                                                                        <MyDatePicker label={'সর্বশেষ উপস্থিতির তারিখ'} name={`unauthorized_teacher.${index}.last_present_date`} />
+                                                                    </div>
+                                                                ))}
+                                                            </>
+                                                        )
+                                                    }
+                                                </FieldArray>
+                                            </div>
+                                        </CustomTabPanel>
                                     </Box>
                                 </div>
                             </div>
@@ -760,18 +887,87 @@ const BilReturnSubmit = () => {
                                     <h2 className='md:text-xl text-lg font-semibold md:mb-8'>শিক্ষার্থী সংক্রান্ত তথ্য</h2>
                                     <Box sx={{ width: '100%' }}>
                                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-                                            <Tabs className='text-xl' variant="scrollable" scrollButtons="auto" value={studentTabValue} onChange={handleStudentTabValueChange} aria-label="basic tabs example">
-                                                <Tab label="ছাত্র/ছাত্রি ভর্তি তথ্য" {...a11yProps(0)} />
-                                                <Tab label="জরিপকৃত তথ্য(৪+...১০+)" {...a11yProps(1)} />
+                                            <Tabs indicatorColor="#000" className='text-xl' variant="scrollable" scrollButtons="auto" value={studentTabValue} onChange={handleStudentTabValueChange} aria-label="basic tabs example">
+                                                <Tab label="জরিপকৃত তথ্য(৪+...১০+)" {...a11yProps(0)} />
+                                                <Tab label="ছাত্র/ছাত্রি ভর্তি তথ্য" {...a11yProps(1)} />
                                                 <Tab label="আশ্রয়ন প্রকল্পের জরিপকৃত তথ্য(৪+...১০+)" {...a11yProps(2)} />
                                             </Tabs>
                                         </Box>
                                         <CustomTabPanel value={studentTabValue} index={0}>
+                                            <div className='pt-8'>
+                                                <FieldArray name="survey_total">
+                                                    {() => (
+                                                        <div>
+                                                            <h3 className='mb-4 text-lg text-[#008B4C] font-semibold'>মোট</h3>
+                                                            {values.survey_total.map((survey_total, index) => (
+                                                                <div key={index} className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
+                                                                    <NumberField name={`survey_total.${index}.boys`} label={"বালক"} placeholder={'বালক সংখ্যা দিন'} />
+                                                                    <NumberField name={`survey_total.${index}.girls`} label={"বালিকা"} placeholder={'বালিকা সংখ্যা দিন'} />
+                                                                    <NumberField name={`survey_total.${index}.total`} label={"মোট শিক্ষার্থী"} placeholder={'মোট শিক্ষার্থী সংখ্যা দিন'} />
+                                                                </div>
+                                                            ))}
+
+                                                        </div>
+                                                    )}
+                                                </FieldArray>
+
+                                                <FieldArray name="survey_admitted">
+                                                    {() => (
+                                                        <div>
+                                                            <h3 className='mb-4 mt-6 text-lg text-[#008B4C] font-semibold'>সংশ্লিষ্ট বিদ্যালয়ে ভর্তিকৃত</h3>
+                                                            {values.survey_admitted.map((survey_admitted, index) => (
+                                                                <div key={index} className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
+                                                                    <NumberField name={`survey_admitted.${index}.boys`} label={"বালক"} placeholder={'বালক সংখ্যা দিন'} />
+                                                                    <NumberField name={`survey_admitted.${index}.girls`} label={"বালিকা"} placeholder={'বালিকা সংখ্যা দিন'} />
+                                                                    <NumberField name={`survey_admitted.${index}.total`} label={"মোট শিক্ষার্থী"} placeholder={'মোট শিক্ষার্থী সংখ্যা দিন'} />
+                                                                </div>
+                                                            ))}
+
+                                                        </div>
+                                                    )}
+                                                </FieldArray>
+
+                                                <FieldArray name="survey_admitted_to_other_school">
+                                                    {() => (
+                                                        <div>
+                                                            <h3 className='mb-4 mt-6 text-lg text-[#008B4C] font-semibold'>অন্যান্য বিদ্যালয়ে ভর্তিকৃত</h3>
+                                                            {values.survey_admitted_to_other_school.map((survey_admitted_to_other_school, index) => (
+                                                                <div key={index} className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
+                                                                    <NumberField name={`survey_admitted_to_other_school.${index}.boys`} label={"বালক"} placeholder={'বালক সংখ্যা দিন'} />
+                                                                    <NumberField name={`survey_admitted_to_other_school.${index}.girls`} label={"বালিকা"} placeholder={'বালিকা সংখ্যা দিন'} />
+                                                                    <NumberField name={`survey_admitted_to_other_school.${index}.total`} label={"মোট শিক্ষার্থী"} placeholder={'মোট শিক্ষার্থী সংখ্যা দিন'} />
+                                                                </div>
+                                                            ))}
+
+                                                        </div>
+                                                    )}
+                                                </FieldArray>
+
+                                                <FieldArray name="survey_unadmitted">
+                                                    {() => (
+                                                        <div>
+                                                            <h3 className='mb-4 mt-6 text-lg text-[#008B4C] font-semibold'>অভর্তিকৃত</h3>
+                                                            {values.survey_unadmitted.map((survey_unadmitted, index) => (
+                                                                <div key={index} className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
+                                                                    <NumberField name={`survey_unadmitted.${index}.boys`} label={"বালক"} placeholder={'বালক সংখ্যা দিন'} />
+                                                                    <NumberField name={`survey_unadmitted.${index}.girls`} label={"বালিকা"} placeholder={'বালিকা সংখ্যা দিন'} />
+                                                                    <NumberField name={`survey_unadmitted.${index}.total`} label={"মোট শিক্ষার্থী"} placeholder={'মোট শিক্ষার্থী সংখ্যা দিন'} />
+                                                                </div>
+                                                            ))}
+
+                                                        </div>
+                                                    )}
+                                                </FieldArray>
+
+                                            </div>
+
+                                        </CustomTabPanel>
+                                        <CustomTabPanel value={studentTabValue} index={1}>
                                             <div className='mt-8'>
                                                 {/* data for nursery 4+ students */}
                                                 <div>
                                                     <button type="button" className={`relative border-gray-300 flex justify-between items-center w-full px-4 py-3 text-sm font-medium text-left rounded-lg border ${studentAccordionActive === 'nursery_four_plus' ? ' bg-slate-200' : '  bg-slate-100'}  ${studentAccordionActive === 'nursery_four_plus' ? 'active' : ''}`} onClick={() => studentTogglePara('nursery_four_plus')}>
-                                                        <h5 className="text-gray-900 text-[16px]">শিশু ৪+</h5>
+                                                        <h5 className="text-gray-900 text-[16px]">শিশু শ্রেণী ৪+</h5>
                                                         <svg className={`w-4 h-4 ml-2 duration-500 ${studentAccordionActive === 'nursery_four_plus' ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                             <path d="M19 9l-7 7-7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                                         </svg>
@@ -789,17 +985,17 @@ const BilReturnSubmit = () => {
                                                                                     {/* data for muslim students */}
                                                                                     <NumberField name={`nursery_four_plus.${index}.muslim_boy_student`} label="মুসলিম ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
                                                                                     <NumberField name={`nursery_four_plus.${index}.muslim_girl_student`} label="মুসলিম ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
-                                                                                    <NumberField name={`nursery_four_plus.${index}.muslim_total_student`} label="মুসলিম মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+                                                                                    <NumberField name={`nursery_four_plus.${index}.muslim_total_student`} label="মোট" placeholder='মোট সংখ্যা দিন' />
 
                                                                                     {/* data for hidu students */}
                                                                                     <NumberField name={`nursery_four_plus.${index}.hindu_boy_student`} label="হিন্দু ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
                                                                                     <NumberField name={`nursery_four_plus.${index}.hindu_girl_student`} label="হিন্দু ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
-                                                                                    <NumberField name={`nursery_four_plus.${index}.hindu_total_student`} label="হিন্দু মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+                                                                                    <NumberField name={`nursery_four_plus.${index}.hindu_total_student`} label="মোট" placeholder='মোট সংখ্যা দিন' />
 
                                                                                     {/* data for total students */}
                                                                                     <NumberField name={`nursery_four_plus.${index}.total_boy_student`} label="মোট ছাত্র" placeholder='ছাত্র সংখ্যা দিন' />
                                                                                     <NumberField name={`nursery_four_plus.${index}.total_girl_student`} label="মোট ছাত্রি" placeholder='ছাত্রি সংখ্যা দিন' />
-                                                                                    <NumberField name={`nursery_four_plus.${index}.total_student`} label="মোট ছাত্র/ছাত্রি" placeholder='মোট সংখ্যা দিন' />
+                                                                                    <NumberField name={`nursery_four_plus.${index}.total_student`} label="মোট শিক্ষার্থী" placeholder='মোট সংখ্যা দিন' />
 
 
                                                                                     <NumberField name={`nursery_four_plus.${index}.special_demanded_student`} label="বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী" placeholder='মোট সংখ্যা দিন' />
@@ -819,7 +1015,7 @@ const BilReturnSubmit = () => {
                                                 {/* data for nursery 5+ students */}
                                                 <div className='mt-3'>
                                                     <button type="button" className={`relative border-gray-300 flex justify-between items-center w-full px-4 py-3 text-sm font-medium text-left rounded-lg border ${studentAccordionActive === 'nursery_five_plus' ? ' bg-slate-200' : '  bg-slate-100'}  ${studentAccordionActive === 'nursery_five_plus' ? 'active' : ''}`} onClick={() => studentTogglePara('nursery_five_plus')}>
-                                                        <h5 className="text-gray-900 text-[16px]">শিশু ৫+</h5>
+                                                        <h5 className="text-gray-900 text-[16px]">শিশু শ্রেণী ৫+</h5>
                                                         <svg className={`w-4 h-4 ml-2 duration-500 ${studentAccordionActive === 'nursery_five_plus' ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                             <path d="M19 9l-7 7-7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                                         </svg>
@@ -1238,24 +1434,7 @@ const BilReturnSubmit = () => {
                                                 </div>
                                             </div>
                                         </CustomTabPanel>
-                                        <CustomTabPanel value={studentTabValue} index={1}>
-                                            <div className='pt-8'>
-                                                {/* school building related data */}
-                                                {/* <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
-                                                    <NumberField name="sallary_scale" label="বেতন স্কেল" placeholder="বেতন স্কেল দিন" />
-                                                    <NumberField name="main_sallary" label="মূল বেতন" placeholder="মূল বেতন দিন" />
-                                                    <NumberField name="educational_allowance" label="শিক্ষা ভাতা" placeholder="শিক্ষা ভাতা দিন" />
-                                                    <NumberField name="bank_account" label="ব্যাংক হিসাব নং" placeholder="ব্যাংক হিসাব নং দিন" />
-                                                    <NumberField name="gpf" label="জিপিএফ নং" placeholder="জিপিএফ নং দিন" />
-                                                    <NumberField name="mobile_number" label="সক্রিয় মোবাইল নং" placeholder="সক্রিয় মোবাইল নং দিন" />
-                                                    <NumberField name="current_year_occasional_vacation" label="চলতি বছরে মোট নৈমিত্তিক ছুটি" placeholder="চলতি বছরে মোট নৈমিত্তিক ছুটি সংখ্যা দিন" />
-                                                    <ImageInput name="signature" label='সাক্ষর' placeholder='সাক্ষর দিন' />
-                                                </div> */}
-                                                catchment
 
-                                            </div>
-
-                                        </CustomTabPanel>
                                         <CustomTabPanel value={studentTabValue} index={2}>
                                             <div className='pt-8'>
 

@@ -30,8 +30,22 @@ body {
   overflow-x: hidden !important;
 }
 
-.css-1q2h7u5{
+.css-1q2h7u5 {
   font-size: 17px !important;
+}
+
+.css-1h9z7r5-MuiButtonBase-root-MuiTab-root {
+  /* color: #008B4C !important; */
+  border-bottom: 3px solid #fff !important;
+}
+.css-1h9z7r5-MuiButtonBase-root-MuiTab-root.Mui-selected {
+  color: #008B4C !important;
+  border-bottom: 3px solid #008B4C !important;
+}
+
+
+.css-1m5i5w0-MuiButtonBase-root-MuiListItemButton-root:hover {
+  color: #008B4C !important;
 }
 
 .instaIcon:hover {

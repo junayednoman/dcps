@@ -2,6 +2,7 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import { TextField } from "@mui/material";
 
 const validationSchema = Yup.object().shape({
     email: Yup.string().email("ইমেইল অ্যাড্রেস সঠিক নয়").required("ইমেইল আবশ্যক"),
@@ -23,8 +24,9 @@ const LoginForm = () => {
                 {({ isSubmitting }) => (
                     <Form>
                         <div className="mb-4">
-                            <label className="font-semibold" htmlFor="email">ইমেইল*</label>
-                            <Field className="md:h-[50px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1" type="email" name="email" id="email" placeholder="আপনার ইমেইল অ্যাড্রেস দিন" />
+                            <label className="font-semibold" htmlFor="emis">EMIS*</label>
+                            {/* <TextField label="বিদ্যালয়ের নাম" placeholder={"বিদ্যালয়ের EMIS কোড দিন"} /> */}
+                            <Field id="emis" name="emis" placeholder="বিদ্যালয়ের EMIS কোড দিন" className="md:h-[50px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1" type="email" />
                             <ErrorMessage name="email" component="div" className="text-[#ED1C24] text-sm mt-1" />
                         </div>
 
