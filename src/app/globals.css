@@ -253,3 +253,37 @@ select option {
 .accordion-item.active .accordion-content {
   height: auto;
 }
+
+
+/* print styles */
+
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  #print-content,
+  #print-content * {
+    visibility: visible;
+  }
+
+  #print-content {
+    width: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+
+  .hidden-while-print * {
+    visibility: hidden !important;
+  }
+
+  .main-heading {
+    font-size: 25px;
+    margin-top: 30px;
+  }
+}
+.css-d48ww9{
+  border-radius: 8px !important;
+}

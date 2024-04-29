@@ -16,17 +16,19 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Link from 'next/link';
 import { GoGear } from "react-icons/go";
-import { FaHistory, FaHome, FaPlus } from "react-icons/fa";
+import { FaHistory } from "react-icons/fa";
 import { IoHelp } from "react-icons/io5";
 import { IoMdSearch } from "react-icons/io";
-import { Tooltip } from '@mui/material';
+import { Backdrop, Fade, Modal, Tooltip } from '@mui/material';
 import NotificationDropdown from '../components/NotificationDropdown';
 import ProfileDropdown from '../components/ProfileDropdown';
 import localFont from "next/font/local"
-import { FaCirclePlus, FaListUl } from "react-icons/fa6";
+import { FaCirclePlus } from "react-icons/fa6";
 import { MdOutlineLogout } from "react-icons/md";
 import logo from "@/media/ps.svg"
 import Image from 'next/image';
+import SearchableSelect from '../components/SearchableSelect';
+import { IoCloseSharp } from "react-icons/io5";
 
 // font
 const notoBengali = localFont({
@@ -111,7 +113,67 @@ const subMenuItems = [
     { label: "লগ আউট", link: "/dashboard/help", icon: <MdOutlineLogout className='text-xl' /> },
 ];
 
+const modalStyle = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 430,
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    p: 4,
+};
+
+
+const monthOptions = [
+    { value: 'জানুয়ারী', label: 'জানুয়ারী' },
+    { value: 'ফেব্রুয়ারী', label: 'ফেব্রুয়ারী' },
+    { value: 'মার্চ', label: 'মার্চ' },
+    { value: 'এপ্রিল', label: 'এপ্রিল' },
+    { value: 'মে', label: 'মে' },
+    { value: 'জুন', label: 'জুন' },
+    { value: 'জুলাই', label: 'জুলাই' },
+    { value: 'আগস্ট', label: 'আগস্ট' },
+    { value: 'সেপ্টেম্বর', label: 'সেপ্টেম্বর' },
+    { value: 'অক্টোবর', label: 'অক্টোবর' },
+    { value: 'নভেম্বর', label: 'নভেম্বর' },
+    { value: 'ডিসেম্বর', label: 'ডিসেম্বর' },
+];
+
+const schoolOptions = [
+    { value: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়', label: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়' },
+    { value: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়', label: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়' },
+    { value: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়', label: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়' },
+    { value: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়', label: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়' },
+    { value: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়', label: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়' },
+    { value: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়', label: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়' },
+    { value: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়', label: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়' },
+    { value: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়', label: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়' },
+    { value: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়', label: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়' },
+    { value: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়', label: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়' },
+    { value: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়', label: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়' },
+    { value: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়', label: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়' },
+];
+
+
+
 export default function DashboardLayout({ children }) {
+    // modal related
+    const [modalOpen, setModalOpen] = React.useState(false);
+    const handleModalOpen = () => setModalOpen(true);
+    const handleModalClose = () => setModalOpen(false);
+
+    const [monthSelectedOption, setMonthSelectedOption] = React.useState(null);
+
+    const handleMonthSelectChange = (monthSelectedOption) => {
+        setMonthSelectedOption(monthSelectedOption);
+    };
+    const [schoolSelectedOption, setSchoolSelectedOption] = React.useState(null);
+
+    const handleSchoolSelectChange = (schoolSelectedOption) => {
+        setSchoolSelectedOption(schoolSelectedOption);
+    };
+
     const [activeMenuItem, setActiveMenuItem] = React.useState("");
     const [role, setRole] = React.useState("head master");
     const theme = useTheme();
@@ -212,14 +274,56 @@ export default function DashboardLayout({ children }) {
                                 </Link>
                             </ListItem>
                             <ListItem onClick={() => setActiveMenuItem("history")} disablePadding sx={{ display: 'block' }}>
-                                <Link href={'/dashboard/bil-return-history'}>
+                                <button onClick={handleModalOpen}>
                                     <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }}>
                                         <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', }}>
                                             <FaHistory style={{ color: activeMenuItem === "history" && "#008B4C" }} className='text-xl' />
                                         </ListItemIcon>
                                         <ListItemText style={{ color: activeMenuItem === "history" && "#008B4C" }} className={`capitalize mt-2`} primary={'বিল রিটার্ন ইতিহাস'} sx={{ opacity: open ? 1 : 0 }} />
                                     </ListItemButton>
-                                </Link>
+                                </button>
+                                <div>
+                                    <Modal
+                                        aria-labelledby="transition-modal-title"
+                                        aria-describedby="transition-modal-description"
+                                        open={modalOpen}
+                                        onClose={handleModalClose}
+                                        closeAfterTransition
+                                        slots={{ backdrop: Backdrop }}
+                                        slotProps={{
+                                            backdrop: {
+                                                timeout: 500,
+                                            },
+                                        }}
+                                    >
+                                        <Fade in={modalOpen}>
+                                            <Box sx={modalStyle}>
+                                                <button className='w-full cursor-default'>
+                                                    <IoCloseSharp onClick={handleModalClose} className='text-2xl ml-auto cursor-pointer' />
+                                                </button>
+                                                <form className='mt-3'>
+                                                    <div className="mb-4">
+                                                        <h1>বিল সাবমিটের মাস সিলেক্ট করুন</h1>
+                                                        <SearchableSelect
+                                                            options={monthOptions}
+                                                            onChange={handleMonthSelectChange}
+                                                            value={monthSelectedOption}
+                                                        />
+                                                    </div>
+                                                    <div className="mb-4">
+                                                        <h1>বিদ্যালয় সিলেক্ট করুন</h1>
+                                                        <SearchableSelect
+                                                            options={schoolOptions}
+                                                            onChange={handleSchoolSelectChange}
+                                                            value={schoolSelectedOption}
+                                                        />
+                                                    </div>
+                                                    <button className="px-4 py-[6px] bg-primaryColor border border-primaryColor hover:bg-textColor text-white rounded-md font-medium capitalize">সার্চ করুন</button>
+                                                </form>
+                                            </Box>
+                                        </Fade>
+                                    </Modal>
+                                </div>
                             </ListItem>
                         </List>
 
