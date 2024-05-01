@@ -33,7 +33,7 @@ function ProfileDropdown({ role }) {
                                 <Image className='rounded-md max-w-[60px]' src={man} alt='man-image' width={200} height={100}></Image>
                             </div>
                             <div>
-                                <h5 className='font-semibold text-[16px]'>Junayed Noman</h5>
+                                <h5 className='font-semibold text-[16px]'>জোনায়েদ নোমান</h5>
                                 <p className='text-[14px] mt-1'>{role}</p>
                             </div>
                         </div>

@@ -23,12 +23,14 @@ import { Backdrop, Fade, Modal, Tooltip } from '@mui/material';
 import NotificationDropdown from '../components/NotificationDropdown';
 import ProfileDropdown from '../components/ProfileDropdown';
 import localFont from "next/font/local"
-import { FaCirclePlus } from "react-icons/fa6";
+import { FaCirclePlus, FaRegCircleQuestion } from "react-icons/fa6";
 import { MdOutlineLogout } from "react-icons/md";
 import logo from "@/media/ps.svg"
 import Image from 'next/image';
 import SearchableSelect from '../components/SearchableSelect';
-import { IoCloseSharp } from "react-icons/io5";
+import { IoCloseSharp, IoListSharp } from "react-icons/io5";
+import { MdOutlineStickyNote2 } from "react-icons/md";
+
 
 // font
 const notoBengali = localFont({
@@ -109,7 +111,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 const subMenuItems = [
     { label: "সেটিংস", link: "/dashboard/settings", icon: <GoGear className='text-xl' /> },
-    { label: "সাহায্য ও সহযোগিতা", link: "/dashboard/help", icon: <IoHelp className='text-xl' /> },
+    { label: "সাহায্য ও সহযোগিতা", link: "/dashboard/help", icon: <FaRegCircleQuestion className='text-xl' /> },
     { label: "লগ আউট", link: "/dashboard/help", icon: <MdOutlineLogout className='text-xl' /> },
 ];
 
@@ -142,17 +144,8 @@ const monthOptions = [
 
 const schoolOptions = [
     { value: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়', label: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়' },
-    { value: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়', label: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়' },
-    { value: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়', label: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়' },
-    { value: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়', label: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়' },
-    { value: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়', label: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়' },
-    { value: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়', label: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়' },
-    { value: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়', label: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়' },
-    { value: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়', label: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়' },
-    { value: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়', label: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়' },
-    { value: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়', label: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়' },
-    { value: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়', label: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়' },
-    { value: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়', label: 'খলিলপুর সরকারি প্রাথমিক বিদ্যালয়' },
+    { value: 'খঞ্জনপুর সরকারি প্রাথমিক বিদ্যালয়', label: 'খঞ্জনপুর সরকারি প্রাথমিক বিদ্যালয়' },
+    { value: 'মনুমুখ সরকারি প্রাথমিক বিদ্যালয়', label: 'মনুমুখ সরকারি প্রাথমিক বিদ্যালয়' },
 ];
 
 
@@ -175,7 +168,7 @@ export default function DashboardLayout({ children }) {
     };
 
     const [activeMenuItem, setActiveMenuItem] = React.useState("");
-    const [role, setRole] = React.useState("head master");
+    const [role, setRole] = React.useState("উপজেলা শিক্ষা অফিসার");
     const theme = useTheme();
     React.useEffect(() => {
         const location = window.location.pathname;
@@ -184,6 +177,10 @@ export default function DashboardLayout({ children }) {
             setActiveMenuItem("submit");
         } else if (location.includes("history")) {
             setActiveMenuItem("history");
+        } else if (location.includes("list")) {
+            setActiveMenuItem("list")
+        } else if (location.includes("summery")) {
+            setActiveMenuItem("summery")
         }
     }, []);
 
@@ -263,16 +260,42 @@ export default function DashboardLayout({ children }) {
 
                     <div className='menuItems'>
                         <List>
-                            <ListItem onClick={() => setActiveMenuItem("submit")} disablePadding sx={{ display: 'block' }}>
-                                <Link href={'/dashboard/bil-return-submit'}>
-                                    <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }}>
-                                        <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', }}>
-                                            <FaCirclePlus className='text-xl' style={{ color: activeMenuItem === "submit" && "#008B4C" }} />
-                                        </ListItemIcon>
-                                        <ListItemText className={`capitalize mt-2`} style={{ color: activeMenuItem === "submit" && "#008B4C" }} primary={'বিল রিটার্ন সাবমিট'} sx={{ opacity: open ? 1 : 0 }} />
-                                    </ListItemButton>
-                                </Link>
-                            </ListItem>
+                            {role === "প্রধান শিক্ষক" &&
+                                <ListItem onClick={() => setActiveMenuItem("submit")} disablePadding sx={{ display: 'block' }}>
+                                    <Link href={'/dashboard/bill-return-submit'}>
+                                        <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }}>
+                                            <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', }}>
+                                                <FaCirclePlus className='text-xl' style={{ color: activeMenuItem === "submit" && "#008B4C" }} />
+                                            </ListItemIcon>
+                                            <ListItemText className={`capitalize mt-2`} style={{ color: activeMenuItem === "submit" && "#008B4C" }} primary={'বিল রিটার্ন সাবমিট'} sx={{ opacity: open ? 1 : 0 }} />
+                                        </ListItemButton>
+                                    </Link>
+                                </ListItem>
+                            }
+                            {role === "সহকারি উপজেলা শিক্ষা অফিসার" || role === "উপজেলা শিক্ষা অফিসার" &&
+                                <>
+                                    <ListItem onClick={() => setActiveMenuItem("list")} disablePadding sx={{ display: 'block' }}>
+                                        <Link href={'/dashboard/bill-return-list'}>
+                                            <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }}>
+                                                <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', }}>
+                                                    <IoListSharp className='text-xl' style={{ color: activeMenuItem === "list" && "#008B4C" }} />
+                                                </ListItemIcon>
+                                                <ListItemText className={`capitalize mt-2`} style={{ color: activeMenuItem === "list" && "#008B4C" }} primary={'বিল রিটার্ন তালিকা'} sx={{ opacity: open ? 1 : 0 }} />
+                                            </ListItemButton>
+                                        </Link>
+                                    </ListItem>
+                                    <ListItem onClick={() => setActiveMenuItem("summery")} disablePadding sx={{ display: 'block' }}>
+                                        <Link href={'/dashboard/bill-return-summery'}>
+                                            <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }}>
+                                                <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', }}>
+                                                    <MdOutlineStickyNote2 className='text-xl' style={{ color: activeMenuItem === "summery" && "#008B4C" }} />
+                                                </ListItemIcon>
+                                                <ListItemText className={`capitalize mt-2`} style={{ color: activeMenuItem === "summery" && "#008B4C" }} primary={'বিল রিটার্ন সারাংশ'} sx={{ opacity: open ? 1 : 0 }} />
+                                            </ListItemButton>
+                                        </Link>
+                                    </ListItem>
+                                </>
+                            }
                             <ListItem onClick={() => setActiveMenuItem("history")} disablePadding sx={{ display: 'block' }}>
                                 <button onClick={handleModalOpen}>
                                     <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }}>
