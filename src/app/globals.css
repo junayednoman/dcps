@@ -254,7 +254,9 @@ select option {
   height: auto;
 }
 
-
+.draftContent p{
+  font-size: 15px;
+}
 /* print styles */
 
 

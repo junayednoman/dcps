@@ -10,9 +10,19 @@ import NumberField from '@/app/components/NumberField';
 import MyDatePicker from '@/app/components/MyDatePicker';
 import AnimateHeight from 'react-animate-height';
 import ImageInput from '@/app/components/ImageInput';
-import { Checkbox, FormControl, InputLabel, ListItemText, MenuItem, OutlinedInput, Select } from '@mui/material';
+import { Checkbox, FormControl, InputLabel, ListItemText, MenuItem, Select } from '@mui/material';
+import { useLocalStorage } from '@uidotdev/usehooks';
 
 const BilReturnSubmit = () => {
+    const [formDataToLocalStorage, setFormDataToLocalStorage] = useLocalStorage("formData", null)
+    const [submittedFormData, setSubmittedFormData] = React.useState(null)
+    const handleOpenNewTab = () => {
+        const newWindow = window.open('/dashboard/bill-return-submit/draft', '_blank');
+        
+        if (newWindow) {
+            newWindow.opener = null;
+        }
+    };
     const [buildingNumber, setBuildingNumber] = React.useState(0)
 
     // Function to handle change in the building number input
@@ -131,13 +141,13 @@ const BilReturnSubmit = () => {
 
 
     const handleFormSubmit = (values) => {
-        console.log(values);
+        setFormDataToLocalStorage(values)
     };
 
     const internetTypes = ['মডেম', 'সিম', 'রাউটার'];
 
     return (
-        <div className='bg-[#FAFAFA]'>
+        <div className='bg-[#FAFAFA] xl:w-[80%] w-full'>
             <h2 className='md:text-2xl text-xl font-semibold md:mb-14 mb-8'>বিল রিটার্ন সাবমিট</h2>
             <Formik
                 initialValues={{
@@ -170,7 +180,7 @@ const BilReturnSubmit = () => {
                         <Form>
                             {/* school related data */}
                             <div className='flex lg:flex-row flex-col md:gap-8 gap-5'>
-                                <div className='xl:w-[80%] w-full border bg-white shadow-sm rounded-[4px] p-8'>
+                                <div className='border bg-white shadow-sm rounded-[4px] p-8'>
                                     <h2 className='md:text-xl text-lg font-semibold md:mb-8'>বিদ্যালয় সংক্রান্ত তথ্য</h2>
                                     <Box sx={{ width: '100%' }}>
                                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -729,7 +739,7 @@ const BilReturnSubmit = () => {
 
                             {/* teacher related data */}
                             <div className='flex lg:flex-row flex-col md:gap-8 gap-5 md:mt-8 mt-5'>
-                                <div className='xl:w-[80%] w-full border bg-white shadow-sm rounded-[4px] p-8'>
+                                <div className='border bg-white shadow-sm rounded-[4px] p-8'>
                                     <h2 className='md:text-xl text-lg font-semibold md:mb-8'>শিক্ষক সংক্রান্ত তথ্য</h2>
                                     <Box sx={{ width: '100%' }}>
                                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -850,7 +860,7 @@ const BilReturnSubmit = () => {
                                                 )}
                                             </FieldArray>
                                         </CustomTabPanel>
-                                        <CustomTabPanel>
+                                        <CustomTabPanel value={teacherTabValue} index={3}>
                                             <div className='mt-8'>
                                                 <FieldArray name='unauthorized_teacher'>
                                                     {
@@ -883,7 +893,7 @@ const BilReturnSubmit = () => {
 
                             {/* student related data */}
                             <div className='flex lg:flex-row flex-col md:gap-8 gap-5 md:mt-8 mt-5'>
-                                <div className='xl:w-[80%] w-full border bg-white shadow-sm rounded-[4px] p-8'>
+                                <div className=' border bg-white shadow-sm rounded-[4px] p-8'>
                                     <h2 className='md:text-xl text-lg font-semibold md:mb-8'>শিক্ষার্থী সংক্রান্ত তথ্য</h2>
                                     <Box sx={{ width: '100%' }}>
                                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -1459,14 +1469,19 @@ const BilReturnSubmit = () => {
                                     </Box>
                                 </div>
                             </div>
-                            <button type="submit" className="px-6 md:py-[10px] py-[6px] md:pt-[15px] pt-[10px] bg-primaryColor border border-primaryColor hover:bg-textColor text-white rounded-md font-semibold capitalize mt-5">সাবমিট করুন</button>
+                            <div className='flex items-center justify-between'>
+                                <button type="submit" className="px-6 md:py-[10px] py-[6px] md:pt-[15px] pt-[10px] bg-[#008B4C] border border-[#008B4C] hover:bg-[#006f3d] text-white rounded-md font-semibold capitalize mt-5">সাবমিট করুন</button>
+                                <button onClick={handleOpenNewTab} type="submit" className="px-6 md:py-[10px] py-[6px] md:pt-[15px] pt-[10px] bg-[#008B4C] border border-[#008B4C] hover:bg-[#006f3d] text-white rounded-md font-semibold capitalize mt-5">পূর্ণাঙ্গ বিল রিপোর্ট</button>
+                            </div>
                         </Form>
                     )
                 }
             </Formik>
 
+
         </div >
     );
 };
+
 
 export default BilReturnSubmit;
