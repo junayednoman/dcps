@@ -1,6 +1,6 @@
 "use client"
 import TextField from '@/app/components/TextField';
-import { Field, FieldArray, Form, Formik } from 'formik';
+import { Field, FieldArray, Form, Formik, useFormikContext } from 'formik';
 import * as React from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -11,19 +11,17 @@ import MyDatePicker from '@/app/components/MyDatePicker';
 import AnimateHeight from 'react-animate-height';
 import ImageInput from '@/app/components/ImageInput';
 import { Checkbox, FormControl, InputLabel, ListItemText, MenuItem, Select } from '@mui/material';
-import { useLocalStorage } from '@uidotdev/usehooks';
+import { bool, boolean } from 'yup';
 
 const BilReturnSubmit = () => {
-    const [formDataToLocalStorage, setFormDataToLocalStorage] = useLocalStorage("formData", null)
-    const [submittedFormData, setSubmittedFormData] = React.useState(null)
     const handleOpenNewTab = () => {
         const newWindow = window.open('/dashboard/bill-return-submit/draft', '_blank');
-        
         if (newWindow) {
             newWindow.opener = null;
         }
     };
-    const [buildingNumber, setBuildingNumber] = React.useState(0)
+
+    const [buildingNumber, setBuildingNumber] = React.useState(0);
 
     // Function to handle change in the building number input
     const handleBuildingNumberChange = (e) => {
@@ -97,6 +95,12 @@ const BilReturnSubmit = () => {
             'aria-controls': `simple-tabpanel-${index}`,
         };
     }
+    function schoolTabIndexes(index) {
+        return {
+            id: `simple-tab-${index}`,
+            'aria-controls': `simple-tabpanel-${index}`,
+        };
+    }
 
     const [schoolTabValue, setSchoolTabValue] = React.useState(0);
 
@@ -141,7 +145,8 @@ const BilReturnSubmit = () => {
 
 
     const handleFormSubmit = (values) => {
-        setFormDataToLocalStorage(values)
+        console.log(values);
+        localStorage.setItem("formData", JSON.stringify(values))
     };
 
     const internetTypes = ['মডেম', 'সিম', 'রাউটার'];
@@ -151,6 +156,65 @@ const BilReturnSubmit = () => {
             <h2 className='md:text-2xl text-xl font-semibold md:mb-14 mb-8'>বিল রিটার্ন সাবমিট</h2>
             <Formik
                 initialValues={{
+                    school: {
+                        general: {
+                            name: "",
+                            cluster: "",
+                            village_moholla: "",
+                            word_number: undefined,
+                            post_office: "",
+                            union_corporation: "",
+                            emis_code: "",
+                            email: "",
+                            founded_date: "",
+                            grade: "",
+                            shifts: undefined,
+                        },
+                        infrastructure: {
+                            buildings: undefined,
+                            headmaster_room: undefined,
+                            office_rooms: undefined,
+                            class_rooms: undefined,
+                            useable_class_rooms: undefined,
+                            multimedia_rooms: undefined,
+                            separated_nursery_class: "",
+                            border_wall: {
+                                wall: "",
+                                funding_type: "",
+                                founded_date: "",
+                            },
+                            toilets: undefined,
+                            wash_block: undefined,
+                            wash_block_founded_date: undefined,
+                            others: {
+                                shahid_minar: "",
+                                freedom_fight_corner: "",
+                                rasel_corner: "",
+                                garden: "",
+                                internet: "",
+                                laptop: {
+                                    total: undefined,
+                                    actives: undefined,
+                                },
+                                multimedia: {
+                                    total: undefined,
+                                    actives: undefined,
+                                },
+                                piano: {
+                                    total: undefined,
+                                    condition: "",
+                                },
+                                electricity_connection: "",
+                            },
+                            water: {
+                                tube_wells: "",
+                                tube_wells_condition: "",
+                                deep_tube_wells: "",
+                                deep_tube_wells_condition: "",
+                            }
+                        },
+                    },
+                    permitted_post: null,
                     budgets: [{ name: '', year: '', amount: '' }],
                     teachers: [{}],
                     vacations: [{}],
@@ -185,21 +249,21 @@ const BilReturnSubmit = () => {
                                     <Box sx={{ width: '100%' }}>
                                         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                                             <Tabs indicatorColor="#000" className='text-xl' variant="scrollable" scrollButtons="auto" value={schoolTabValue} onChange={handleSchoolTabValueChange} aria-label="basic tabs example">
-                                                <Tab label="সাধারণ তথ্য" {...a11yProps(0)} />
-                                                <Tab label="ভৌত অবকাঠামো তথ্য" {...a11yProps(1)} />
-                                                <Tab label="ভূমি বিষয়ক তথ্য" {...a11yProps(2)} />
-                                                <Tab label="উপবৃত্তি সংক্রান্ত তথ্য" {...a11yProps(3)} />
-                                                <Tab label="সভা সংক্রান্ত তথ্য" {...a11yProps(4)} />
-                                                <Tab label="উন্নয়ন কার্যক্রম সংক্রান্ত তথ্য" {...a11yProps(5)} />
+                                                <Tab label="সাধারণ তথ্য" {...schoolTabIndexes(0)} />
+                                                <Tab label="ভৌত অবকাঠামো তথ্য" {...schoolTabIndexes(1)} />
+                                                <Tab label="ভূমি বিষয়ক তথ্য" {...schoolTabIndexes(2)} />
+                                                <Tab label="উপবৃত্তি সংক্রান্ত তথ্য" {...schoolTabIndexes(3)} />
+                                                <Tab label="সভা সংক্রান্ত তথ্য" {...schoolTabIndexes(4)} />
+                                                <Tab label="উন্নয়ন কার্যক্রম সংক্রান্ত তথ্য" {...schoolTabIndexes(5)} />
 
                                             </Tabs>
                                         </Box>
                                         <CustomTabPanel value={schoolTabValue} index={0}>
                                             <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-6 pt-6'>
-                                                <TextField name="school_name" label="বিদ্যালয়ের নাম" placeholder={"বিদ্যালয়ের নাম লিখুন"} />
+                                                <TextField value={values.school.general.name} name="school.general.name" label="বিদ্যালয়ের নাম" placeholder={"বিদ্যালয়ের নাম লিখুন"} />
                                                 <div className="mb-4">
                                                     <label className='font-semibold' htmlFor="cluster">ক্লাস্টার*</label>
-                                                    <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name="cluster" id="cluster">
+                                                    <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name="school.general.cluster" id="cluster">
                                                         <option className='text-gray-300' value="Select an option" selected>ক্লাস্টার সিলেক্ট করুন</option>
                                                         <option value="সাধুহাটি ক্লাস্টার">সাধুহাটি</option>
                                                         <option value="কামালপুর">কামালপুর</option>
@@ -211,18 +275,17 @@ const BilReturnSubmit = () => {
                                                         <option value="আকবরপুর">আকবরপুর</option>
                                                     </Field>
                                                 </div>
-                                                <TextField name="village" label="গ্রাম/মহল্লার নাম" placeholder={"গ্রাম/মহল্লার নাম লিখুন"} />
-                                                <TextField name="word_number" label="ওয়ার্ড নাম্বার" placeholder={"ওয়ার্ড নাম্বার লিখুন"} />
-                                                <TextField name="post_office" label="ডাকঘর" placeholder={"ডাকঘর লিখুন"} />
-                                                <TextField name="union_corporation" label="ইউনিয়ন/পৌরসভা" placeholder={"ইউনিয়ন/পৌরসভা লিখুন"} />
-                                                <TextField name="emis_code" label="EMIS কোড" placeholder={"EMIS কোড লিখুন"} />
-                                                <TextField name="school_email" label="বিদ্যালয়ের ইমেইল" placeholder={"বিদ্যালয়ের ইমেইল লিখুন"} />
-                                                {/* <TextField name="found_date" label="প্রতিষ্ঠার সন" placeholder={"প্রতিষ্ঠার সন লিখুন"} /> */}
-                                                <MyDatePicker name="founded_date" label="প্রতিষ্ঠার সন" />
+                                                <TextField value={values.school.general.village_moholla} name="school.general.village_moholla" label="গ্রাম/মহল্লার নাম" placeholder={"গ্রাম/মহল্লার নাম লিখুন"} />
+                                                <NumberField value={values.school.general.word_number} name="school.general.word_number" label="ওয়ার্ড নাম্বার" placeholder={"ওয়ার্ড নাম্বার লিখুন"} />
+                                                <TextField value={values.school.general.word_number} name="school.general.word_number" label="ডাকঘর" placeholder={"ডাকঘর লিখুন"} />
+                                                <TextField value={values.school.general.union_corporation} name="school.general.union_corporation" label="ইউনিয়ন/পৌরসভা" placeholder={"ইউনিয়ন/পৌরসভা লিখুন"} />
+                                                <TextField value={values.school.general.emis_code} name="school.general.emis_code" label="EMIS কোড" placeholder={"EMIS কোড লিখুন"} />
+                                                <TextField value={values.school.general.email} name="school.general.email" label="বিদ্যালয়ের ইমেইল" placeholder={"বিদ্যালয়ের ইমেইল লিখুন"} />
+                                                <MyDatePicker value={values.school.general.founded_date} name="school.general.founded_date" label="প্রতিষ্ঠার সন" />
 
                                                 <div className="mb-4">
                                                     <label className='font-semibold' htmlFor="grade">গ্রেড*</label>
-                                                    <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name="grade" id="grade">
+                                                    <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name="school.general.grade" id="grade">
                                                         <option className='text-gray-300' value="Select an option" selected>গ্রেড সিলেক্ট করুন</option>
                                                         <option value="A">A</option>
                                                         <option value="B">B</option>
@@ -232,7 +295,7 @@ const BilReturnSubmit = () => {
                                                 </div>
                                                 <div className="mb-4">
                                                     <label className='font-semibold' htmlFor="shift">শিফট সংখ্যা*</label>
-                                                    <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name="shift" id="shift">
+                                                    <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name="school.general.shifts" id="shift">
                                                         <option className='text-gray-300' value="Select an option" selected>শিফট সিলেক্ট করুন</option>
                                                         <option value="A">১</option>
                                                         <option value="B">২</option>
@@ -247,7 +310,7 @@ const BilReturnSubmit = () => {
                                                 <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
                                                     <div className="mb-4">
                                                         <label className="font-semibold" htmlFor="building_number">ভবন সংখ্যা*</label>
-                                                        <input placeholder="ভবন সংখ্যা দিন" name='building_number' id="building_number" onChange={handleBuildingNumberChange} type="number" className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" />
+                                                        <input value={values.school.infrastructure.buildings} placeholder="ভবন সংখ্যা দিন" name='school.infrastructure.buildings' id="building_number" onChange={handleBuildingNumberChange} type="number" className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" />
                                                     </div>
                                                 </div>
                                                 < div className='mt-6 mb-12'>
@@ -352,16 +415,16 @@ const BilReturnSubmit = () => {
 
                                                 {/* class room related data */}
                                                 <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-6'>
-                                                    <NumberField label="প্রধান শিক্ষকের কক্ষ" placeholder="প্রধান শিক্ষকের কক্ষ সংখ্যা" name="head_master_room" />
-                                                    <NumberField label="অফিস কক্ষ" placeholder="অফিস কক্ষ সংখ্যা দিন" name="office_room" />
-                                                    <NumberField label="শ্রেণী কক্ষ" placeholder="শ্রেণী কক্ষের সংখ্যা দিন" name="class_room" />
-                                                    <NumberField label="ব্যবহারযোগ্য শ্রেণী কক্ষ" placeholder="ব্যবহারযোগ্য শ্রেণী কক্ষের সংখ্যা দিন" name="useable_class_room" />
-                                                    <NumberField label="মাল্টিমিডিয়া কক্ষ" placeholder="মাল্টিমিডিয়া কক্ষ সংখ্যা দিন" name="multimedia_room" />
+                                                    <NumberField value={values.school.infrastructure.headmaster_room} label="প্রধান শিক্ষকের কক্ষ" placeholder="প্রধান শিক্ষকের কক্ষ সংখ্যা" name="school.infrastructure.headmaster_room" />
+                                                    <NumberField value={values.school.infrastructure.office_rooms} label="অফিস কক্ষ" placeholder="অফিস কক্ষ সংখ্যা দিন" name="school.infrastructure.office_rooms" />
+                                                    <NumberField value={values.school.infrastructure.class_rooms} label="শ্রেণী কক্ষ" placeholder="শ্রেণী কক্ষের সংখ্যা দিন" name="school.infrastructure.class_rooms" />
+                                                    <NumberField value={values.school.infrastructure.useable_class_rooms} label="ব্যবহারযোগ্য শ্রেণী কক্ষ" placeholder="ব্যবহারযোগ্য শ্রেণী কক্ষের সংখ্যা দিন" name="school.infrastructure.useable_class_rooms" />
+                                                    <NumberField value={values.school.infrastructure.multimedia_rooms} label="মাল্টিমিডিয়া কক্ষ" placeholder="মাল্টিমিডিয়া কক্ষ সংখ্যা দিন" name="school.infrastructure.multimedia_rooms" />
                                                     {/* <NumberField label="শিশু শ্রেণী" placeholder="শিশু শ্রেণী সংখ্যা দিন" name="nursery_class" /> */}
 
                                                     <div className="mb-4">
                                                         <label className='font-semibold' htmlFor="have_nursery_class">পৃথক শিশু শ্রেণী*</label>
-                                                        <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name="have_nursery_class" id="have_nursery_class">
+                                                        <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name="school.infrastructure.separated_nursery_class" id="have_nursery_class">
                                                             <option className='text-gray-300' value="Select an option" selected>একটি অপশন সিলেক্ট করুন</option>
                                                             <option value="আছে">আছে</option>
                                                             <option value="নাই">নাই</option>
@@ -370,7 +433,7 @@ const BilReturnSubmit = () => {
 
                                                     <div className="mb-4">
                                                         <label className='font-semibold' htmlFor="border_wall">সীমানা প্রাচীর*</label>
-                                                        <Field onChange={handleBorderWallChange} className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name="border_wall" id="border_wall">
+                                                        <Field onChange={handleBorderWallChange} className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name="school.infrastructure.border_wall.wall" id="border_wall">
                                                             <option className='text-gray-300' value="Select an option" selected>একটি অপশন সিলেক্ট করুন</option>
                                                             <option value="আছে">আছে</option>
                                                             <option value="নাই">নাই</option>
@@ -379,7 +442,7 @@ const BilReturnSubmit = () => {
                                                     {borderWall === 'আছে' &&
                                                         <div className="mb-4">
                                                             <label className='font-semibold' htmlFor="border_wall">সীমানা প্রাচীরের অর্থায়ন ধরন*</label>
-                                                            <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name="funding_type" id="funding_type">
+                                                            <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name="school.infrastructure.border_wall.funding_type" id="funding_type">
                                                                 <option className='text-gray-300' value="Select an option" selected>একটি অপশন সিলেক্ট করুন</option>
                                                                 <option value="ডিপিই">ডিপিই</option>
                                                                 <option value="উপজেলা">জেলা পরিষদ</option>
@@ -389,14 +452,14 @@ const BilReturnSubmit = () => {
                                                     }
 
                                                     {borderWall === "আছে" &&
-                                                        <MyDatePicker label="সীমানা প্রাচীর নির্মাণের সন" name="border_wall_building_data" />
+                                                        <MyDatePicker label="সীমানা প্রাচীর নির্মাণের সন" name="school.infrastructure.border_wall.founded_date" />
                                                     }
 
-                                                    <NumberField label="টয়লেট সংখ্যা" placeholder="টয়লেট সংখ্যা দিন" name="toilet" />
+                                                    <NumberField label="টয়লেট সংখ্যা" placeholder="টয়লেট সংখ্যা দিন" name="school.infrastructure.toilets" />
 
                                                     <div className="mb-4">
                                                         <label className='font-semibold' htmlFor="wash_block">ওয়াশ ব্লক*</label>
-                                                        <Field onChange={handleWashBlockChange} className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name="border_wall" id="border_wall">
+                                                        <Field onChange={handleWashBlockChange} className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name="school.infrastructure.wash_block" id="wash_block">
                                                             <option className='text-gray-300' value="Select an option" selected>একটি অপশন সিলেক্ট করুন</option>
                                                             <option value="আছে">আছে</option>
                                                             <option value="নাই">নাই</option>
@@ -404,7 +467,7 @@ const BilReturnSubmit = () => {
                                                     </div>
 
                                                     {washBlock === "আছে" &&
-                                                        <MyDatePicker label="ওয়াশ ব্লক নির্মাণের সন" name="wash_block_building_data" />
+                                                        <MyDatePicker label="ওয়াশ ব্লক নির্মাণের সন" name="school.infrastructure.wash_block_founded_date" />
                                                     }
                                                 </div>
 
@@ -422,7 +485,7 @@ const BilReturnSubmit = () => {
                                                             <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-6'>
                                                                 <div className="mb-4">
                                                                     <label className='font-semibold' htmlFor={`shahid_minar`}>শহিদ মিনার*</label>
-                                                                    <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`shahid_minar`} id={`shahid_minar`}>
+                                                                    <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`school.infrastructure.others.shahid_minar`} id={`shahid_minar`}>
                                                                         <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
                                                                         <option value="আছে">আছে</option>
                                                                         <option value="নাই">নাই</option>
@@ -431,7 +494,7 @@ const BilReturnSubmit = () => {
 
                                                                 <div className="mb-4">
                                                                     <label className='font-semibold' htmlFor={`liberation_war_corner`}>মুক্তিযুদ্ধ কর্নার*</label>
-                                                                    <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`liberation_war_corner`} id={`liberation_war_corner`}>
+                                                                    <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`school.infrastructure.others.freedom_fight_corner`} id={`liberation_war_corner`}>
                                                                         <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
                                                                         <option value="আছে">আছে</option>
                                                                         <option value="নাই">নাই</option>
@@ -440,7 +503,7 @@ const BilReturnSubmit = () => {
 
                                                                 <div className="mb-4">
                                                                     <label className='font-semibold' htmlFor={`sheikh_rasel_corner`}>শেখ রাসেল কর্নার*</label>
-                                                                    <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`sheikh_rasel_corner`} id={`sheikh_rasel_corner`}>
+                                                                    <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`school.infrastructure.others.rasel_corner`} id={`sheikh_rasel_corner`}>
                                                                         <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
                                                                         <option value="আছে">আছে</option>
                                                                         <option value="নাই">নাই</option>
@@ -449,7 +512,7 @@ const BilReturnSubmit = () => {
 
                                                                 <div className="mb-4">
                                                                     <label className='font-semibold' htmlFor={`roof_garden`}>বাগান/ছাদ বাগান*</label>
-                                                                    <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`roof_garden`} id={`roof_garden`}>
+                                                                    <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`school.infrastructure.others.garden`} id={`roof_garden`}>
                                                                         <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
                                                                         <option value="আছে">আছে</option>
                                                                         <option value="নাই">নাই</option>
@@ -486,10 +549,10 @@ const BilReturnSubmit = () => {
                                                             <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4 mt-4'>
                                                                 <div className="mb-4">
                                                                     <label className="font-semibold" htmlFor="laptop_number">ল্যাপটপ সংখ্যা*</label>
-                                                                    <input placeholder="ল্যাপটপ সংখ্যা দিন" name='laptop_number' id="laptop_number" onChange={handleLaptopChange} type="number" className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" />
+                                                                    <input placeholder="ল্যাপটপ সংখ্যা দিন" name='others.laptop.total' id="laptop_number" onChange={handleLaptopChange} type="number" className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" />
                                                                 </div>
                                                                 {laptop >= 1 &&
-                                                                    <NumberField placeholder={"সচল ল্যাপটপের সংখ্যা দিন"} label={'সচল ল্যাপটপের সংখ্যা'} name={"active_laptops"} />
+                                                                    <NumberField placeholder={"সচল ল্যাপটপের সংখ্যা দিন"} label={'সচল ল্যাপটপের সংখ্যা'} name={"others.laptop.actives"} />
                                                                 }
                                                             </div>
 
@@ -499,10 +562,10 @@ const BilReturnSubmit = () => {
                                                             <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4 mt-4'>
                                                                 <div className="mb-4">
                                                                     <label className="font-semibold" htmlFor="multimedia_number">মাল্টিমিডিয়া সংখ্যা*</label>
-                                                                    <input placeholder="মাল্টিমিডিয়া সংখ্যা দিন" name='multimedia_number' id="multimedia_number" onChange={handleMultimediaChange} type="number" className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" />
+                                                                    <input placeholder="মাল্টিমিডিয়া সংখ্যা দিন" name='others.multimedia.total' id="multimedia_number" onChange={handleMultimediaChange} type="number" className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" />
                                                                 </div>
                                                                 {multimedia >= 1 &&
-                                                                    <NumberField placeholder={"সচল মাল্টিমিডিয়ার সংখ্যা দিন"} label={'সচল মাল্টিমিডিয়া সংখ্যা'} name={"active_multimedias"} />
+                                                                    <NumberField placeholder={"সচল মাল্টিমিডিয়ার সংখ্যা দিন"} label={'সচল মাল্টিমিডিয়া সংখ্যা'} name={"others.multimedia.actives"} />
                                                                 }
                                                             </div>
 
@@ -510,12 +573,12 @@ const BilReturnSubmit = () => {
                                                             <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4 mt-4'>
                                                                 <div className="mb-4">
                                                                     <label className="font-semibold" htmlFor="piano_number">পিয়ানো সংখ্যা*</label>
-                                                                    <input placeholder="পিয়ানো সংখ্যা দিন" name='piano_number' id="piano_number" onChange={handlePianoChange} type="number" className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" />
+                                                                    <input placeholder="পিয়ানো সংখ্যা দিন" name='others.piano.total' id="piano_number" onChange={handlePianoChange} type="number" className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" />
                                                                 </div>
                                                                 {piano >= 1 &&
                                                                     <div className="mb-4">
                                                                         <label className='font-semibold' htmlFor={`piano_condition`}>পিয়ানো এর বর্তমান অবস্থা*</label>
-                                                                        <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`piano_condition`} id={`piano_condition`}>
+                                                                        <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`others.piano.condition`} id={`piano_condition`}>
                                                                             <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
                                                                             <option value="সচল">সচল</option>
                                                                             <option value="নষ্ট">নষ্ট</option>
@@ -529,7 +592,7 @@ const BilReturnSubmit = () => {
                                                             < div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-6'>
                                                                 <div className="my-4">
                                                                     <label className='font-semibold' htmlFor={`electricity`}>বিদ্যুৎ সংযোগ*</label>
-                                                                    <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`electricity`} id={`electricity`}>
+                                                                    <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`others.electricity_connection`} id={`electricity`}>
                                                                         <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
                                                                         <option value="আছে">আছে</option>
                                                                         <option value="নাই">নাই</option>
@@ -554,15 +617,15 @@ const BilReturnSubmit = () => {
                                                             <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4 mt-4'>
                                                                 <div className="mb-4">
                                                                     <label className="font-semibold" htmlFor="tubewell_number">টিউবওয়েল সংখ্যা*</label>
-                                                                    <input placeholder="টিউবওয়েল সংখ্যা দিন" name='tubewell_number' id="tubewell_number" onChange={handleTubeWellChange} type="number" className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" />
+                                                                    <input placeholder="টিউবওয়েল সংখ্যা দিন" name='others.water.tube_wells' id="tubewell_number" onChange={handleTubeWellChange} type="number" className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" />
                                                                 </div>
                                                             </div>
 
                                                             {tubeWell >= 1 &&
                                                                 < div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-6'>
                                                                     <div className="mb-4">
-                                                                        <label className='font-semibold' htmlFor={`laption_condition`}>টিউবওয়েল এর বর্তমান অবস্থা*</label>
-                                                                        <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`laption_condition`} id={`laption_condition`}>
+                                                                        <label className='font-semibold' htmlFor={`tubewell_condition`}>টিউবওয়েল এর বর্তমান অবস্থা*</label>
+                                                                        <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`others.water.tube_wells_condition`} id={`tubewell_condition`}>
                                                                             <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
                                                                             <option value="ভাল">ভাল</option>
                                                                             <option value="পরিত্যক্ত">মেরামতযোগ্য</option>
@@ -574,15 +637,15 @@ const BilReturnSubmit = () => {
                                                             <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4 mt-4'>
                                                                 <div className="mb-4">
                                                                     <label className="font-semibold" htmlFor="deep_tubewell_number">ডিপ টিউবওয়েল সংখ্যা*</label>
-                                                                    <input placeholder="ডিপ টিউবওয়েল সংখ্যা দিন" name='deep_tubewell_number' id="deep_tubewell_number" onChange={handleDeepTubeWellChange} type="number" className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" />
+                                                                    <input placeholder="ডিপ টিউবওয়েল সংখ্যা দিন" name='others.water.deep_tube_wells' id="deep_tubewell_number" onChange={handleDeepTubeWellChange} type="number" className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" />
                                                                 </div>
                                                             </div>
 
                                                             {deepTubeWell >= 1 &&
                                                                 < div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-6'>
                                                                     <div className="mb-4">
-                                                                        <label className='font-semibold' htmlFor={`laption_condition`}>ডিপ টিউবওয়েল এর বর্তমান অবস্থা*</label>
-                                                                        <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`laption_condition`} id={`laption_condition`}>
+                                                                        <label className='font-semibold' htmlFor={`deep_tubewell_condition`}>ডিপ টিউবওয়েল এর বর্তমান অবস্থা*</label>
+                                                                        <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`others.water.deep_tube_wells_condition`} id={`deep_tubewell_condition`}>
                                                                             <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
                                                                             <option value="ভাল">ভাল</option>
                                                                             <option value="পরিত্যক্ত">মেরামতযোগ্য</option>
@@ -681,7 +744,7 @@ const BilReturnSubmit = () => {
                                             </div>
                                         </CustomTabPanel>
                                         <CustomTabPanel value={schoolTabValue} index={4}>
-                                            {/* stipend related data */}
+                                            {/* conference related data */}
                                             <div className='pt-8 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4'>
                                                 <NumberField name="smc" label="এসএমসি" placeholder="এসএমসি সভার সংখ্যা দিন" />
                                                 <NumberField name="pta" label="পিটিএ" placeholder="পিটিএ সভার সংখ্যা দিন" />
@@ -692,7 +755,7 @@ const BilReturnSubmit = () => {
                                             </div>
                                         </CustomTabPanel>
                                         <CustomTabPanel value={schoolTabValue} index={5}>
-                                            {/* stipend related data */}
+                                            {/* budget related data */}
                                             <FieldArray name="budgets">
                                                 {arrayHelpers => (
                                                     <div>

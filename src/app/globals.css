@@ -257,6 +257,9 @@ select option {
 .draftContent p{
   font-size: 15px;
 }
+.spinner{
+  color: #008B4C !important;
+}
 /* print styles */
 
 

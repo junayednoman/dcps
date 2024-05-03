@@ -1,14 +1,16 @@
 "use client"
 
 import { CircularProgress } from "@mui/material";
-import { useLocalStorage } from "@uidotdev/usehooks";
-import { useState } from "react";
 import { LuDownload } from "react-icons/lu";
+import { useEffect, useState } from "react";
 const DataDraft = () => {
 
-    const [formData, setFormData] = useState([]);
-    const [data] = useLocalStorage("formData", [])
-    console.log(data);
+    const [formData, setFormData] = useState(null);
+
+    useEffect(() => {
+        const datas = localStorage.getItem("formData");
+        setFormData(JSON.parse(datas));
+    }, [])
 
 
 
@@ -16,8 +18,10 @@ const DataDraft = () => {
         window.print();
     };
 
-    if (!data) {
-        return <CircularProgress color="secondary" />
+    if (!formData) {
+        return <div className="flex justify-center items-center h-[80vh]">
+            <CircularProgress className="spinner" />
+        </div>
     }
 
 
@@ -32,8 +36,8 @@ const DataDraft = () => {
                     <div>
                         <h4 className='md:text-[17px] text-lg font-semibold md:mb-5 print:mb-4 print:text-xl text-[#008B4C]'>সাধারণ তথ্য</h4>
                         <div className="flex flex-wrap gap-x-12 gap-y-4">
-                            <p><span className="font-medium">বিদ্যালয়ের নাম: </span>{data.school_name}</p>
-                            <p><span className="font-medium">ক্লাস্টার: </span>{data.cluster}</p>
+                            <p><span className="font-medium">বিদ্যালয়ের নাম: </span>{formData.school_name}</p>
+                            <p><span className="font-medium">ক্লাস্টার: </span>{formData.cluster}</p>
                             <p><span className="font-medium">গ্রাম/মহল্লার নাম: </span>গোলাবাড়ি</p>
                             <p><span className="font-medium">ওয়ার্ড নাম্বার: </span>৬</p>
                             <p><span className="font-medium">ডাকঘর: </span>গোলাবাড়ি</p>
@@ -390,6 +394,8 @@ const DataDraft = () => {
                 <button onClick={handlePrint} type="submit" className="px-6 md:py-[10px] py-[6px] md:pt-[15px] pt-[10px] bg-[#008B4C] border border-[#008B4C] hover:bg-[#006f3d] text-white rounded-md font-semibold capitalize mt-5 print:hidden flex items-center gap-3"><span>ডাউনলোড করুন </span><span className="block -mt-[2px]"><LuDownload className="text-xl" /></span></button>
             </div>
         </div>
+
+     
     );
 };
 
