@@ -58,7 +58,7 @@ const BillList = () => {
             <table className="w-full table-auto">
                 <thead className="text-left bg-slate-100">
                     <tr>
-                        <th className="border px-4 py-2">আইডি</th>
+                        <th className="border px-4 py-2">ক্রমিক</th>
                         <th className="border px-4 py-2">ইএমআইএস</th>
                         <th className="border px-4 py-2">নাম</th>
                         <th className="border px-4 py-2">একশন</th>
@@ -71,7 +71,7 @@ const BillList = () => {
                             <td className="border px-4 py-3">{item.emis}</td>
                             <td className="border px-4 py-3">{item.name}</td>
                             <td className="border px-4 py-3">
-                                <Link href={`/school/${item.id}`} className="text-greenColor font-medium underline">
+                                <Link href={`/dashboard/bill-details`} className="text-greenColor font-medium underline">
                                     বিস্তারিত দেখুন
                                 </Link>
                             </td>

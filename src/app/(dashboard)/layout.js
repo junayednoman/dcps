@@ -341,7 +341,7 @@ export default function DashboardLayout({ children }) {
                                                             value={schoolSelectedOption}
                                                         />
                                                     </div>
-                                                    <button className="px-4 py-[6px] bg-primaryColor border border-primaryColor hover:bg-textColor text-white rounded-md font-medium capitalize">সার্চ করুন</button>
+                                                    <Link onClick={handleModalClose} href={'/dashboard/bill-return-history'} className="px-4 py-[6px] pt-2 bg-primaryColor border border-primaryColor hover:bg-textColor text-white rounded-md font-medium capitalize mt-4">সার্চ করুন</Link>
                                                 </form>
                                             </Box>
                                         </Fade>
