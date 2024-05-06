@@ -327,7 +327,12 @@ select option {
     background: #fff !important;
     display: block !important;
   }
+
   .css-4t3x6l-MuiPaper-root-MuiDrawer-paper {
     padding-top: 15px !important;
+  }
+
+  .css-vwd6ro {
+    width: 100% !important;
   }
 }
