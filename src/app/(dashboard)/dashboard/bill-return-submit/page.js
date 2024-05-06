@@ -278,7 +278,7 @@ const BilReturnSubmit = () => {
                     ({ isSubmitting, values }) => (
                         <Form>
                             {/* school related data */}
-                            <div className='border bg-white shadow-sm rounded-[4px] p-8'>
+                            <div className='border bg-white shadow-sm rounded-[4px] md:p-8 p-3'>
                                 <h2 className='md:text-xl text-lg font-semibold md:mb-8'>বিদ্যালয় সংক্রান্ত তথ্য</h2>
                                 <DataDropdown title="সাধারণ তথ্য" itemKey={'general'} activeItem={activeItem} setActiveItem={setActiveItem}>
                                     <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4 pt-4'>
@@ -849,7 +849,7 @@ const BilReturnSubmit = () => {
 
                             </div>
                             {/* teacher related data */}
-                            <div className='border bg-white shadow-sm rounded-[4px] p-8 mt-7'>
+                            <div className='border bg-white shadow-sm rounded-[4px] md:p-8 p-3 mt-7'>
                                 <h2 className='md:text-xl text-lg font-semibold md:mb-8'>শিক্ষক সংক্রান্ত তথ্য</h2>
                                 <DataDropdown title="সাধারণ তথ্য" itemKey={'teacher_general'} activeItem={activeItem} setActiveItem={setActiveItem}>
                                     <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-6 pt-4'>
@@ -981,7 +981,7 @@ const BilReturnSubmit = () => {
                             </div>
 
                             {/* teacher related data */}
-                            <div className='border bg-white shadow-sm rounded-[4px] p-8 mt-4'>
+                            <div className='border bg-white shadow-sm rounded-[4px] md:p-8 p-3 mt-4'>
                                 <h2 className='md:text-xl text-lg font-semibold md:mb-8'>শিক্ষার্থী সংক্রান্ত তথ্য</h2>
                                 <DataDropdown title="জরিপকৃত তথ্য(৪+...১০+)" itemKey={'survey'} activeItem={activeItem} setActiveItem={setActiveItem}>
                                     <div className='pt-8'>
