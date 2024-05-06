@@ -179,7 +179,7 @@ body {
 }
 
 .menuItems {
-  margin-top: 40px !important;
+  margin-top: 50px !important;
 }
 
 select {
@@ -302,7 +302,7 @@ select option {
 }
 
 .open_close_btn_mobile_drawer {
-  position: absolute;
+  position: fixed;
   top: 13px;
   left: 25px;
   z-index: 9999;
@@ -311,6 +311,10 @@ select option {
 @media (max-width: 768px) {
   .open_close_btn_mobile_drawer {
     top: 10px !important;
+  }
+
+  .css-zxdg2z {
+    padding: 12px !important;
   }
 }
 
