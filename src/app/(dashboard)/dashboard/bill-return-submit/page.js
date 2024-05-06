@@ -140,7 +140,7 @@ const BilReturnSubmit = () => {
     const internetTypes = ['মডেম', 'সিম', 'রাউটার'];
 
     return (
-        <div className='bg-[#FAFAFA] xl:w-[85%] w-full'>
+        <div className='bg-[#FAFAFA] xl:w-[85%] w-full lg:mt-0 mt-4'>
             <h2 className='md:text-2xl text-xl font-semibold md:mb-14 mb-8'>বিল রিটার্ন সাবমিট</h2>
             <Formik
                 initialValues={{
