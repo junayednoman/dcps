@@ -1,16 +1,21 @@
-import getDb from '@/lib/db';
-import { NextResponse } from 'next/server';
+// pages/api/users.js
 
-export async function GET() {
-    //   try {
-    //     // Fetch user data from your database or use dummy data
-    //     const db = getDb(); // Use your function to get the database connection
-    //     const users = await db.collection('users').find().toArray(); // Example query to fetch users
+import getDb from "@/lib/db";
 
-    //     res.status(200).json(users); // Send the user data as JSON response
-    //   } catch (error) {
-    //     console.error('Error fetching users:', error);
-    //     res.status(500).json({ error: 'Internal Server Error' });
-    //   }
-   return NextResponse.json({ hello: "Hellos" })
+export default async function handler(req, res) {
+
+    if (req.method !== 'GET') {
+        return res.status(4052).json({ error: 'Method Not Allowed' });
+    }
+
+    try {
+        const db = await getDb();
+        // const users = await db.collection("users").find();
+        const user = await db.collection('users').findOne({ name: "noman" });
+        res.status(200).json(user);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server Error' });
+    }
+
 }
