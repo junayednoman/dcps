@@ -31,11 +31,11 @@ const DataDraft = () => {
             <div className="p-8 rounded-md shadow-sm bg-white">
                 {/* school related daa */}
                 <h2 className='md:text-xl text-lg font-semibold main-heading'>বিদ্যালয় সংক্রান্ত তথ্য</h2>
-                <div className="w-full h-[1px] bg-[#008B4C] md:mb-9 mt-2 print:mb-6"></div>
+                <div className="w-full h-[1px] bg-[#008B4C] md:mb-9 mb-5 mt-2 print:mb-6"></div>
                 <div>
                     <div>
-                        <h4 className='md:text-[17px] text-lg font-semibold md:mb-5 print:mb-4 print:text-xl text-[#008B4C]'>সাধারণ তথ্য</h4>
-                        <div className="flex flex-wrap gap-x-12 gap-y-4">
+                        <h4 className='md:text-[17px] text-lg font-semibold md:mb-5 mb-4 print:mb-4 print:text-xl text-[#008B4C]'>সাধারণ তথ্য</h4>
+                        <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col">
                             <p><span className="font-medium">বিদ্যালয়ের নাম: </span>{formData.school_name}</p>
                             <p><span className="font-medium">ক্লাস্টার: </span>{formData.cluster}</p>
                             <p><span className="font-medium">গ্রাম/মহল্লার নাম: </span>গোলাবাড়ি</p>
@@ -51,13 +51,13 @@ const DataDraft = () => {
                         </div>
                     </div>
                     <div className="mt-12 ">
-                        <div className="flex flex-wrap gap-x-12 gap-y-4">
+                        <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col">
                             <p><span className="font-medium">ভবন সংখ্যা: </span>৩</p>
                             <p><span className="font-medium">ভবন ১ নির্মাণের সন: </span>১২-৪-২০০০</p>
                             <p><span className="font-medium">ভবন ১ এর ধরন: </span>পাকা</p>
                             <p><span className="font-medium">ভবন ১ এর বর্তমান অবস্থা*: </span>ভালো</p>
                         </div>
-                        <div className="flex flex-wrap gap-x-12 gap-y-4 mt-10">
+                        <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col mt-10">
                             <p><span className="font-medium">প্রধান শিক্ষকের কক্ষ: </span>১</p>
                             <p><span className="font-medium">অফিস কক্ষ: </span>৩</p>
                             <p><span className="font-medium">শ্রেণী কক্ষ: </span>৩</p>
@@ -72,7 +72,7 @@ const DataDraft = () => {
                             <p><span className="font-medium">ওয়াশ ব্লক: </span>আছে</p>
                             <p><span className="font-medium">ওয়াশ ব্লক নির্মাণের সন: </span>১২-৪-২০০০</p>
                         </div>
-                        <div className="flex flex-wrap gap-x-12 gap-y-4 mt-10">
+                        <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col mt-10">
                             <p><span className="font-medium">শহিদ মিনার: </span>আছে</p>
                             <p><span className="font-medium">মুক্তিযুদ্ধ কর্নার: </span>আছে</p>
                             <p><span className="font-medium">শেখ রাসেল কর্নার: </span>আছে</p>
@@ -88,7 +88,7 @@ const DataDraft = () => {
                             <p><span className="font-medium">বিদ্যুৎ সংযোগ: </span>আছে</p>
 
                         </div>
-                        <div className="flex flex-wrap gap-x-12 gap-y-4 mt-10">
+                        <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col mt-10">
                             <p><span className="font-medium">টিউবওয়েল সংখ্যা: </span>৩</p>
                             <p><span className="font-medium">টিউবওয়েল এর বর্তমান অবস্থা: </span>ভালো</p>
                             <p><span className="font-medium">ডিপ টিউবওয়েল সংখ্যা: </span>৩</p>
@@ -97,8 +97,8 @@ const DataDraft = () => {
 
                     </div>
                     <div className="mt-12">
-                        <h4 className='md:text-[17px] text-lg font-semibold md:mb-5 print:mb-4 print:text-xl text-[#008B4C]'>ভূমি বিষয়ক তথ্য</h4>
-                        <div className="flex flex-wrap gap-x-12 gap-y-4">
+                        <h4 className='md:text-[17px] text-lg font-semibold md:mb-5 mb-4 print:mb-4 print:text-xl text-[#008B4C]'>ভূমি বিষয়ক তথ্য</h4>
+                        <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col">
                             <p><span className="font-medium">ভূমির পরিমান(শতাংশ): </span>৫</p>
                             <p><span className="font-medium">দখলকৃত ভূমির পরিমান(শতাংশ): </span>৫</p>
                             <p><span className="font-medium">বেদখলকৃত ভূমির পরিমান(শতাংশ): </span>৫</p>
@@ -115,8 +115,8 @@ const DataDraft = () => {
                         </div>
                     </div>
                     <div className="mt-12">
-                        <h4 className='md:text-[17px] text-lg font-semibold md:mb-5 print:mb-4 print:text-xl text-[#008B4C]'>উপবৃত্তি সংক্রান্ত তথ্য</h4>
-                        <div className="flex flex-wrap gap-x-12 gap-y-4">
+                        <h4 className='md:text-[17px] text-lg font-semibold md:mb-5 mb-4 print:mb-4 print:text-xl text-[#008B4C]'>উপবৃত্তি সংক্রান্ত তথ্য</h4>
+                        <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col">
                             <p><span className="font-medium">সর্বশেষ প্রান্তিকের সময়কাল: </span>প্রথম</p>
                             <p><span className="font-medium">সর্বশেষ প্রান্তিকে মোট সুবিধাভোগী: </span>৩</p>
                             <p><span className="font-medium">উপবৃত্তির চাহিদা: </span>৩</p>
@@ -124,8 +124,8 @@ const DataDraft = () => {
                         </div>
                     </div>
                     <div className="mt-12">
-                        <h4 className='md:text-[17px] text-lg font-semibold md:mb-5 print:mb-4 print:text-xl text-[#008B4C]'>সভা সংক্রান্ত তথ্য</h4>
-                        <div className="flex flex-wrap gap-x-12 gap-y-4">
+                        <h4 className='md:text-[17px] text-lg font-semibold md:mb-5 mb-4 print:mb-4 print:text-xl text-[#008B4C]'>সভা সংক্রান্ত তথ্য</h4>
+                        <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col">
                             <p><span className="font-medium">এসএমসি: </span>৪</p>
                             <p><span className="font-medium">পিটিএ: </span>৪</p>
                             <p><span className="font-medium">মা-সমাবেশ: </span>৪</p>
@@ -135,8 +135,8 @@ const DataDraft = () => {
                         </div>
                     </div>
                     <div className="mt-12">
-                        <h4 className='md:text-[17px] text-lg font-semibold md:mb-5 print:mb-4 print:text-xl text-[#008B4C]'>উন্নয়ন কার্যক্রম সংক্রান্ত তথ্য</h4>
-                        <div className="flex flex-wrap gap-x-12 gap-y-4">
+                        <h4 className='md:text-[17px] text-lg font-semibold md:mb-5 mb-4 print:mb-4 print:text-xl text-[#008B4C]'>উন্নয়ন কার্যক্রম সংক্রান্ত তথ্য</h4>
+                        <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col">
                             <p>১। </p>
                             <p><span className="font-medium">বরাদ্দের ধরন: </span>স্লিপ</p>
                             <p><span className="font-medium">অর্থ বছর: </span>১২-৪-২০০০</p>
@@ -147,13 +147,13 @@ const DataDraft = () => {
             </div>
 
             {/* teacher related data */}
-            <div className="mt-10 p-8 rounded-md shadow-sm bg-white">
+            <div className="md:mt-10 mt-6 md:p-8 p-4 rounded-md shadow-sm bg-white">
                 <h2 className='md:text-xl text-lg font-semibold main-heading'>শিক্ষক সংক্রান্ত তথ্য</h2>
-                <div className="w-full h-[1px] bg-[#008B4C] md:mb-9 mt-2 print:mb-6"></div>
+                <div className="w-full h-[1px] bg-[#008B4C] md:mb-9 mb-5 mt-2 print:mb-6"></div>
                 <div>
                     <div>
-                        <h4 className='md:text-[17px] text-lg font-semibold md:mb-5 print:mb-4 print:text-xl text-[#008B4C]'>সাধারণ তথ্য</h4>
-                        <div className="flex flex-wrap gap-x-12 gap-y-4">
+                        <h4 className='md:text-[17px] text-lg font-semibold md:mb-5 mb-4 print:mb-4 print:text-xl text-[#008B4C]'>সাধারণ তথ্য</h4>
+                        <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col">
                             <p><span className="font-medium">অনুমোদিত পদ: </span>৩</p>
                             <p><span className="font-medium">কর্মরত পদ: </span>৩</p>
                             <p><span className="font-medium">শূন্য পদ: </span>৩</p>
@@ -162,8 +162,8 @@ const DataDraft = () => {
                         </div>
                     </div>
                     <div className="mt-12">
-                        <h4 className='md:text-[17px] text-lg font-semibold md:mb-5 print:mb-4 print:text-xl text-[#008B4C]'>বেতন সংক্রান্ত তথ্য</h4>
-                        <div className="flex flex-wrap gap-x-12 gap-y-4">
+                        <h4 className='md:text-[17px] text-lg font-semibold md:mb-5 mb-4 print:mb-4 print:text-xl text-[#008B4C]'>বেতন সংক্রান্ত তথ্য</h4>
+                        <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col">
                             <span className="text-base font-semibold">শিক্ষক ১ঃ</span>
                             <p><span className="font-medium">শিক্ষকের নাম: </span>আছে</p>
                             <p><span className="font-medium">শিক্ষকের পদবি: </span>আছে</p>
@@ -184,8 +184,8 @@ const DataDraft = () => {
                         </div>
                     </div>
                     <div className="mt-12">
-                        <h4 className='md:text-[17px] text-lg font-semibold md:mb-5 print:mb-4 print:text-xl text-[#008B4C]'>ছুটি সংক্রান্ত তথ্য</h4>
-                        <div className="flex flex-wrap gap-x-12 gap-y-4">
+                        <h4 className='md:text-[17px] text-lg font-semibold md:mb-5 mb-4 print:mb-4 print:text-xl text-[#008B4C]'>ছুটি সংক্রান্ত তথ্য</h4>
+                        <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col">
                             <span className="text-base font-semibold">শিক্ষক ১ঃ</span>
                             <p><span className="font-medium">শিক্ষকের নাম: </span>আছে</p>
                             <p><span className="font-medium">ছুটির ধরন: </span>আছে</p>
@@ -194,8 +194,8 @@ const DataDraft = () => {
                         </div>
                     </div>
                     <div className="mt-12">
-                        <h4 className='md:text-[17px] text-lg font-semibold md:mb-5 print:mb-4 print:text-xl text-[#008B4C]'>অনুমোদিত শিক্ষক তথ্য</h4>
-                        <div className="flex flex-wrap gap-x-12 gap-y-4">
+                        <h4 className='md:text-[17px] text-lg font-semibold md:mb-5 mb-4 print:mb-4 print:text-xl text-[#008B4C]'>অনুমোদিত শিক্ষক তথ্য</h4>
+                        <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col">
                             <p><span className="font-medium">শিক্ষকের নাম: </span>আছে</p>
                             <p><span className="font-medium">শিক্ষকের পদবি: </span>আছে</p>
                             <p><span className="font-medium">সর্বশেষ উপস্থিতির তারিখ: </span>আছে</p>
@@ -205,32 +205,32 @@ const DataDraft = () => {
             </div>
 
             {/* student related data */}
-            <div className="mt-10 p-8 rounded-md shadow-sm bg-white">
+            <div className="md:mt-10 mt-6 md:p-8 p-4 rounded-md shadow-sm bg-white">
                 <h2 className='md:text-xl text-lg font-semibold main-heading'>শিক্ষার্থী সংক্রান্ত তথ্য</h2>
-                <div className="w-full h-[1px] bg-[#008B4C] md:mb-9 mt-2 print:mb-6"></div>
+                <div className="w-full h-[1px] bg-[#008B4C] md:mb-9 mb-5 mt-2 print:mb-6"></div>
 
                 <div>
                     <div>
-                        <h4 className='md:text-[17px] text-lg font-semibold md:mb-5 print:mb-4 print:text-xl text-[#008B4C]'>জরিপকৃত তথ্য(৪+...১০+)</h4>
-                        <div className="flex flex-wrap gap-x-12 gap-y-4">
+                        <h4 className='md:text-[17px] text-lg font-semibold md:mb-5 mb-4 print:mb-4 print:text-xl text-[#008B4C]'>জরিপকৃত তথ্য(৪+...১০+)</h4>
+                        <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col">
                             <span className="text-base font-semibold">মোটঃ</span>
                             <p><span className="font-medium">বালক: </span>৪</p>
                             <p><span className="font-medium">বালিকা: </span>৩</p>
                             <p><span className="font-medium">মোট শিক্ষার্থী: </span>৭</p>
                         </div>
-                        <div className="flex flex-wrap gap-x-12 gap-y-4 mt-5">
+                        <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col mt-5">
                             <span className="text-base font-semibold">সংশ্লিষ্ট বিদ্যালয়ে ভর্তিকৃতঃ</span>
                             <p><span className="font-medium">বালক: </span>৪</p>
                             <p><span className="font-medium">বালিকা: </span>৩</p>
                             <p><span className="font-medium">মোট শিক্ষার্থী: </span>৭</p>
                         </div>
-                        <div className="flex flex-wrap gap-x-12 gap-y-4 mt-5">
+                        <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col mt-5">
                             <span className="text-base font-semibold">অন্যান্য বিদ্যালয়ে ভর্তিকৃতঃ</span>
                             <p><span className="font-medium">বালক: </span>৪</p>
                             <p><span className="font-medium">বালিকা: </span>৩</p>
                             <p><span className="font-medium">মোট শিক্ষার্থী: </span>৭</p>
                         </div>
-                        <div className="flex flex-wrap gap-x-12 gap-y-4 mt-5">
+                        <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col mt-5">
                             <span className="text-base font-semibold">অভর্তিকৃতঃ</span>
                             <p><span className="font-medium">বালক: </span>৪</p>
                             <p><span className="font-medium">বালিকা: </span>৩</p>
@@ -239,8 +239,8 @@ const DataDraft = () => {
                     </div>
                     <div className="mt-12">
                         <div>
-                            <h4 className='md:text-[17px] text-lg font-semibold md:mb-5 print:mb-4 print:text-xl text-[#008B4C]'>ছাত্র/ছাত্রী ভর্তি তথ্য</h4>
-                            <div className="flex flex-wrap gap-x-12 gap-y-4">
+                            <h4 className='md:text-[17px] text-lg font-semibold md:mb-5 mb-4 print:mb-4 print:text-xl text-[#008B4C]'>ছাত্র/ছাত্রী ভর্তি তথ্য</h4>
+                            <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col">
                                 <span className="text-base font-semibold">শিশু শ্রেণী ৪+ঃ</span>
                                 <p><span className="font-medium">মুসলিম ছাত্র: </span>৪</p>
                                 <p><span className="font-medium">মুসলিম ছাত্রী: </span>৪</p>
@@ -253,7 +253,7 @@ const DataDraft = () => {
                                 <p><span className="font-medium">মোট শিক্ষার্থী: </span>৪</p>
                                 <p><span className="font-medium">বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী: </span>৪</p>
                             </div>
-                            <div className="flex flex-wrap gap-x-12 gap-y-4 mt-10">
+                            <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col mt-10">
                                 <span className="text-base font-semibold">শিশু শ্রেণী ৫+ঃ</span>
                                 <p><span className="font-medium">মুসলিম ছাত্র: </span>৪</p>
                                 <p><span className="font-medium">মুসলিম ছাত্রী: </span>৪</p>
@@ -266,7 +266,7 @@ const DataDraft = () => {
                                 <p><span className="font-medium">মোট শিক্ষার্থী: </span>৪</p>
                                 <p><span className="font-medium">বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী: </span>৪</p>
                             </div>
-                            <div className="flex flex-wrap gap-x-12 gap-y-4 mt-10">
+                            <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col mt-10">
                                 <span className="text-base font-semibold">প্রথম শ্রেণিঃ</span>
                                 <p><span className="font-medium">মুসলিম ছাত্র: </span>৪</p>
                                 <p><span className="font-medium">মুসলিম ছাত্রী: </span>৪</p>
@@ -279,7 +279,7 @@ const DataDraft = () => {
                                 <p><span className="font-medium">মোট শিক্ষার্থী: </span>৪</p>
                                 <p><span className="font-medium">বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী: </span>৪</p>
                             </div>
-                            <div className="flex flex-wrap gap-x-12 gap-y-4 mt-10">
+                            <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col mt-10">
                                 <span className="text-base font-semibold">দ্বিতীয় শ্রেণিঃ</span>
                                 <p><span className="font-medium">মুসলিম ছাত্র: </span>৪</p>
                                 <p><span className="font-medium">মুসলিম ছাত্রী: </span>৪</p>
@@ -292,7 +292,7 @@ const DataDraft = () => {
                                 <p><span className="font-medium">মোট শিক্ষার্থী: </span>৪</p>
                                 <p><span className="font-medium">বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী: </span>৪</p>
                             </div>
-                            <div className="flex flex-wrap gap-x-12 gap-y-4 mt-10">
+                            <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col mt-10">
                                 <span className="text-base font-semibold">তৃতীয় শ্রেণিঃ</span>
                                 <p><span className="font-medium">মুসলিম ছাত্র: </span>৪</p>
                                 <p><span className="font-medium">মুসলিম ছাত্রী: </span>৪</p>
@@ -305,7 +305,7 @@ const DataDraft = () => {
                                 <p><span className="font-medium">মোট শিক্ষার্থী: </span>৪</p>
                                 <p><span className="font-medium">বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী: </span>৪</p>
                             </div>
-                            <div className="flex flex-wrap gap-x-12 gap-y-4 mt-10">
+                            <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col mt-10">
                                 <span className="text-base font-semibold">চতুর্থ শ্রেণিঃ</span>
                                 <p><span className="font-medium">মুসলিম ছাত্র: </span>৪</p>
                                 <p><span className="font-medium">মুসলিম ছাত্রী: </span>৪</p>
@@ -318,7 +318,7 @@ const DataDraft = () => {
                                 <p><span className="font-medium">মোট শিক্ষার্থী: </span>৪</p>
                                 <p><span className="font-medium">বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী: </span>৪</p>
                             </div>
-                            <div className="flex flex-wrap gap-x-12 gap-y-4 mt-10">
+                            <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col mt-10">
                                 <span className="text-base font-semibold">পঞ্চম শ্রেণিঃ</span>
                                 <p><span className="font-medium">মুসলিম ছাত্র: </span>৪</p>
                                 <p><span className="font-medium">মুসলিম ছাত্রী: </span>৪</p>
@@ -331,7 +331,7 @@ const DataDraft = () => {
                                 <p><span className="font-medium">মোট শিক্ষার্থী: </span>৪</p>
                                 <p><span className="font-medium">বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী: </span>৪</p>
                             </div>
-                            <div className="flex flex-wrap gap-x-12 gap-y-4 mt-10">
+                            <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col mt-10">
                                 <span className="text-base font-semibold">ষষ্ঠ শ্রেণিঃ</span>
                                 <p><span className="font-medium">মুসলিম ছাত্র: </span>৪</p>
                                 <p><span className="font-medium">মুসলিম ছাত্রী: </span>৪</p>
@@ -344,7 +344,7 @@ const DataDraft = () => {
                                 <p><span className="font-medium">মোট শিক্ষার্থী: </span>৪</p>
                                 <p><span className="font-medium">বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী: </span>৪</p>
                             </div>
-                            <div className="flex flex-wrap gap-x-12 gap-y-4 mt-10">
+                            <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col mt-10">
                                 <span className="text-base font-semibold">সপ্তম শ্রেণিঃ</span>
                                 <p><span className="font-medium">মুসলিম ছাত্র: </span>৪</p>
                                 <p><span className="font-medium">মুসলিম ছাত্রী: </span>৪</p>
@@ -357,7 +357,7 @@ const DataDraft = () => {
                                 <p><span className="font-medium">মোট শিক্ষার্থী: </span>৪</p>
                                 <p><span className="font-medium">বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী: </span>৪</p>
                             </div>
-                            <div className="flex flex-wrap gap-x-12 gap-y-4 mt-10">
+                            <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col mt-10">
                                 <span className="text-base font-semibold">অষ্টম শ্রেণিঃ</span>
                                 <p><span className="font-medium">মুসলিম ছাত্র: </span>৪</p>
                                 <p><span className="font-medium">মুসলিম ছাত্রী: </span>৪</p>
@@ -373,16 +373,16 @@ const DataDraft = () => {
                         </div>
                     </div>
                     <div className="mt-12">
-                        <h4 className='md:text-[17px] text-lg font-semibold md:mb-5 print:mb-4 print:text-xl text-[#008B4C]'>আশ্রয়ন প্রকল্পের জরিপকৃত তথ্য(৪+...১০+)</h4>
-                        <div className="flex flex-wrap gap-x-12 gap-y-4">
+                        <h4 className='md:text-[17px] text-lg font-semibold md:mb-5 mb-4 print:mb-4 print:text-xl text-[#008B4C]'>আশ্রয়ন প্রকল্পের জরিপকৃত তথ্য(৪+...১০+)</h4>
+                        <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col">
                             <p><span className="font-medium">মোট জরিপকৃত শিক্ষার্থী: </span>৪</p>
                             <p><span className="font-medium">সংশ্লিষ্ট বিদ্যালয়ে ভর্তিকৃত শিক্ষার্থী: </span>৫</p>
                             <p><span className="font-medium">অভর্তিকৃত শিক্ষার্থী: </span>৫</p>
                         </div>
                     </div>
                     {/* <div className="mt-12">
-                        <h4 className='md:text-[17px] text-lg font-semibold md:mb-5 print:mb-4 print:text-xl text-[#008B4C]'>সাধারণ তথ্য</h4>
-                        <div className="flex flex-wrap gap-x-12 gap-y-4">
+                        <h4 className='md:text-[17px] text-lg font-semibold md:mb-5 mb-4 print:mb-4 print:text-xl text-[#008B4C]'>সাধারণ তথ্য</h4>
+                        <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col">
                             <p><span className="font-medium">অনুমোদিত: </span>আছে</p>
                         </div>
                     </div> */}
@@ -395,7 +395,7 @@ const DataDraft = () => {
             </div>
         </div>
 
-     
+
     );
 };
 

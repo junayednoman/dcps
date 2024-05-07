@@ -9,8 +9,8 @@ const Summery = () => {
     ];
     return (
         <div className="p-6 shadow-sm rounded-md bg-white">
-            <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">বিল রিটার্ন সারাংশ</h3>
+            <div className="flex items-center md:flex-row flex-col justify-between mb-4">
+                <h3 className="text-lg font-semibold md:mb-0 mb-3">বিল রিটার্ন সারাংশ</h3>
                 <input
                     type="text"
                     placeholder="সার্চ করুন..."

@@ -45,32 +45,32 @@ const BillHistory = () => {
 
     return (
         <div className="p-6 shadow-sm rounded-md bg-white">
-            <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">জানুয়ারি মাসের বিল রিটার্ন ইতিহাস</h3>
+            <div className="flex items-center md:flex-row flex-col justify-between mb-4">
+                <h3 className="text-lg font-semibold mb-3">জানুয়ারি মাসের বিল রিটার্ন ইতিহাস</h3>
                 <input
                     type="text"
                     placeholder="সার্চ করুন..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="px-4 py-2 mr-4 rounded-md border border-gray-300 focus:outline-none focus:border-[#008B4C]"
+                    className="px-4 py-2rounded-md border border-gray-300 focus:outline-none focus:border-[#008B4C]"
                 />
             </div>
             <table className="w-full table-auto">
                 <thead className="text-left bg-slate-100">
                     <tr>
                         <th className="border px-4 py-2">ক্রমিক</th>
-                        <th className="border px-4 py-2">ইএমআইএস</th>
+                        <th className="border px-4 py-2 md:block hidden">ইএমআইএস</th>
                         <th className="border px-4 py-2">নাম</th>
-                        <th className="border px-4 py-2">একশন</th>
+                        <th className="border px-4 py-2 md:block hidden">একশন</th>
                     </tr>
                 </thead>
                 <tbody>
                     {currentItems.map((item) => (
                         <tr key={item.id}>
                             <td className="border px-4 py-3">{item.id}</td>
-                            <td className="border px-4 py-3">{item.emis}</td>
+                            <td className="border px-4 py-3 md:block hidden">{item.emis}</td>
                             <td className="border px-4 py-3">{item.name}</td>
-                            <td className="border px-4 py-3">
+                            <td className="border px-4 py-3 md:block hidden">
                                 <Link href={`/dashboard/bill-details`} className="text-greenColor font-medium underline">
                                     বিস্তারিত দেখুন
                                 </Link>
@@ -80,7 +80,7 @@ const BillHistory = () => {
                 </tbody>
             </table>
             {/* Pagination */}
-            <div className="mt-6 flex gap-8 items-center justify-between">
+            <div className="mt-6 flex md:flex-row flex-col gap-8 items-center justify-between">
                 <div className="flex items-center gap-5">
                     <h5>{convertToBengaliNumber(tableData.length)} টির মধ্যে ১ থেকে {convertToBengaliNumber(itemsPerPage === 9 ? 10 : itemsPerPage)} পর্যন্ত দেখাচ্ছে</h5>
                     <select
