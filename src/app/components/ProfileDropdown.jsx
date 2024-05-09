@@ -1,12 +1,15 @@
 import { IconButton } from '@mui/material';
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useContext } from 'react';
 import man from "../../media/man.jpg";
 import Image from 'next/image';
 import Link from 'next/link';
 import { FaRegUser } from "react-icons/fa";
 import { MdOutlineLogout } from "react-icons/md";
+import { AuthContext } from '@/authContext/AuthContext';
+import handleLogout from '@/lib/handleLogout';
 
-function ProfileDropdown({ role }) {
+function ProfileDropdown() {
+    const { name, role } = useContext(AuthContext);
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
 
@@ -33,7 +36,7 @@ function ProfileDropdown({ role }) {
                                 <Image className='rounded-md max-w-[60px]' src={man} alt='man-image' width={200} height={100}></Image>
                             </div>
                             <div>
-                                <h5 className='font-semibold text-[16px]'>জোনায়েদ নোমান</h5>
+                                <h5 className='font-semibold text-[16px]'>{name}</h5>
                                 <p className='text-[14px] mt-1'>{role}</p>
                             </div>
                         </div>
@@ -46,9 +49,9 @@ function ProfileDropdown({ role }) {
                             </li>
                         </ul>
                         <hr className='w-full b-0' />
-                        <ul className='text-accentColor space-y-3 px-5'>
+                        <ul className='text-accentColor space-y-3 px-5' onClick={handleLogout}>
                             <li>
-                                <Link href="#" className='flex items-center gap-2'>
+                                <Link href="" className='flex items-center gap-2'>
                                     <MdOutlineLogout className='text-lg' />
                                     <span>লগ আউট</span>
                                 </Link>

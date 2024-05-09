@@ -1,5 +1,7 @@
 import localFont from "next/font/local"
 import "./globals.css";
+import AuthContextProvider from "@/authContext/AuthContext";
+
 
 const notoBengali = localFont({
   src: [
@@ -22,7 +24,11 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={notoBengali.className}>{children}</body>
+      <body className={notoBengali.className}>
+        <AuthContextProvider>
+          {children}
+        </AuthContextProvider>
+      </body>
     </html>
   );
 }

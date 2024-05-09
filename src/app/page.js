@@ -3,6 +3,7 @@ import govLogo from "@/media/gov.svg"
 import Image from "next/image";
 import BodyContainer from "./components/BodyContainer";
 import LoginForm from "./components/LoginForm";
+import { cookies } from "next/headers";
 
 export default function Home() {
   return (

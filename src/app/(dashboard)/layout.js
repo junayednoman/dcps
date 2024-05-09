@@ -18,7 +18,7 @@ import Link from 'next/link';
 import { GoGear } from "react-icons/go";
 import { FaHistory } from "react-icons/fa";
 import { IoMdSearch } from "react-icons/io";
-import { Backdrop, Button, Fade, Modal, Tooltip } from '@mui/material';
+import { Backdrop, Fade, Modal, Tooltip } from '@mui/material';
 import NotificationDropdown from '../components/NotificationDropdown';
 import ProfileDropdown from '../components/ProfileDropdown';
 import localFont from "next/font/local"
@@ -29,9 +29,11 @@ import Image from 'next/image';
 import SearchableSelect from '../components/SearchableSelect';
 import { IoCloseSharp, IoListSharp } from "react-icons/io5";
 import { MdOutlineStickyNote2 } from "react-icons/md";
-import { useWindowSize } from '@uidotdev/usehooks';
 import MobileDrawer from '../components/MobileDrawer';
-
+import { AuthContext } from '@/authContext/AuthContext';
+import Loading from '../components/Loading';
+import { LuUsers } from "react-icons/lu";
+import handleLogout from '@/lib/handleLogout';
 
 // font
 const notoBengali = localFont({
@@ -113,7 +115,6 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 const subMenuItems = [
     { label: "সেটিংস", link: "/dashboard/settings", icon: <GoGear className='text-xl' /> },
     { label: "সাহায্য ও সহযোগিতা", link: "/dashboard/help", icon: <FaRegCircleQuestion className='text-xl' /> },
-    { label: "লগ আউট", link: "/dashboard/help", icon: <MdOutlineLogout className='text-xl' /> },
 ];
 
 const modalStyle = {
@@ -152,6 +153,8 @@ const schoolOptions = [
 
 
 export default function DashboardLayout({ children }) {
+    const { role, loading } = React.useContext(AuthContext);
+
     // modal related
     const [modalOpen, setModalOpen] = React.useState(false);
     const handleModalOpen = () => setModalOpen(true);
@@ -169,9 +172,9 @@ export default function DashboardLayout({ children }) {
         setSchoolSelectedOption(schoolSelectedOption);
     };
 
+
     const theme = useTheme();
     const [activeMenuItem, setActiveMenuItem] = React.useState("");
-    const [role, setRole] = React.useState("উপজেলা শিক্ষা অফিসার");
     React.useEffect(() => {
         const location = window.location.pathname;
 
@@ -183,8 +186,12 @@ export default function DashboardLayout({ children }) {
             setActiveMenuItem("list")
         } else if (location.includes("summery")) {
             setActiveMenuItem("summery")
+        } else if (location.includes("users")) {
+            setActiveMenuItem("users")
         }
     }, []);
+
+
 
     const [open, setOpen] = React.useState(true);
     const handleDrawerOpen = () => {
@@ -194,12 +201,9 @@ export default function DashboardLayout({ children }) {
     const handleDrawerClose = () => {
         setOpen(false);
     };
-
-    const [openMobileDrawer, setOpenMobileDrawer] = React.useState(false);
-
-    const toggleDrawer = (newOpenMobileDrawer) => () => {
-        setOpenMobileDrawer(newOpenMobileDrawer);
-    };
+    if (loading) {
+        return <Loading />
+    }
 
     return (
         <main className={notoBengali.className}>
@@ -321,7 +325,7 @@ export default function DashboardLayout({ children }) {
                                     </Link>
                                 </ListItem>
                             }
-                            {role === "সহকারি উপজেলা শিক্ষা অফিসার" || role === "উপজেলা শিক্ষা অফিসার" &&
+                            {role === "সহকারি উপজেলা শিক্ষা অফিসার" || role === "উপজেলা শিক্ষা অফিসার" ?
                                 <>
                                     <ListItem onClick={() => setActiveMenuItem("list")} disablePadding sx={{ display: 'block' }}>
                                         <Link href={'/dashboard/bill-return-list'}>
@@ -343,60 +347,74 @@ export default function DashboardLayout({ children }) {
                                             </ListItemButton>
                                         </Link>
                                     </ListItem>
-                                </>
+
+                                    <ListItem onClick={() => setActiveMenuItem("users")} disablePadding sx={{ display: 'block' }}>
+                                        <Link href={'/dashboard/users'}>
+                                            <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }}>
+                                                <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', }}>
+                                                    <LuUsers className='text-xl' style={{ color: activeMenuItem === "users" && "#008B4C" }} />
+                                                </ListItemIcon>
+                                                <ListItemText className={`capitalize mt-2`} style={{ color: activeMenuItem === "users" && "#008B4C" }} primary={'ইউজারস'} sx={{ opacity: open ? 1 : 0 }} />
+                                            </ListItemButton>
+                                        </Link>
+                                    </ListItem>
+
+                                </> : ''
                             }
-                            <ListItem onClick={() => setActiveMenuItem("history")} disablePadding sx={{ display: 'block' }}>
-                                <button onClick={handleModalOpen}>
-                                    <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }}>
-                                        <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', }}>
-                                            <FaHistory style={{ color: activeMenuItem === "history" && "#008B4C" }} className='text-xl' />
-                                        </ListItemIcon>
-                                        <ListItemText style={{ color: activeMenuItem === "history" && "#008B4C" }} className={`capitalize mt-2`} primary={'বিল রিটার্ন ইতিহাস'} sx={{ opacity: open ? 1 : 0 }} />
-                                    </ListItemButton>
-                                </button>
-                                <div>
-                                    <Modal
-                                        aria-labelledby="transition-modal-title"
-                                        aria-describedby="transition-modal-description"
-                                        open={modalOpen}
-                                        onClose={handleModalClose}
-                                        closeAfterTransition
-                                        slots={{ backdrop: Backdrop }}
-                                        slotProps={{
-                                            backdrop: {
-                                                timeout: 500,
-                                            },
-                                        }}
-                                    >
-                                        <Fade in={modalOpen}>
-                                            <Box sx={modalStyle}>
-                                                <button className='w-full cursor-default'>
-                                                    <IoCloseSharp onClick={handleModalClose} className='text-2xl ml-auto cursor-pointer' />
-                                                </button>
-                                                <form className='mt-3'>
-                                                    <div className="mb-4">
-                                                        <h1>বিল সাবমিটের মাস সিলেক্ট করুন</h1>
-                                                        <SearchableSelect
-                                                            options={monthOptions}
-                                                            onChange={handleMonthSelectChange}
-                                                            value={monthSelectedOption}
-                                                        />
-                                                    </div>
-                                                    <div className="mb-4">
-                                                        <h1>বিদ্যালয় সিলেক্ট করুন</h1>
-                                                        <SearchableSelect
-                                                            options={schoolOptions}
-                                                            onChange={handleSchoolSelectChange}
-                                                            value={schoolSelectedOption}
-                                                        />
-                                                    </div>
-                                                    <Link onClick={handleModalClose} href={'/dashboard/bill-return-history'} className="px-4 py-[6px] pt-2 bg-primaryColor border border-primaryColor hover:bg-textColor text-white rounded-md font-medium capitalize mt-4">সার্চ করুন</Link>
-                                                </form>
-                                            </Box>
-                                        </Fade>
-                                    </Modal>
-                                </div>
-                            </ListItem>
+                            {role && role !== "উপজেলা শিক্ষা অফিসার" &&
+                                <ListItem onClick={() => setActiveMenuItem("history")} disablePadding sx={{ display: 'block' }}>
+                                    <button onClick={handleModalOpen}>
+                                        <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }}>
+                                            <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', }}>
+                                                <FaHistory style={{ color: activeMenuItem === "history" && "#008B4C" }} className='text-xl' />
+                                            </ListItemIcon>
+                                            <ListItemText style={{ color: activeMenuItem === "history" && "#008B4C" }} className={`capitalize mt-2`} primary={'বিল রিটার্ন ইতিহাস'} sx={{ opacity: open ? 1 : 0 }} />
+                                        </ListItemButton>
+                                    </button>
+                                    <div>
+                                        <Modal
+                                            aria-labelledby="transition-modal-title"
+                                            aria-describedby="transition-modal-description"
+                                            open={modalOpen}
+                                            onClose={handleModalClose}
+                                            closeAfterTransition
+                                            slots={{ backdrop: Backdrop }}
+                                            slotProps={{
+                                                backdrop: {
+                                                    timeout: 500,
+                                                },
+                                            }}
+                                        >
+                                            <Fade in={modalOpen}>
+                                                <Box sx={modalStyle}>
+                                                    <button className='w-full cursor-default'>
+                                                        <IoCloseSharp onClick={handleModalClose} className='text-2xl ml-auto cursor-pointer' />
+                                                    </button>
+                                                    <form className='mt-3'>
+                                                        <div className="mb-4">
+                                                            <h1>বিল সাবমিটের মাস সিলেক্ট করুন</h1>
+                                                            <SearchableSelect
+                                                                options={monthOptions}
+                                                                onChange={handleMonthSelectChange}
+                                                                value={monthSelectedOption}
+                                                            />
+                                                        </div>
+                                                        <div className="mb-4">
+                                                            <h1>বিদ্যালয় সিলেক্ট করুন</h1>
+                                                            <SearchableSelect
+                                                                options={schoolOptions}
+                                                                onChange={handleSchoolSelectChange}
+                                                                value={schoolSelectedOption}
+                                                            />
+                                                        </div>
+                                                        <Link onClick={handleModalClose} href={'/dashboard/bill-return-history'} className="px-4 py-[6px] pt-2 bg-primaryColor border border-primaryColor hover:bg-textColor text-white rounded-md font-medium capitalize mt-4">সার্চ করুন</Link>
+                                                    </form>
+                                                </Box>
+                                            </Fade>
+                                        </Modal>
+                                    </div>
+                                </ListItem>
+                            }
                         </List>
 
                         <Divider />
@@ -427,6 +445,17 @@ export default function DashboardLayout({ children }) {
                                     </Link>
                                 </ListItem>
                             ))}
+                            {/* { label: "লগ আউট", link: "/dashboard/help", icon: <MdOutlineLogout className='text-xl' /> }, */}
+                            <ListItem onClick={handleLogout} disablePadding sx={{ display: 'block' }}>
+                                <Link href={''}>
+                                    <ListItemButton sx={{ minHeight: 48, justifyContent: open ? 'initial' : 'center', px: 2.5, }}>
+                                        <ListItemIcon sx={{ minWidth: 0, mr: open ? 3 : 'auto', justifyContent: 'center', }}>
+                                            <MdOutlineLogout className='text-xl' style={{ color: activeMenuItem === "logout" && "#008B4C" }} />
+                                        </ListItemIcon>
+                                        <ListItemText className={`capitalize mt-2`} style={{ color: activeMenuItem === "logout" && "#008B4C" }} primary={'লগ আউট'} sx={{ opacity: open ? 1 : 0 }} />
+                                    </ListItemButton>
+                                </Link>
+                            </ListItem>
                         </List>
                     </div>
                 </Drawer>
