@@ -29,7 +29,7 @@ export async function POST(req, res) {
                 })
                 return response;
             } else {
-                return NextResponse.json({ message: "Invalid credentials!" });
+                return NextResponse.json({ message: "Invalid credentials no user!" });
             }
         } catch (error) {
             console.error(error);
