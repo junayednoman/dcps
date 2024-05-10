@@ -38,7 +38,7 @@ const LoginForm = () => {
                         window.location = "/dashboard";
                     }, 1200)
                 } else {
-                    toast.warn("তথ্য সঠিক নয়!")
+                    toast.warn(data.message)
                 }
             })
             .catch(error => {
