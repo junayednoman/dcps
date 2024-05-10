@@ -15,7 +15,7 @@ const LoginForm = () => {
     const [loading, setLoading] = useState(false);
     const handleSubmit = (values) => {
         setLoading(true)
-        const apiUrl = "http://localhost:3000/api/auth/sign-in";
+        const apiUrl = "https://dmsp.vercel.app/api/auth/sign-in";
         axios.post(apiUrl, values)
             .then(res => {
                 if (res.data.role && res.status === 200) {
