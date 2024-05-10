@@ -2,7 +2,6 @@
 import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import axios from "axios";
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from "react-toastify";
 
@@ -13,26 +12,42 @@ const validationSchema = Yup.object().shape({
 
 const LoginForm = () => {
     const [loading, setLoading] = useState(false);
-    const handleSubmit = (values) => {
+    const handleSubmit = async (values) => {
         setLoading(true)
         const apiUrl = "https://dmsp.vercel.app/api/auth/sign-in";
-        axios.post(apiUrl, values)
-            .then(res => {
-                if (res.data.role && res.status === 200) {
-                    localStorage.setItem("userInfo", JSON.stringify({ name: res.data.name, role: res.data.role }));
-                    toast.success(res.data.message)
-                    console.log(res.data.name);
-                    window.location = "/dashboard"
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(values)
+        })
+            .then(response => {
+                console.log(response);
+                if (response.ok) {
                 } else {
-                    console.log(res);
-                    toast.warning(res.data.message)
+                    throw new Error('Network response was not ok');
                 }
-            }).catch(err => {
-                console.log('err', err);
-                toast.error(err.response.statusText)
-            }).finally(() => {
-                setLoading(false)
+                return response.json();
+            }).then(data => {
+                console.log(data);
+                if (data && data.message === "Logged in successfully") {
+                    localStorage.setItem("userInfo", JSON.stringify({ name: data.name, role: data.role }));
+                    toast.success("সাইন ইন সফল হয়েছে!")
+                    setTimeout(() => {
+                        window.location = "/dashboard";
+                    }, 1200)
+                } else {
+                    toast.warn("তথ্য সঠিক নয়!")
+                }
             })
+            .catch(error => {
+                toast.error('There was an error!');
+                console.error('There was an error!', error);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
     };
 
     return (

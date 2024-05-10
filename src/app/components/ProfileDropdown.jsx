@@ -16,6 +16,16 @@ function ProfileDropdown() {
     const handleIconClick = () => {
         setIsOpen(!isOpen);
     }
+    const handleLogoutUser = async () => {
+        try {
+            const logOut = await handleLogout();
+            if (logOut && logOut.isLoggedOut) {
+                window.location = "/";
+            }
+        } catch (error) {
+            console.log("Error logging out!");
+        }
+    }
 
     return (
         <div className="dropdown relative" ref={dropdownRef}>
@@ -49,7 +59,7 @@ function ProfileDropdown() {
                             </li>
                         </ul>
                         <hr className='w-full b-0' />
-                        <ul className='text-accentColor space-y-3 px-5' onClick={handleLogout}>
+                        <ul className='text-accentColor space-y-3 px-5' onClick={handleLogoutUser}>
                             <li>
                                 <Link href="" className='flex items-center gap-2'>
                                     <MdOutlineLogout className='text-lg' />

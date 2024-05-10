@@ -8,11 +8,13 @@ const AuthContextProvider = ({ children }) => {
     const [name, setName] = useState("");
     useEffect(() => {
         setLoading(true)
-        console.log(document.cookie);
         try {
             const userInfo = localStorage.getItem("userInfo");
-            const { name, role } = JSON.parse(userInfo);
-            setName(name);
+            if (userInfo) {
+                const { name, role } = JSON.parse(userInfo);
+                setName(name);
+                setRole(role);
+            }
             if (role) {
                 if (role === "ueo") {
                     setRole("উপজেলা শিক্ষা অফিসার");
@@ -28,7 +30,7 @@ const AuthContextProvider = ({ children }) => {
             setLoading(false)
         }
     }, [])
-    
+
     const authInfo = {
         role,
         name,
