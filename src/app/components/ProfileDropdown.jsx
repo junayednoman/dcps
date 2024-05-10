@@ -10,6 +10,7 @@ import handleLogout from '@/lib/handleLogout';
 
 function ProfileDropdown() {
     const { name, role } = useContext(AuthContext);
+    console.log(role);
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
 

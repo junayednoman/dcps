@@ -17,6 +17,3 @@ export async function POST(req, res) {
         return NextResponse.json({ message: "Method not allowed!" });
     }
 }
-// async function delete(data) {
-//   cookies().delete('name')
-// }

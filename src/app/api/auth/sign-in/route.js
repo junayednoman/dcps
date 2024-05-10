@@ -8,9 +8,7 @@ export async function POST(req, res) {
         try {
             const db = await getDb();
             const user = await db.collection('users').findOne({ emis: emis });
-            if (!user) {
-                return NextResponse.json({ message: "Invalid credentials!" });
-            } else {
+            if (user) {
                 if (user.password !== password) {
                     return NextResponse.json({ message: "Invalid credentials!" });
                 }
@@ -30,6 +28,9 @@ export async function POST(req, res) {
                     maxAge: 86400,
                 })
                 return response;
+            } else {
+                return NextResponse.json({ message: "Invalid credentials!" });
+
             }
         } catch (error) {
             console.error(error);

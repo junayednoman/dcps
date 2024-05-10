@@ -10,20 +10,21 @@ const AuthContextProvider = ({ children }) => {
         setLoading(true)
         try {
             const userInfo = localStorage.getItem("userInfo");
+
             if (userInfo) {
-                const { name, role } = JSON.parse(userInfo);
-                setName(name);
-                setRole(role);
-            }
-            if (role) {
-                if (role === "ueo") {
-                    setRole("উপজেলা শিক্ষা অফিসার");
-                } else if (role === "aueo") {
-                    setRole("সহকারি উপজেলা শিক্ষা অফিসার");
-                } else {
-                    setRole("প্রধান শিক্ষক");
+                const { name: userName, role: userRole } = JSON.parse(userInfo);
+                setName(userName);
+                if (userRole) {
+                    if (userRole === "ueo") {
+                        setRole("উপজেলা শিক্ষা অফিসার");
+                    } else if (userRole === "aueo") {
+                        setRole("সহকারি উপজেলা শিক্ষা অফিসার");
+                    } else if (userRole === "head-master") {
+                        setRole("প্রধান শিক্ষক");
+                    }
                 }
             }
+
         } catch (error) {
             console.log(error);
         } finally {
