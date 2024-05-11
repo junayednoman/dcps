@@ -10,7 +10,7 @@ export async function POST(req, res) {
             const user = await db.collection('users').findOne({ emis: emis });
             if (user) {
                 if (user.password !== password) {
-                    return NextResponse.json({ message: "Invalid credentialsssssssss!" });
+                    return NextResponse.json({ message: "Invalid credentials!" });
                 }
                 const payload = {
                     emis: emis,
@@ -29,7 +29,7 @@ export async function POST(req, res) {
                 })
                 return response;
             } else {
-                return NextResponse.json({ message: "Invalid credentials no user!" });
+                return NextResponse.json({ message: "Invalid credentials!" });
             }
         } catch (error) {
             console.error(error);

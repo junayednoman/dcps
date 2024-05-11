@@ -14,7 +14,7 @@ const LoginForm = () => {
     const [loading, setLoading] = useState(false);
     const handleSubmit = async (values) => {
         setLoading(true)
-        const apiUrl = "https://dmsp.vercel.app/api/auth/sign-in";
+        const apiUrl = "http://localhost:3000/api/auth/sign-in";
         fetch(apiUrl, {
             method: 'POST',
             headers: {
@@ -36,9 +36,9 @@ const LoginForm = () => {
                     toast.success("সাইন ইন সফল হয়েছে!")
                     setTimeout(() => {
                         window.location = "/dashboard";
-                    }, 1200)
+                    }, 1000)
                 } else {
-                    toast.warn(data.message)
+                    toast.warn("তথ্য সঠিক নয়!")
                 }
             })
             .catch(error => {

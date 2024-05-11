@@ -1,5 +1,5 @@
 import { Field } from 'formik';
-const NumberField = ({ name, label, placeholder, handleChange, value }) => {
+const NumberField = ({ name, label, placeholder, value }) => {
     return (
         <div className="mb-4">
             <label className="font-semibold" htmlFor={name}>{label}</label>

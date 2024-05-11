@@ -308,6 +308,23 @@ select option {
   z-index: 9999;
 }
 
+.css-t3ipsp-control {
+  margin-top: 4px !important;
+  height: 44px !important;
+  border: 1px solid #000 !important;
+  border-radius: 6px !important;
+}
+.css-t3ipsp-control:focus {
+  outline: #000 !important;
+}
+
+.css-13cymwt-control {
+  margin-top: 4px !important;
+  height: 44px !important;
+  border: 1px solid #000 !important;
+  border-radius: 6px !important;
+}
+
 @media (max-width: 768px) {
   .open_close_btn_mobile_drawer {
     top: 10px !important;
