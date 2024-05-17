@@ -262,6 +262,12 @@ select option {
   color: #008B4C !important;
 }
 
+.btnSpinner {
+  color: #fff !important;
+  width: 20px !important;
+  height: 20px !important;
+}
+
 /* print styles */
 
 
@@ -314,6 +320,7 @@ select option {
   border: 1px solid #000 !important;
   border-radius: 6px !important;
 }
+
 .css-t3ipsp-control:focus {
   outline: #000 !important;
 }

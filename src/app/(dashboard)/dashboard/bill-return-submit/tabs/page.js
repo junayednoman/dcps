@@ -330,7 +330,7 @@ const BilReturnSubmit = () => {
                                                                 <label className='font-semibold' htmlFor={`building_situation_1`}>ভবন ১ এর বর্তমান অবস্থা*</label>
                                                                 <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`building_situation_1`} id={`building_situation_1`}>
                                                                     <option className='text-gray-300' value="Select an option" selected >ভবনের অবস্থা সিলেক্ট করুন</option>
-                                                                    <option value="ভাল">ভাল</option>
+                                                                    <option value="ভালো">ভালো</option>
                                                                     <option value="জরাজীর্ণ">জরাজীর্ণ</option>
                                                                     <option value="পরিত্যাক্ত">পরিত্যাক্ত</option>
                                                                     <option value="পরিত্যাক্ত">ঝুঁকিপূর্ণ</option>
@@ -346,7 +346,7 @@ const BilReturnSubmit = () => {
                                                                 <label className='font-semibold' htmlFor={`building_situation_2`}>ভবন 2 এর বর্তমান অবস্থা*</label>
                                                                 <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`building_situation_2`} id={`building_situation_2`}>
                                                                     <option className='text-gray-300' value="Select an option" selected>ভবনের অবস্থা সিলেক্ট করুন</option>
-                                                                    <option value="ভাল">ভাল</option>
+                                                                    <option value="ভালো">ভালো</option>
                                                                     <option value="জরাজীর্ণ">জরাজীর্ণ</option>
                                                                     <option value="পরিত্যাক্ত">পরিত্যাক্ত</option>
                                                                 </Field>
@@ -370,7 +370,7 @@ const BilReturnSubmit = () => {
                                                                 <label className='font-semibold' htmlFor={`building_situation_3`}>ভবন ৩ এর বর্তমান অবস্থা*</label>
                                                                 <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`building_situation_3`} id={`building_situation_3`}>
                                                                     <option className='text-gray-300' value="Select an option" selected>ভবনের অবস্থা সিলেক্ট করুন</option>
-                                                                    <option value="ভাল">ভাল</option>
+                                                                    <option value="ভালো">ভালো</option>
                                                                     <option value="জরাজীর্ণ">জরাজীর্ণ</option>
                                                                     <option value="পরিত্যাক্ত">পরিত্যাক্ত</option>
                                                                 </Field>
@@ -394,7 +394,7 @@ const BilReturnSubmit = () => {
                                                                 <label className='font-semibold' htmlFor={`building_situation_4`}>ভবন ৪ এর বর্তমান অবস্থা*</label>
                                                                 <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`building_situation_4`} id={`building_situation_4`}>
                                                                     <option className='text-gray-300' value="Select an option" selected>ভবনের অবস্থা সিলেক্ট করুন</option>
-                                                                    <option value="ভাল">ভাল</option>
+                                                                    <option value="ভালো">ভালো</option>
                                                                     <option value="জরাজীর্ণ">জরাজীর্ণ</option>
                                                                     <option value="পরিত্যাক্ত">পরিত্যাক্ত</option>
                                                                 </Field>
@@ -427,7 +427,7 @@ const BilReturnSubmit = () => {
                                                         <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name="school.infrastructure.separated_nursery_class" id="have_nursery_class">
                                                             <option className='text-gray-300' value="Select an option" selected>একটি অপশন সিলেক্ট করুন</option>
                                                             <option value="আছে">আছে</option>
-                                                            <option value="নাই">নাই</option>
+                                                            <option value="নেই">নেই</option>
                                                         </Field>
                                                     </div>
 
@@ -436,7 +436,7 @@ const BilReturnSubmit = () => {
                                                         <Field onChange={handleBorderWallChange} className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name="school.infrastructure.border_wall.wall" id="border_wall">
                                                             <option className='text-gray-300' value="Select an option" selected>একটি অপশন সিলেক্ট করুন</option>
                                                             <option value="আছে">আছে</option>
-                                                            <option value="নাই">নাই</option>
+                                                            <option value="নেই">নেই</option>
                                                         </Field>
                                                     </div>
                                                     {borderWall === 'আছে' &&
@@ -462,7 +462,7 @@ const BilReturnSubmit = () => {
                                                         <Field onChange={handleWashBlockChange} className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name="school.infrastructure.wash_block" id="wash_block">
                                                             <option className='text-gray-300' value="Select an option" selected>একটি অপশন সিলেক্ট করুন</option>
                                                             <option value="আছে">আছে</option>
-                                                            <option value="নাই">নাই</option>
+                                                            <option value="নেই">নেই</option>
                                                         </Field>
                                                     </div>
 
@@ -488,7 +488,7 @@ const BilReturnSubmit = () => {
                                                                     <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`school.infrastructure.others.shahid_minar`} id={`shahid_minar`}>
                                                                         <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
                                                                         <option value="আছে">আছে</option>
-                                                                        <option value="নাই">নাই</option>
+                                                                        <option value="নেই">নেই</option>
                                                                     </Field>
                                                                 </div>
 
@@ -497,7 +497,7 @@ const BilReturnSubmit = () => {
                                                                     <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`school.infrastructure.others.freedom_fight_corner`} id={`liberation_war_corner`}>
                                                                         <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
                                                                         <option value="আছে">আছে</option>
-                                                                        <option value="নাই">নাই</option>
+                                                                        <option value="নেই">নেই</option>
                                                                     </Field>
                                                                 </div>
 
@@ -506,7 +506,7 @@ const BilReturnSubmit = () => {
                                                                     <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`school.infrastructure.others.rasel_corner`} id={`sheikh_rasel_corner`}>
                                                                         <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
                                                                         <option value="আছে">আছে</option>
-                                                                        <option value="নাই">নাই</option>
+                                                                        <option value="নেই">নেই</option>
                                                                     </Field>
                                                                 </div>
 
@@ -515,7 +515,7 @@ const BilReturnSubmit = () => {
                                                                     <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`school.infrastructure.others.garden`} id={`roof_garden`}>
                                                                         <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
                                                                         <option value="আছে">আছে</option>
-                                                                        <option value="নাই">নাই</option>
+                                                                        <option value="নেই">নেই</option>
                                                                     </Field>
                                                                 </div>
 
@@ -595,7 +595,7 @@ const BilReturnSubmit = () => {
                                                                     <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`others.electricity_connection`} id={`electricity`}>
                                                                         <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
                                                                         <option value="আছে">আছে</option>
-                                                                        <option value="নাই">নাই</option>
+                                                                        <option value="নেই">নেই</option>
                                                                     </Field>
                                                                 </div>
                                                             </div>
@@ -627,7 +627,7 @@ const BilReturnSubmit = () => {
                                                                         <label className='font-semibold' htmlFor={`tubewell_condition`}>টিউবওয়েল এর বর্তমান অবস্থা*</label>
                                                                         <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`others.water.tube_wells_condition`} id={`tubewell_condition`}>
                                                                             <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
-                                                                            <option value="ভাল">ভাল</option>
+                                                                            <option value="ভালো">ভালো</option>
                                                                             <option value="পরিত্যক্ত">মেরামতযোগ্য</option>
                                                                         </Field>
                                                                     </div>
@@ -647,7 +647,7 @@ const BilReturnSubmit = () => {
                                                                         <label className='font-semibold' htmlFor={`deep_tubewell_condition`}>ডিপ টিউবওয়েল এর বর্তমান অবস্থা*</label>
                                                                         <Field className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]" as="select" name={`others.water.deep_tube_wells_condition`} id={`deep_tubewell_condition`}>
                                                                             <option className='text-gray-300' value="একটি অপশন সিলেক্ট করুন" selected >একটি অপশন সিলেক্ট করুন</option>
-                                                                            <option value="ভাল">ভাল</option>
+                                                                            <option value="ভালো">ভালো</option>
                                                                             <option value="পরিত্যক্ত">মেরামতযোগ্য</option>
                                                                         </Field>
                                                                     </div>

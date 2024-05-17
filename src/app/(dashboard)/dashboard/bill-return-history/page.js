@@ -52,7 +52,7 @@ const BillHistory = () => {
                     placeholder="সার্চ করুন..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="px-4 py-2rounded-md border border-gray-300 focus:outline-none focus:border-[#008B4C]"
+                    className="px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:border-[#008B4C]"
                 />
             </div>
             <table className="w-full table-auto">
