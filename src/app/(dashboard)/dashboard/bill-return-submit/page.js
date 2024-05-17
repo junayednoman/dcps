@@ -203,7 +203,7 @@ const BilReturnSubmit = () => {
             // formData.student.admission = values.class_seven;
             // formData.student.admission = values.class_eight;
             formData.student.asroyon_survey = values.asroyon_survey;
-            const apiUrl = "http://localhost:3000/api/bill-return/submit";
+            const apiUrl = "https://dmsp.vercel.app/api/bill-return/submit";
             fetch(apiUrl, {
                 method: 'POST',
                 headers: {

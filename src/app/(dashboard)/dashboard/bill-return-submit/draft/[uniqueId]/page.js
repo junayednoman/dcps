@@ -10,7 +10,7 @@ const DataDraft = ({ params }) => {
     const [loading, setLoading] = useState()
     useEffect(() => {
         setLoading(true)
-        const apiUrl = "http://localhost:3000/api/bill-return/get";
+        const apiUrl = "https://dmsp.vercel.app/api/bill-return/get";
         fetch(apiUrl, {
             method: 'POST',
             headers: {
