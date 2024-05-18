@@ -1,90 +1,118 @@
-"use client"
+"use client";
 import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 
 const validationSchema = Yup.object().shape({
-    emis: Yup.string().required("ইএমআইএস কোড আবশ্যক"),
-    password: Yup.string().required("পাসওয়ার্ড আবশ্যক"),
+  emis: Yup.string().required("ইএমআইএস কোড আবশ্যক"),
+  password: Yup.string().required("পাসওয়ার্ড আবশ্যক"),
 });
 
 const LoginForm = () => {
-    const [loading, setLoading] = useState(false);
-    const handleSubmit = async (values) => {
-        setLoading(true)
-        const apiUrl = "https://dmsp.vercel.app/api/auth/sign-in";
-        fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(values)
-        })
-            .then(response => {
-                console.log(response);
-                if (response.ok) {
-                } else {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            }).then(data => {
-                console.log(data);
-                if (data && data.message === "Logged in successfully") {
-                    localStorage.setItem("userInfo", JSON.stringify({ name: data.name, role: data.role }));
-                    toast.success("সাইন ইন সফল হয়েছে!")
-                    setTimeout(() => {
-                        window.location = "/dashboard";
-                    }, 1000)
-                } else {
-                    toast.warn("তথ্য সঠিক নয়!")
-                }
-            })
-            .catch(error => {
-                toast.error('There was an error!');
-                console.error('There was an error!', error);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-    };
+  const [loading, setLoading] = useState(false);
+  const handleSubmit = async (values) => {
+    setLoading(true);
+    const apiUrl = "https://dmsp.vercel.app/api/auth/sign-in";
+    fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(values),
+    })
+      .then((response) => {
+        console.log(response);
+        if (response.ok) {
+        } else {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        if (data && data.message === "Logged in successfully") {
+          localStorage.setItem(
+            "userInfo",
+            JSON.stringify({ name: data.name, role: data.role })
+          );
+          toast.success("সাইন ইন সফল হয়েছে!");
+          setTimeout(() => {
+            window.location = "/dashboard";
+          }, 1000);
+        } else {
+          toast.warn("তথ্য সঠিক নয়!");
+        }
+      })
+      .catch((error) => {
+        toast.error("There was an error!");
+        console.error("There was an error!", error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
-    return (
-        <>
-            <Formik
-                initialValues={{ emis: "", password: "" }}
-                validationSchema={validationSchema}
-                onSubmit={handleSubmit}
-            >
-                {({ isSubmitting }) => (
-                    <Form>
-                        <div className="mb-4">
-                            <label className="font-semibold" htmlFor="emis">EMIS*</label>
-                            {/* <TextField label="বিদ্যালয়ের নাম" placeholder={"বিদ্যালয়ের EMIS কোড দিন"} /> */}
-                            <Field id="emis" name="emis" placeholder="বিদ্যালয়ের EMIS কোড দিন" className="md:h-[50px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1" type="text" />
-                            <ErrorMessage name="emis" component="div" className="text-[#ED1C24] text-sm mt-1" />
-                        </div>
+  return (
+    <>
+      <Formik
+        initialValues={{ emis: "", password: "" }}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+        {({ isSubmitting }) => (
+          <Form>
+            <div className="mb-4">
+              <label className="font-semibold" htmlFor="emis">
+                EMIS*
+              </label>
+              {/* <TextField label="বিদ্যালয়ের নাম" placeholder={"বিদ্যালয়ের EMIS কোড দিন"} /> */}
+              <Field
+                id="emis"
+                name="emis"
+                placeholder="বিদ্যালয়ের EMIS কোড দিন"
+                className="md:h-[50px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1"
+                type="text"
+              />
+              <ErrorMessage
+                name="emis"
+                component="div"
+                className="text-[#ED1C24] text-sm mt-1"
+              />
+            </div>
 
-                        <div className="mb-4">
-                            <label className="font-semibold" htmlFor="password">পাসওয়ার্ড*</label>
-                            <Field className="md:h-[50px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1" type="password" name="password" id="password" placeholder="আপনার পাসওয়ার্ড দিন" />
-                            <ErrorMessage name="password" component="div" className="text-[#ED1C24] text-sm mt-1" />
-                        </div>
+            <div className="mb-4">
+              <label className="font-semibold" htmlFor="password">
+                পাসওয়ার্ড*
+              </label>
+              <Field
+                className="md:h-[50px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1"
+                type="password"
+                name="password"
+                id="password"
+                placeholder="আপনার পাসওয়ার্ড দিন"
+              />
+              <ErrorMessage
+                name="password"
+                component="div"
+                className="text-[#ED1C24] text-sm mt-1"
+              />
+            </div>
 
-                        <div>
-                            <button type="submit" disabled={loading} className="px-6 md:py-[10px] py-[6px] md:pt-[15px] pt-[10px] bg-primaryColor border border-primaryColor hover:bg-textColor text-white rounded-md font-semibold capitalize mt-1">{`${loading ?
-                                'লোড হচ্ছে...'
-
-
-                                : "সাইন ইন"}`}</button>
-                        </div>
-                    </Form>
-                )}
-            </Formik>
-            <ToastContainer autoClose={1400} />
-        </>
-    );
+            <div>
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-6 md:py-[10px] py-[6px] md:pt-[15px] pt-[10px] bg-primaryColor border border-primaryColor hover:bg-textColor text-white rounded-md font-semibold capitalize mt-1"
+              >{`${loading ? "লোড হচ্ছে..." : "সাইন ইন"}`}</button>
+            </div>
+          </Form>
+        )}
+      </Formik>
+      <ToastContainer autoClose={1400} />
+    </>
+  );
 };
 
 export default LoginForm;

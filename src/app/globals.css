@@ -1,14 +1,12 @@
 /* import google font */
-@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap");
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 * {
-  font-family:
-    '__notoBengali_2f1964',
-    '__notoBengali_Fallback_2f1964' !important;
+  font-family: "__notoBengali_2f1964", "__notoBengali_Fallback_2f1964" !important;
 }
 
 p {
@@ -44,18 +42,17 @@ body {
 }
 
 .css-1h9z7r5-MuiButtonBase-root-MuiTab-root.Mui-selected {
-  color: #008B4C !important;
-  border-bottom: 3px solid #008B4C !important;
+  color: #008b4c !important;
+  border-bottom: 3px solid #008b4c !important;
 }
 
 .css-1q2h7u5.Mui-selected {
-  border-bottom: 3px solid #008B4C !important;
-  color: #008B4C !important;
+  border-bottom: 3px solid #008b4c !important;
+  color: #008b4c !important;
 }
 
-
 .css-1m5i5w0-MuiButtonBase-root-MuiListItemButton-root:hover {
-  color: #008B4C !important;
+  color: #008b4c !important;
 }
 
 .instaIcon:hover {
@@ -206,7 +203,6 @@ select option {
   width: 100% !important;
 }
 
-
 /* Styles for the accordion */
 .accordion {
   width: 100%;
@@ -259,7 +255,7 @@ select option {
 }
 
 .spinner {
-  color: #008B4C !important;
+  color: #008b4c !important;
 }
 
 .btnSpinner {
@@ -268,8 +264,13 @@ select option {
   height: 20px !important;
 }
 
+.css-13cymwt-control {
+  max-height: 30px !important;
+}
+.css-t3ipsp-control {
+  max-height: 30px !important;
+}
 /* print styles */
-
 
 @media print {
   body * {
