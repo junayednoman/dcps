@@ -556,49 +556,51 @@ export default function DashboardLayout({ children }) {
                       </ListItemButton>
                     </Link>
                   </ListItem>
-
-                  <ListItem
-                    onClick={() => setActiveMenuItem("users")}
-                    disablePadding
-                    sx={{ display: "block" }}
-                  >
-                    <Link href={"/dashboard/users"}>
-                      <ListItemButton
-                        sx={{
-                          minHeight: 48,
-                          justifyContent: open ? "initial" : "center",
-                          px: 2.5,
-                        }}
-                      >
-                        <ListItemIcon
-                          sx={{
-                            minWidth: 0,
-                            mr: open ? 3 : "auto",
-                            justifyContent: "center",
-                          }}
-                        >
-                          <LuUsers
-                            className="text-xl"
-                            style={{
-                              color: activeMenuItem === "users" && "#008B4C",
-                            }}
-                          />
-                        </ListItemIcon>
-                        <ListItemText
-                          className={`capitalize mt-2`}
-                          style={{
-                            color: activeMenuItem === "users" && "#008B4C",
-                          }}
-                          primary={"ইউজারস"}
-                          sx={{ opacity: open ? 1 : 0 }}
-                        />
-                      </ListItemButton>
-                    </Link>
-                  </ListItem>
                 </>
               ) : (
                 ""
               )}
+              {role === "উপজেলা শিক্ষা অফিসার" && (
+                <ListItem
+                  onClick={() => setActiveMenuItem("users")}
+                  disablePadding
+                  sx={{ display: "block" }}
+                >
+                  <Link href={"/dashboard/users"}>
+                    <ListItemButton
+                      sx={{
+                        minHeight: 48,
+                        justifyContent: open ? "initial" : "center",
+                        px: 2.5,
+                      }}
+                    >
+                      <ListItemIcon
+                        sx={{
+                          minWidth: 0,
+                          mr: open ? 3 : "auto",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <LuUsers
+                          className="text-xl"
+                          style={{
+                            color: activeMenuItem === "users" && "#008B4C",
+                          }}
+                        />
+                      </ListItemIcon>
+                      <ListItemText
+                        className={`capitalize mt-2`}
+                        style={{
+                          color: activeMenuItem === "users" && "#008B4C",
+                        }}
+                        primary={"ইউজারস"}
+                        sx={{ opacity: open ? 1 : 0 }}
+                      />
+                    </ListItemButton>
+                  </Link>
+                </ListItem>
+              )}
+
               {role && role !== "উপজেলা শিক্ষা অফিসার" && (
                 <ListItem
                   onClick={() => setActiveMenuItem("history")}

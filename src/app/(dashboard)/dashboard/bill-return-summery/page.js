@@ -1,6 +1,4 @@
 "use client"
-import { useState } from "react";
-import convertToBengaliNumber from "@/lib/convertToBengaliNumber";
 
 const Summery = () => {
     const tableData = [

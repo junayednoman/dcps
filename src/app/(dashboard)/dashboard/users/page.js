@@ -4,7 +4,6 @@ import { useState } from "react";
 import convertToBengaliNumber from "@/lib/convertToBengaliNumber";
 import { MdDeleteOutline, MdEdit } from "react-icons/md";
 import { Backdrop, Box, Fade, Modal } from "@mui/material";
-import { FaHistory } from "react-icons/fa";
 import { IoCloseSharp } from "react-icons/io5";
 import TextField from "@/app/components/TextField";
 
@@ -66,7 +65,7 @@ const Users = () => {
     return (
         <>
             <div className="mb-6">
-                <button onClick={handleModalOpen} type="submit" className="px-6 md:py-[10px] py-[6px] md:pt-[15px] pt-[10px] bg-[#008B4C] border border-[#008B4C] hover:bg-[#006f3d] text-white rounded-md font-semibold capitalize mt-5">নতুন ইউজার যুক্ত করুন</button>
+                <button type="submit" className="px-6 md:py-[10px] py-[6px] md:pt-[15px] pt-[10px] bg-[#008B4C] border border-[#008B4C] hover:bg-[#006f3d] text-white rounded-md font-semibold capitalize mt-5">নতুন ইউজার যুক্ত করুন</button>
                 <Modal
                     aria-labelledby="transition-modal-title"
                     aria-describedby="transition-modal-description"
