@@ -15,7 +15,6 @@ export async function POST(req, res) {
 
     const token = cookies().get("authToken").value;
     const checkExpirity = checkJwtExpirity(token);
-
     // verify token
     if (!token || checkExpirity?.isExpired) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
@@ -23,19 +22,31 @@ export async function POST(req, res) {
 
     // verify user role
     const { role } = decodeUser(token);
-    if (role !== "head-master") {
+    if (role !== "ueo" && role !== "aueo") {
       return NextResponse.json({ message: "Forbidden" }, { status: 403 });
     }
 
     const db = await getDb();
-    const billData = await req.json();
-    const result = await db.collection("bills").insertOne(billData);
+    const parent = await req.json();
+    const query = { parent: parent };
 
-    if (!result.acknowledged) {
-      return NextResponse.json({ message: "Failed to post" }, { status: 500 });
+    const result = await db
+      .collection("users")
+      .find(role === "aueo" ? query : {}, {
+        projection: { unique_id: 0, password: 0 },
+      })
+      .sort({ created_at: -1 })
+      .toArray();
+    console.log(result);
+
+    if (!result) {
+      return NextResponse.json({ message: "Failed to fetch" }, { status: 500 });
     }
 
-    return NextResponse.json({ message: "Bill return submitted" });
+    return NextResponse.json(
+      { success: true, message: "User created successfully", data: result },
+      { status: 200 }
+    );
   } catch (error) {
     console.error(error);
     return NextResponse.json({ message: "Server Error" }, { status: 500 });

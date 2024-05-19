@@ -264,6 +264,16 @@ select option {
   height: 20px !important;
 }
 
+.my-confirm-button{
+  background: #008B4C !important;
+  color: #fff;
+  outline: 0;
+  padding-bottom: 5px;
+}
+.my-confirm-button:hover{
+  background: #006f3d !important;
+}
+
 .css-13cymwt-control {
   max-height: 30px !important;
 }

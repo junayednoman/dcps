@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
-import decodeJwt from "@/lib/handleLogout";
 import getDb from '@/lib/db';
+import checkJwtExpirity from '@/lib/checkJwtExpirity';
 
 export async function POST(req, res) {
     try {
@@ -10,12 +10,10 @@ export async function POST(req, res) {
         }
 
         const token = cookies().get("authToken").value;
-        const tokenExp = decodeJwt(token)?.exp;
-        const currentTime = Math.floor(Date.now() / 1000);
-        const isExpired = tokenExp < currentTime;
+        const checkExpirity = checkJwtExpirity(token);
 
         // verify token
-        if (!token || isExpired) {
+        if (!token || checkExpirity?.isExpired) {
             return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
         }
 

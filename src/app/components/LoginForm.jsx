@@ -6,7 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 
 const validationSchema = Yup.object().shape({
-  emis: Yup.string().required("ইএমআইএস কোড আবশ্যক"),
+  unique_id: Yup.string().required("ইনিক আইডি আবশ্যক"),
   password: Yup.string().required("পাসওয়ার্ড আবশ্যক"),
 });
 
@@ -35,7 +35,7 @@ const LoginForm = () => {
         if (data && data.message === "Logged in successfully") {
           localStorage.setItem(
             "userInfo",
-            JSON.stringify({ name: data.name, role: data.role })
+            JSON.stringify({ user_name: data.user_name, role: data.role })
           );
           toast.success("সাইন ইন সফল হয়েছে!");
           setTimeout(() => {
@@ -57,26 +57,26 @@ const LoginForm = () => {
   return (
     <>
       <Formik
-        initialValues={{ emis: "", password: "" }}
+        initialValues={{ unique_id: "", password: "" }}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
         {({ isSubmitting }) => (
           <Form>
             <div className="mb-4">
-              <label className="font-semibold" htmlFor="emis">
-                EMIS*
+              <label className="font-semibold" htmlFor="unique_id">
+                ইউনিক আইডি*
               </label>
               {/* <TextField label="বিদ্যালয়ের নাম" placeholder={"বিদ্যালয়ের EMIS কোড দিন"} /> */}
               <Field
-                id="emis"
-                name="emis"
+                id="unique_id"
+                name="unique_id"
                 placeholder="বিদ্যালয়ের EMIS কোড দিন"
                 className="md:h-[50px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1"
                 type="text"
               />
               <ErrorMessage
-                name="emis"
+                name="unique_id"
                 component="div"
                 className="text-[#ED1C24] text-sm mt-1"
               />

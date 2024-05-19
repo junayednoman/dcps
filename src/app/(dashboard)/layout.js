@@ -295,22 +295,16 @@ export default function DashboardLayout({ children }) {
                     <Image src={logo} alt="logo" width={50} height={50}></Image>
                   </a>
                 </h1>
-                {/* <form className='md:block hidden'>
-                                    <div className='relative'>
-                                        <IoMdSearch className='text-[#888] text-xl absolute top-[8px] left-[10px]' />
-                                        <input type="text" placeholder='Search...' className='border-[#ccc] border pl-9 pr-4 py-[6px] rounded-md text-textColor focus:outline-textColor focus:outline-1 w-[230px]' />
-                                    </div>
-                                </form> */}
-                <div className="text-textColor w-[200px] max-h-[44px]">
-                  <SearchableSelect
-                    placeholder={
-                      updateLoading ? "লোড হচ্ছে..." : "Select a role"
-                    }
-                    options={roleOptions}
-                    onChange={handleRoleSelectChange}
-                    value={roleOption}
-                  />
-                </div>
+                <form className="md:block hidden">
+                  <div className="relative">
+                    <IoMdSearch className="text-[#888] text-xl absolute top-[8px] left-[10px]" />
+                    <input
+                      type="text"
+                      placeholder="Search..."
+                      className="border-[#ccc] border pl-9 pr-4 py-[6px] rounded-md text-textColor focus:outline-textColor focus:outline-1 w-[230px]"
+                    />
+                  </div>
+                </form>
               </div>
               <div className="flex items-center ml-auto text-black">
                 <div className="flex items-center justify-center">
@@ -437,7 +431,7 @@ export default function DashboardLayout({ children }) {
 
           <div className="menuItems">
             <List>
-              {role === "প্রধান শিক্ষক" && (
+              {role === "head-master" && (
                 <ListItem
                   onClick={() => setActiveMenuItem("submit")}
                   disablePadding
@@ -477,8 +471,7 @@ export default function DashboardLayout({ children }) {
                   </Link>
                 </ListItem>
               )}
-              {role === "সহকারি উপজেলা শিক্ষা অফিসার" ||
-              role === "উপজেলা শিক্ষা অফিসার" ? (
+              {role === "aueo" || role === "ueo" ? (
                 <>
                   <ListItem
                     onClick={() => setActiveMenuItem("list")}
@@ -560,7 +553,7 @@ export default function DashboardLayout({ children }) {
               ) : (
                 ""
               )}
-              {role === "উপজেলা শিক্ষা অফিসার" && (
+              {role === "ueo" || role === "aueo" ? (
                 <ListItem
                   onClick={() => setActiveMenuItem("users")}
                   disablePadding
@@ -599,9 +592,11 @@ export default function DashboardLayout({ children }) {
                     </ListItemButton>
                   </Link>
                 </ListItem>
+              ) : (
+                ""
               )}
 
-              {role && role !== "উপজেলা শিক্ষা অফিসার" && (
+              {role && role !== "ueo" && (
                 <ListItem
                   onClick={() => setActiveMenuItem("history")}
                   disablePadding
