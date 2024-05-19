@@ -33,7 +33,7 @@ export async function POST(req, res) {
     const result = await db
       .collection("users")
       .find(role === "aueo" ? query : {}, {
-        projection: { unique_id: 0, password: 0 },
+        projection: { unique_id: 0, password: 0, parent: 0 },
       })
       .sort({ created_at: -1 })
       .toArray();

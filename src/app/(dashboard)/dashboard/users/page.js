@@ -44,7 +44,7 @@ const Users = () => {
       .finally(() => {
         setDataLoading(false);
       });
-  }, [mutated]);
+  }, [mutated, userName]);
 
   console.log(users);
 
@@ -63,69 +63,22 @@ const Users = () => {
         (value) => value !== "একটি রোল সিলেক্ট করুন"
       ),
   });
-  const tableData = [
-    {
-      id: "১",
-      name: "খলিলপুর সরকারি প্রাথমিক বিদ্যালয়",
-      designation: "প্রধান শিক্ষক",
-    },
-    {
-      id: "২",
-      name: "খঞ্জন পুর সরকারি প্রাথমিক বিদ্যালয়",
-      designation: "প্রধান শিক্ষক",
-    },
-    {
-      id: "৩",
-      name: "মনুমুখ সরকারি প্রাথমিক বিদ্যালয়",
-      designation: "প্রধান শিক্ষক",
-    },
-    {
-      id: "৪",
-      name: "মোবারকপুর সরকারি প্রাথমিক বিদ্যালয়",
-      designation: "প্রধান শিক্ষক",
-    },
-    {
-      id: "৫",
-      name: "নাদামপুর সরকারি প্রাথমিক বিদ্যালয়",
-      designation: "প্রধান শিক্ষক",
-    },
-    {
-      id: "৬",
-      name: "নিজ বাহাদুর সরকারি প্রাথমিক বিদ্যালয়",
-      designation: "প্রধান শিক্ষক",
-    },
-    {
-      id: "৭",
-      name: "পশ্চিম সাধুহাটি সরকারি প্রাথমিক বিদ্যালয়",
-      designation: "প্রধান শিক্ষক",
-    },
-    {
-      id: "৮",
-      name: "পূর্ব লামুয়া হাজি আতিক মিয়া সরকারি প্রাথমিক বিদ্যালয়",
-      designation: "প্রধান শিক্ষক",
-    },
-    {
-      id: "৯",
-      name: "রফিনগর সরকারি প্রাথমিক বিদ্যালয়",
-      designation: "প্রধান শিক্ষক",
-    },
-    {
-      id: "১০",
-      name: "রফিনগর সরকারি প্রাথমিক বিদ্যালয়",
-      designation: "প্রধান শিক্ষক",
-    },
-    // Add more data as needed
-  ];
+  const updateShema = Yup.object().shape({
+    password: Yup.string()
+      .required("পাসওয়ার্ড অবশ্যই পূরণ করতে হবে।")
+      .min(6, "পাসওয়ার্ড অন্তত ৬ অক্ষরের হতে হবে।")
+      .matches(/\d/, "পাসওয়ার্ডে অন্তত একটি সংখ্যা থাকতে হবে।"),
+  });
 
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [itemsPerPage, setItemsPerPage] = useState(5);
 
   // Filtering data based on search term
-  const filteredData = tableData.filter(
+  const filteredData = users.filter(
     (item) =>
-      item.name.includes(searchTerm) ||
-      String(item.atomicNumber).includes(searchTerm)
+      item.user_name.includes(searchTerm) ||
+      String(item.role).includes(searchTerm)
   );
 
   // Pagination logic
@@ -146,6 +99,12 @@ const Users = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const handleModalOpen = () => setModalOpen(true);
   const handleModalClose = () => setModalOpen(false);
+
+  // update user modal
+  const [updateModalOpen, setUpdateModalOpen] = useState(false);
+  const handleUpdateModalOpen = () => setUpdateModalOpen(true);
+  const handleUpdateModalClose = () => setUpdateModalOpen(false);
+
   const modalStyle = {
     position: "absolute",
     top: "50%",
@@ -269,6 +228,8 @@ const Users = () => {
       }
     });
   };
+  console.log(users);
+  const handleUserUpdate = (id) => {};
   if (dataLoading) {
     return <Loading />;
   }
@@ -395,6 +356,69 @@ const Users = () => {
             </Box>
           </Fade>
         </Modal>
+        {/* user update modal */}
+        <Modal
+          aria-labelledby="transition-modal-title"
+          aria-describedby="transition-modal-description"
+          open={updateModalOpen}
+          onClose={handleUpdateModalClose}
+          closeAfterTransition
+          slots={{ backdrop: Backdrop }}
+          slotProps={{
+            backdrop: {
+              timeout: 500,
+            },
+          }}
+        >
+          <Fade in={updateModalOpen}>
+            <Box sx={modalStyle}>
+              <button className="w-full cursor-default">
+                <IoCloseSharp
+                  onClick={handleUpdateModalClose}
+                  className="text-2xl ml-auto cursor-pointer"
+                />
+              </button>
+
+              <Formik
+                initialValues={{
+                  password: "",
+                }}
+                validationSchema={updateShema}
+                onSubmit={handleUserUpdate}
+              >
+                {({ isValid }) => (
+                  <Form>
+                    <div className="">
+                      <TextField
+                        name="password"
+                        placeholder="পাসওয়ার্ড দিন"
+                        label="পাসওয়ার্ড*"
+                      />
+                      <div className="mt-5">
+                        <button
+                          type="submit"
+                          disabled={!isValid}
+                          className={`px-5 py-[9px] pt-3 bg-primaryColor border border-primaryColor text-white rounded-md font-medium capitalize ${
+                            !isValid ? "opacity-50 cursor-not-allowed" : ""
+                          }`}
+                        >
+                          {loading ? (
+                            <p className="text-white flex items-center gap-2">
+                              <span>লোড হচ্ছে...</span>
+                              <CircularProgress className="btnSpinner" />
+                            </p>
+                          ) : (
+                            "যোগ করুন"
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  </Form>
+                )}
+              </Formik>
+            </Box>
+          </Fade>
+        </Modal>
       </div>
       <div className="p-6 shadow-sm rounded-md bg-white">
         <div className="flex items-center md:flex-row flex-col justify-between mb-4">
@@ -418,7 +442,7 @@ const Users = () => {
               </tr>
             </thead>
             <tbody>
-              {users.map((item, index) => (
+              {currentItems.map((item, index) => (
                 <tr key={index}>
                   <td className="border px-4 py-3">{index + 1}</td>
                   <td className="border px-4 py-3">{item.user_name}</td>
@@ -427,6 +451,7 @@ const Users = () => {
                     <div>
                       <div className="flex items-center gap-4 text-xl">
                         <div
+                          onClick={handleUpdateModalOpen}
                           className="tooltip tooltip-left cursor-pointer"
                           data-tip="Edit user"
                         >
@@ -451,7 +476,7 @@ const Users = () => {
         <div className="mt-6 flex md:flex-row flex-col gap-8 items-center justify-between">
           <div className="flex items-center gap-5">
             <h5>
-              {convertToBengaliNumber(tableData.length)} টির মধ্যে ১ থেকে{" "}
+              {convertToBengaliNumber(users.length)} টির মধ্যে ১ থেকে{" "}
               {convertToBengaliNumber(itemsPerPage === 9 ? 10 : itemsPerPage)}{" "}
               পর্যন্ত দেখাচ্ছে
             </h5>
@@ -460,9 +485,9 @@ const Users = () => {
               onChange={(e) => changeItemsPerPage(parseInt(e.target.value))}
               className="px-4 py-2 rounded-md border border-gray-300 focus:outline-none"
             >
-              <option value={5}>প্রতি পেইজে ৫</option>
-              <option value={10}>প্রতি পেইজে ১০</option>
-              <option value={20}>প্রতি পেইজে ২০</option>
+              <option value={5}>5 per page</option>
+              <option value={10}>10 per page</option>
+              <option value={20}>20 per page</option>
             </select>
           </div>
           <div className="flex items-center">

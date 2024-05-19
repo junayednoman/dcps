@@ -4,6 +4,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
+import { LiaEyeSlash, LiaEyeSolid } from "react-icons/lia";
 
 const validationSchema = Yup.object().shape({
   unique_id: Yup.string().required("ইনিক আইডি আবশ্যক"),
@@ -11,6 +12,7 @@ const validationSchema = Yup.object().shape({
 });
 
 const LoginForm = () => {
+  const [passwordType, setPasswordType] = useState(true);
   const [loading, setLoading] = useState(false);
   const handleSubmit = async (values) => {
     setLoading(true);
@@ -82,17 +84,32 @@ const LoginForm = () => {
               />
             </div>
 
-            <div className="mb-4">
+            <div className="mb-4 relative">
               <label className="font-semibold" htmlFor="password">
                 পাসওয়ার্ড*
               </label>
               <Field
                 className="md:h-[50px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1"
-                type="password"
+                type={passwordType ? "password" : "text"}
                 name="password"
                 id="password"
                 placeholder="আপনার পাসওয়ার্ড দিন"
               />
+              <div
+                className="cursor-pointer inline-block absolute bottom-[43%] right-8"
+                onClick={() => setPasswordType(!passwordType)}
+              >
+                <LiaEyeSlash
+                  className={`text-[21px] ${
+                    passwordType ? "opacity-0" : "opacity-100"
+                  } duration-200 absolute`}
+                />
+                <LiaEyeSolid
+                  className={`text-[21px] ${
+                    passwordType ? "opacity-100" : "opacity-0"
+                  } duration-200 absolute`}
+                />
+              </div>
               <ErrorMessage
                 name="password"
                 component="div"
