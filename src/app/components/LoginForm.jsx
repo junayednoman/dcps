@@ -84,31 +84,33 @@ const LoginForm = () => {
               />
             </div>
 
-            <div className="mb-4 relative">
+            <div className="mb-4">
               <label className="font-semibold" htmlFor="password">
                 পাসওয়ার্ড*
               </label>
-              <Field
-                className="md:h-[50px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1"
-                type={passwordType ? "password" : "text"}
-                name="password"
-                id="password"
-                placeholder="আপনার পাসওয়ার্ড দিন"
-              />
-              <div
-                className="cursor-pointer inline-block absolute bottom-[43%] right-8"
-                onClick={() => setPasswordType(!passwordType)}
-              >
-                <LiaEyeSlash
-                  className={`text-[21px] ${
-                    passwordType ? "opacity-0" : "opacity-100"
-                  } duration-200 absolute`}
+              <div className="relative">
+                <Field
+                  className="md:h-[50px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1"
+                  type={passwordType ? "password" : "text"}
+                  name="password"
+                  id="password"
+                  placeholder="আপনার পাসওয়ার্ড দিন"
                 />
-                <LiaEyeSolid
-                  className={`text-[21px] ${
-                    passwordType ? "opacity-100" : "opacity-0"
-                  } duration-200 absolute`}
-                />
+                <div
+                  className="cursor-pointer inline-block absolute bottom-[36px] right-8"
+                  onClick={() => setPasswordType(!passwordType)}
+                >
+                  <LiaEyeSlash
+                    className={`text-[21px] ${
+                      passwordType ? "opacity-0" : "opacity-100"
+                    } duration-200 absolute`}
+                  />
+                  <LiaEyeSolid
+                    className={`text-[21px] ${
+                      passwordType ? "opacity-100" : "opacity-0"
+                    } duration-200 absolute`}
+                  />
+                </div>
               </div>
               <ErrorMessage
                 name="password"
