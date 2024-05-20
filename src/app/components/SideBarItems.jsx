@@ -165,6 +165,7 @@ const SideBarItems = ({ setDrawer }) => {
                                                 options={monthOptions}
                                                 onChange={handleMonthSelectChange}
                                                 value={monthSelectedOption}
+                                                placeholder={"মাস সিলেক্ট করুন"}
                                             />
                                         </div>
                                         <div className="mb-4">

@@ -174,12 +174,6 @@ const schoolOptions = [
   },
 ];
 
-const roleOptions = [
-  { value: "ueo", label: "ueo" },
-  { value: "aueo", label: "aueo" },
-  { value: "head-master", label: "head-master" },
-];
-
 export default function DashboardLayout({ children }) {
   const { role, loading } = React.useContext(AuthContext);
 
@@ -197,42 +191,6 @@ export default function DashboardLayout({ children }) {
 
   const handleSchoolSelectChange = (schoolSelectedOption) => {
     setSchoolSelectedOption(schoolSelectedOption);
-  };
-  const [roleOption, setRoleOption] = React.useState(null);
-  const [updateLoading, setUpdateLoading] = React.useState(false);
-  const handleRoleSelectChange = (roleOption) => {
-    setUpdateLoading(true);
-    setRoleOption(roleOption);
-    const role = roleOption.value;
-    const apiUrl = "https://dmsp.vercel.app/api/auth/update-role";
-    fetch(apiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(role),
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        if (data.success) {
-          toast.success("সফলভাবে আপডেট হয়েছে!");
-          handleLogout();
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
-        } else {
-          toast.warn("আপডেট হয়নি");
-        }
-      })
-      .catch((error) => {
-        toast.error("There was an error!");
-        console.error("There was an error!", error);
-      })
-      .finally(() => {
-        setUpdateLoading(false);
-      });
   };
 
   const theme = useTheme();
@@ -657,22 +615,20 @@ export default function DashboardLayout({ children }) {
                             />
                           </button>
                           <form className="mt-3">
-                            <div className="mb-4">
-                              <h1>বিল সাবমিটের মাস সিলেক্ট করুন</h1>
-                              <SearchableSelect
-                                options={monthOptions}
-                                onChange={handleMonthSelectChange}
-                                value={monthSelectedOption}
-                              />
-                            </div>
-                            <div className="mb-4">
-                              <h1>বিদ্যালয় সিলেক্ট করুন</h1>
-                              <SearchableSelect
-                                options={schoolOptions}
-                                onChange={handleSchoolSelectChange}
-                                value={schoolSelectedOption}
-                              />
-                            </div>
+                            <SearchableSelect
+                              options={monthOptions}
+                              onChange={handleMonthSelectChange}
+                              value={monthSelectedOption}
+                              label={"বিল সাবমিটের মাস সিলেক্ট করুন"}
+                              placeholder={"মাস সিলেক্ট করুন"}
+                            />
+                            <SearchableSelect
+                              options={schoolOptions}
+                              onChange={handleSchoolSelectChange}
+                              value={schoolSelectedOption}
+                              placeholder={"বিদ্যালয় সিলেক্ট করুন"}
+                              label={"বিদ্যালয় সিলেক্ট করুন"}
+                            />
                             <div className="mt-7">
                               <Link
                                 onClick={handleModalClose}

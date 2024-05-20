@@ -67,7 +67,7 @@ const LoginForm = () => {
           <Form>
             <div className="mb-4">
               <label className="font-semibold" htmlFor="unique_id">
-                ইউনিক আইডি*
+                আইডি*
               </label>
               {/* <TextField label="বিদ্যালয়ের নাম" placeholder={"বিদ্যালয়ের EMIS কোড দিন"} /> */}
               <Field

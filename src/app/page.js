@@ -3,7 +3,6 @@ import govLogo from "@/media/gov.svg"
 import Image from "next/image";
 import BodyContainer from "./components/BodyContainer";
 import LoginForm from "./components/LoginForm";
-import { cookies } from "next/headers";
 
 export default function Home() {
   return (
@@ -15,7 +14,7 @@ export default function Home() {
               <a href="https://www.dpe.gov.bd/" target="_blank">
                 <Image style={{ width: "auto", height: "auto" }} width={80} height={80} src={psLogo} alt="primary education logo" className="mb-5 max-w-[80px]"></Image>
               </a>
-              <h1 className="md:text-[60px] text-3xl font-bold w-full md:w-[500px] mx-auto md:leading-[50px]">Go 2 Bill</h1>
+              <h1 className="md:text-[60px] text-3xl font-bold w-full md:w-[500px] mx-auto md:leading-[50px]">go 2 bill</h1>
               <a href="https://bangladesh.gov.bd/" target="_blank">
                 <Image style={{ width: "auto", height: "auto" }} width={80} height={80} src={govLogo} alt="Bd GOV logo" className="mb-5 max-w-[80px]"></Image>
               </a>

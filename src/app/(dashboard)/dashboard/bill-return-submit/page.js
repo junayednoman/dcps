@@ -445,14 +445,16 @@ const BilReturnSubmit = () => {
                       >
                         ক্লাস্টার সিলেক্ট করুন
                       </option>
-                      <option value="সাধুহাটি">সাধুহাটি</option>
-                      <option value="কামালপুর">কামালপুর</option>
-                      <option value="ভাঁদ‌গাঁও">ভাঁদ‌গাঁও</option>
-                      <option value="শ্যামরারবাজার">শ্যামরারবাজার</option>
-                      <option value="আমতৈল">আমতৈল</option>
-                      <option value="নাজিরাবাদ">নাজিরাবাদ</option>
-                      <option value="বাহারমর্দান">বাহারমর্দান</option>
-                      <option value="আকবরপুর">আকবরপুর</option>
+                      <option value="সাধুহাটি ক্লাস্টার">সাধুহাটি</option>
+                      <option value="কামালপুর ক্লাস্টার">কামালপুর</option>
+                      <option value="ভাঁদ‌গাঁও ক্লাস্টার">ভাঁদ‌গাঁও</option>
+                      <option value="শ্যামরারবাজার ক্লাস্টার">
+                        শ্যামরারবাজার
+                      </option>
+                      <option value="আমতৈল ক্লাস্টার">আমতৈল</option>
+                      <option value="নাজিরাবাদ ক্লাস্টার">নাজিরাবাদ</option>
+                      <option value="বাহারমর্দান ক্লাস্টার">বাহারমর্দান</option>
+                      <option value="আকবরপুর ক্লাস্টার">আকবরপুর</option>
                     </Field>
                   </div>
                   <TextField
@@ -1672,17 +1674,14 @@ const BilReturnSubmit = () => {
               >
                 {/* stipend related data */}
                 <div className="pt-4 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4">
-                  <div className="mb-4">
-                    <label className="font-semibold" htmlFor={"stipend_year"}>
-                      সর্বশেষ প্রান্তিকের বছর
-                    </label>
-                    <SearchableSelect
-                      className="h-[44px]"
-                      options={stipendYearOptions}
-                      onChange={stipendYearSelectChange}
-                      value={stipendYearSelectedOption}
-                    />
-                  </div>
+                  <SearchableSelect
+                    className="h-[44px]"
+                    options={stipendYearOptions}
+                    label={"সর্বশেষ প্রান্তিকের বছর"}
+                    placeholder={"একটি বছর সিলেক্ট করুন"}
+                    onChange={stipendYearSelectChange}
+                    value={stipendYearSelectedOption}
+                  />
                   <div className="mb-4">
                     <label className="font-semibold" htmlFor={"latest_season"}>
                       সর্বশেষ প্রান্তিকের মৌসুম

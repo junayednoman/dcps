@@ -6,18 +6,53 @@ import { MdDeleteOutline, MdEdit } from "react-icons/md";
 import { Backdrop, Box, CircularProgress, Fade, Modal } from "@mui/material";
 import { IoCloseSharp } from "react-icons/io5";
 import TextField from "@/app/components/TextField";
-import { ErrorMessage, Field, Form, Formik } from "formik";
+import { Form, Formik } from "formik";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Swal from "sweetalert2";
 import Loading from "@/app/components/Loading";
 import { AuthContext } from "@/authContext/AuthContext";
+import UserNames from "@/app/components/UserNames";
 
 const Users = () => {
   const { userName, role } = useContext(AuthContext);
   const [users, setUsers] = useState([]);
   const [dataLoading, setDataLoading] = useState(true);
   const [mutated, setMutated] = useState(false);
+
+  const [schoolOptions, setSchoolOptions] = useState(null);
+  useEffect(() => {
+    if (role === "aueo") {
+      const apiUrl = "https://dmsp.vercel.app/api/clusters";
+      fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userName),
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          console.log(data.data);
+          if (data.success) {
+            const schoolOptions = data.data.schools.map((school) => ({
+              value: school.name,
+              label: school.name,
+            }));
+            setSchoolOptions(schoolOptions);
+          }
+        })
+        .catch((error) => {
+          toast.error("There was an error!");
+          console.error("There was an error!", error);
+        })
+        .finally(() => {
+          // setLoading(false);
+        });
+    }
+  }, []);
 
   useEffect(() => {
     setDataLoading(true);
@@ -46,22 +81,13 @@ const Users = () => {
       });
   }, [mutated, userName]);
 
-  console.log(users);
-
   const validationSchema = Yup.object().shape({
-    user_name: Yup.string().required("ইউজার নামটি অবশ্যই পূরণ করতে হবে।"),
+    // user_name: Yup.string().required("ইউজার নামটি অবশ্যই পূরণ করতে হবে।"),
     unique_id: Yup.string().required("ইউনিক আইডি অবশ্যই পূরণ করতে হবে।"),
     password: Yup.string()
       .required("পাসওয়ার্ড অবশ্যই পূরণ করতে হবে।")
       .min(6, "পাসওয়ার্ড অন্তত ৬ অক্ষরের হতে হবে।")
       .matches(/\d/, "পাসওয়ার্ডে অন্তত একটি সংখ্যা থাকতে হবে।"),
-    role: Yup.string()
-      .required("একটি রোল অবশ্যই সিলেক্ট করতে হবে।")
-      .test(
-        "একটি রোল অবশ্যই সিলেক্ট করতে হবে।",
-        "একটি রোল অবশ্যই সিলেক্ট করতে হবে।",
-        (value) => value !== "একটি রোল সিলেক্ট করুন"
-      ),
   });
   const updateShema = Yup.object().shape({
     password: Yup.string()
@@ -77,7 +103,7 @@ const Users = () => {
   // Filtering data based on search term
   const filteredData = users.filter(
     (item) =>
-      item.user_name.includes(searchTerm) ||
+      item?.user_name?.includes(searchTerm) ||
       String(item.role).includes(searchTerm)
   );
 
@@ -100,11 +126,6 @@ const Users = () => {
   const handleModalOpen = () => setModalOpen(true);
   const handleModalClose = () => setModalOpen(false);
 
-  // update user modal
-  const [updateModalOpen, setUpdateModalOpen] = useState(false);
-  const handleUpdateModalOpen = () => setUpdateModalOpen(true);
-  const handleUpdateModalClose = () => setUpdateModalOpen(false);
-
   const modalStyle = {
     position: "absolute",
     top: "50%",
@@ -116,11 +137,40 @@ const Users = () => {
     p: 4,
   };
 
+  // user names
+  const [selectedUserName, setSelectedUserName] = useState(null);
+
+  const [userNameError, setUserNameError] = useState(false);
+  const handleUserNameChange = (selectedUserName) => {
+    if (selectedUserName) {
+      setUserNameError(false);
+    }
+    setSelectedUserName(selectedUserName);
+  };
+
+  // update user modal
+  const [updateModalOpen, setUpdateModalOpen] = useState(false);
+  const handleUpdateModalOpen = () => setUpdateModalOpen(true);
+  const handleUpdateModalClose = () => {
+    setUpdateModalOpen(false);
+    setSelectedUserName(null);
+  };
+
   const [loading, setLoading] = useState(false);
 
   const handleFormSubmit = (values) => {
+    if (!selectedUserName) {
+      return setUserNameError(true);
+    } else {
+      values.user_name = selectedUserName.value;
+      setUserNameError(false);
+    }
     setLoading(true);
-    console.log(values);
+    if (role === "ueo") {
+      values.role = "aueo";
+    } else {
+      values.role = "head-master";
+    }
     const currentDate = new Date().toISOString();
     values.created_at = currentDate;
     values.parent = userName;
@@ -140,9 +190,10 @@ const Users = () => {
         // handleModalClose();
         console.log(data);
         if (data.message === "user name exist") {
+          setSelectedUserName(null);
           Swal.fire({
-            title: "ইউজার নামটি উপলব্ধ নয়!",
-            text: "ইউজার নামটি উপলব্ধ নয়। অন্য নাম দিয়ে চেস্টা করুন।",
+            title: "ইউজার নামটি ইতোমধ্যে নেওয়া হয়েছে!",
+            text: "ইউজার নামটি ইতোমধ্যে নেওয়া হয়েছে। অন্য নাম দিয়ে চেস্টা করুন।",
             icon: "warning",
             confirmButtonText: "ঠিক আছে",
             customClass: {
@@ -151,8 +202,8 @@ const Users = () => {
           });
         } else if (data.message === "id exist") {
           Swal.fire({
-            title: "ইউনিক আইডিটি উপলব্ধ নয়!",
-            text: "ইউনিক আইডিটি উপলব্ধ নয়। অন্য আইডি দিয়ে চেস্টা করুন।",
+            title: "ইউনিক আইডিটি ইতোমধ্যে নেওয়া হয়েছে!",
+            text: "ইউনিক আইডিটি ইতোমধ্যে নেওয়া হয়েছে। অন্য আইডি দিয়ে চেস্টা করুন।",
             icon: "warning",
             confirmButtonText: "ঠিক আছে",
             customClass: {
@@ -247,8 +298,10 @@ const Users = () => {
               <span>লোড হচ্ছে...</span>
               <CircularProgress className="btnSpinner" />
             </p>
+          ) : role === "ueo" ? (
+            "নতুন ক্লাস্টার যুক্ত করুন"
           ) : (
-            "নতুন ইউজার যুক্ত করুন"
+            "নতুন বিদ্যালয় যুক্ত করুন"
           )}
         </button>
         <Modal
@@ -275,10 +328,9 @@ const Users = () => {
 
               <Formik
                 initialValues={{
-                  user_name: "",
                   unique_id: "",
+                  user_name: "",
                   password: "",
-                  role: "",
                 }}
                 validationSchema={validationSchema}
                 onSubmit={handleFormSubmit}
@@ -286,10 +338,13 @@ const Users = () => {
                 {({ isValid }) => (
                   <Form>
                     <div className="">
-                      <TextField
-                        name="user_name"
-                        placeholder="ইউজার নাম দিন"
-                        label="ইউজার নাম*"
+                      <UserNames
+                        schoolOptions={schoolOptions}
+                        userNameError={userNameError}
+                        handleUserNameChange={handleUserNameChange}
+                        selectedUserName={selectedUserName}
+                        role={role}
+                        UserName={userName}
                       />
                       <TextField
                         name="unique_id"
@@ -301,36 +356,6 @@ const Users = () => {
                         placeholder="পাসওয়ার্ড দিন"
                         label="পাসওয়ার্ড*"
                       />
-                      <div>
-                        <label htmlFor="role" className="font-semibold">
-                          রোল*
-                        </label>
-                        <Field
-                          className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]"
-                          as="select"
-                          name={`role`}
-                          id={`role`}
-                        >
-                          <option className="text-gray-300" selected>
-                            একটি রোল সিলেক্ট করুন
-                          </option>
-                          {role === "ueo" ? (
-                            <>
-                              <option value="ueo">ueo</option>
-                              <option value="aueo">aueo</option>
-                            </>
-                          ) : (
-                            <>
-                              <option value="head-master">head-master</option>
-                            </>
-                          )}
-                        </Field>
-                        <ErrorMessage
-                          name="role"
-                          component="div"
-                          className="text-[#ED1C24] text-sm mt-1"
-                        />
-                      </div>
                       <div className="mt-5">
                         <button
                           type="submit"
@@ -422,112 +447,133 @@ const Users = () => {
       </div>
       <div className="p-6 shadow-sm rounded-md bg-white">
         <div className="flex items-center md:flex-row flex-col justify-between mb-4">
-          <h3 className="text-lg font-semibold md:mb-0 mb-3">ব্যবহারকারী</h3>
-          <input
-            type="text"
-            placeholder="সার্চ করুন..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:border-[#008B4C]"
-          />
+          <h3 className="text-lg font-semibold md:mb-0 mb-3">
+            ব্যবহারকারীঃ{" "}
+            <span className="text-xl">
+              {convertToBengaliNumber(users.length)}
+            </span>
+          </h3>
+          {users.length > 0 && (
+            <input
+              type="text"
+              placeholder="সার্চ করুন..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:border-[#008B4C]"
+            />
+          )}
         </div>
         <div>
-          <table className="w-full table-auto">
-            <thead className="text-left bg-slate-100">
-              <tr>
-                <th className="border px-4 py-2">ক্রমিক</th>
-                <th className="border px-4 py-2">নাম</th>
-                <th className="border px-4 py-2 ">পদবি</th>
-                <th className="border px-4 py-2">একশন</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentItems.map((item, index) => (
-                <tr key={index}>
-                  <td className="border px-4 py-3">{index + 1}</td>
-                  <td className="border px-4 py-3">{item.user_name}</td>
-                  <td className="border px-4 py-3">{item.role}</td>
-                  <td className="border px-4 py-3">
-                    <div>
-                      <div className="flex items-center gap-4 text-xl">
-                        <div
-                          onClick={handleUpdateModalOpen}
-                          className="tooltip tooltip-left cursor-pointer"
-                          data-tip="Edit user"
-                        >
-                          <MdEdit />
-                        </div>
-                        <div
-                          onClick={() => handleUserDelete(item._id)}
-                          className="tooltip tooltip-right cursor-pointer"
-                          data-tip="Delete user"
-                        >
-                          <MdDeleteOutline className=" text-[21px]" />
+          {users.length > 0 ? (
+            <table className="w-full table-auto">
+              <thead className="text-left bg-slate-100">
+                <tr>
+                  <th className="border px-4 py-2">ক্রমিক</th>
+                  <th className="border px-4 py-2">নাম</th>
+                  <th className="border px-4 py-2 ">ভূমিকা</th>
+                  <th className="border px-4 py-2">একশন</th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentItems.map((item, index) => (
+                  <tr key={index}>
+                    <td className="border px-4 py-3">{index + 1}</td>
+                    <td className="border px-4 py-3">{item.user_name}</td>
+                    <td className="border px-4 py-3">
+                      {item.role === "ueo"
+                        ? "উপজেলা শিক্ষা অফিসার"
+                        : item.role === "aueo"
+                        ? "ক্লাস্টার"
+                        : "বিদ্যালয়"}
+                    </td>
+                    <td className="border px-4 py-3">
+                      <div>
+                        <div className="flex items-center gap-4 text-xl">
+                          <div
+                            onClick={handleUpdateModalOpen}
+                            className="tooltip tooltip-left cursor-pointer"
+                            data-tip="Edit user"
+                          >
+                            <MdEdit />
+                          </div>
+                          <div
+                            onClick={() => handleUserDelete(item._id)}
+                            className="tooltip tooltip-right cursor-pointer"
+                            data-tip="Delete user"
+                          >
+                            <MdDeleteOutline className=" text-[21px]" />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p className="py-20 text-center text-xl font-semibold">
+              No data found!
+            </p>
+          )}
         </div>
         {/* Pagination */}
-        <div className="mt-6 flex md:flex-row flex-col gap-8 items-center justify-between">
-          <div className="flex items-center gap-5">
-            <h5>
-              {convertToBengaliNumber(users.length)} টির মধ্যে ১ থেকে{" "}
-              {convertToBengaliNumber(itemsPerPage === 9 ? 10 : itemsPerPage)}{" "}
-              পর্যন্ত দেখাচ্ছে
-            </h5>
-            <select
-              value={itemsPerPage}
-              onChange={(e) => changeItemsPerPage(parseInt(e.target.value))}
-              className="px-4 py-2 rounded-md border border-gray-300 focus:outline-none"
-            >
-              <option value={5}>5 per page</option>
-              <option value={10}>10 per page</option>
-              <option value={20}>20 per page</option>
-            </select>
-          </div>
-          <div className="flex items-center">
-            <button
-              onClick={() => paginate(currentPage - 1)}
-              disabled={currentPage === 1}
-              className={`py-1 px-[13px] pt-[7px] mr-2 ${
-                currentPage === 1 ? "bg-gray-300" : "bg-[#008B4C]"
-              } text-white rounded-md focus:outline-none`}
-            >
-              {"<"}
-            </button>
-            {Array.from({
-              length: Math.ceil(filteredData.length / itemsPerPage),
-            }).map((_, index) => (
+        {users.length > 0 && (
+          <div className="mt-6 flex md:flex-row flex-col gap-8 items-center justify-between">
+            <div className="flex items-center gap-5">
+              <h5>
+                {convertToBengaliNumber(users.length)} টির মধ্যে ১ থেকে{" "}
+                {convertToBengaliNumber(itemsPerPage === 9 ? 10 : itemsPerPage)}{" "}
+                পর্যন্ত দেখাচ্ছে
+              </h5>
+              <select
+                value={itemsPerPage}
+                onChange={(e) => changeItemsPerPage(parseInt(e.target.value))}
+                className="px-4 py-2 rounded-md border border-gray-300 focus:outline-none"
+              >
+                <option value={5}>5 per page</option>
+                <option value={10}>10 per page</option>
+                <option value={20}>20 per page</option>
+              </select>
+            </div>
+            <div className="flex items-center">
               <button
-                key={index}
-                onClick={() => paginate(index + 1)}
+                onClick={() => paginate(currentPage - 1)}
+                disabled={currentPage === 1}
                 className={`py-1 px-[13px] pt-[7px] mr-2 ${
-                  currentPage === index + 1 ? "bg-[#008B4C]" : "bg-gray-300"
+                  currentPage === 1 ? "bg-gray-300" : "bg-[#008B4C]"
                 } text-white rounded-md focus:outline-none`}
               >
-                {index + 1}
+                {"<"}
               </button>
-            ))}
-            <button
-              onClick={() => paginate(currentPage + 1)}
-              disabled={
-                currentPage === Math.ceil(filteredData.length / itemsPerPage)
-              }
-              className={`py-1 px-[13px] pt-[7px] mr-2 ${
-                currentPage === Math.ceil(filteredData.length / itemsPerPage)
-                  ? "bg-gray-300"
-                  : "bg-[#008B4C]"
-              } text-white rounded-md focus:outline-none`}
-            >
-              {">"}
-            </button>
+              {Array.from({
+                length: Math.ceil(filteredData.length / itemsPerPage),
+              }).map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => paginate(index + 1)}
+                  className={`py-1 px-[13px] pt-[7px] mr-2 ${
+                    currentPage === index + 1 ? "bg-[#008B4C]" : "bg-gray-300"
+                  } text-white rounded-md focus:outline-none`}
+                >
+                  {index + 1}
+                </button>
+              ))}
+              <button
+                onClick={() => paginate(currentPage + 1)}
+                disabled={
+                  currentPage === Math.ceil(filteredData.length / itemsPerPage)
+                }
+                className={`py-1 px-[13px] pt-[7px] mr-2 ${
+                  currentPage === Math.ceil(filteredData.length / itemsPerPage)
+                    ? "bg-gray-300"
+                    : "bg-[#008B4C]"
+                } text-white rounded-md focus:outline-none`}
+              >
+                {">"}
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </>
   );

@@ -56,7 +56,7 @@ const BillList = () => {
     <div className="p-6 shadow-sm rounded-md bg-white">
       <div className="flex items-center md:flex-row flex-col justify-between mb-4">
         <h3 className="text-lg font-semibold md:mb-0 mb-3">
-          বিদ্যালয়ের তালিকা
+          বিল রিটার্ন তালিকা
         </h3>
         <input
           type="text"
