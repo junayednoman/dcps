@@ -62,7 +62,7 @@ const BillDetails = () => {
                         </Box>
                         <CustomTabPanel value={schoolTabValue} index={0}>
                             <div className='grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4 gap-y-4 pt-6'>
-                                <PairedData label={"বিদ্যালয়ের নাম"} value={"খলিলপুর সরকারি প্রাথমিক বিদ্যালয়"} />
+                                <PairedData label={"বিদ্যালয়ের নাম"} value={"নিজ বাহাদুর পুর সরকারি প্রাথমিক বিদ‌্যালয়"} />
                                 <PairedData label={"ক্লাস্টার"} value={"সাধুহাটি"} />
                                 <PairedData label={"গ্রাম/মহল্লার নাম"} value={"খলিলপুর"} />
                                 <PairedData label={"ওয়ার্ড নাম্বার"} value={"৪"} />
