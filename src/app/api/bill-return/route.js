@@ -31,10 +31,11 @@ export async function POST(req, res) {
     // uniqueId from the client side
     const cluster = await req.json();
     console.log(cluster);
+    const query = { "school.general.cluster": cluster };
 
     const result = await db
       .collection("bills")
-      .find({ "school.general.cluster": cluster })
+      .find(role === "ueo" ? {} : query)
       .project({ "school.general.name": 1, "school.general.emis_code": 1 })
       .toArray();
 
