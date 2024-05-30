@@ -38,6 +38,13 @@ export function middleware(req, res) {
       ) {
         return NextResponse.redirect(new URL("/dashboard", req.url));
       }
+      if (
+        req.nextUrl.pathname.includes("/bill-details") &&
+        role !== "ueo" &&
+        role !== "aueo"
+      ) {
+        return NextResponse.redirect(new URL("/dashboard", req.url));
+      }
     } catch (error) {
       console.error("Token verification error:", error);
       return NextResponse.redirect(new URL("/", req.url));

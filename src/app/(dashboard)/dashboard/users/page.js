@@ -23,7 +23,7 @@ const Users = () => {
   const [schoolOptions, setSchoolOptions] = useState(null);
   useEffect(() => {
     if (role === "aueo") {
-      const apiUrl = "https://dmsp.vercel.app/api/clusters";
+      const apiUrl = "http://localhost:3000/api/clusters";
       fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -56,7 +56,7 @@ const Users = () => {
 
   useEffect(() => {
     setDataLoading(true);
-    const apiUrl = "https://dmsp.vercel.app/api/users";
+    const apiUrl = "http://localhost:3000/api/users";
     fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -175,7 +175,7 @@ const Users = () => {
     values.created_at = currentDate;
     values.parent = userName;
 
-    const apiUrl = "https://dmsp.vercel.app/api/users/add";
+    const apiUrl = "http://localhost:3000/api/users/add";
     fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -240,7 +240,7 @@ const Users = () => {
       cancelButtonText: "বাতিল করুন",
     }).then((result) => {
       if (result.isConfirmed) {
-        const apiUrl = "https://dmsp.vercel.app/api/users/delete";
+        const apiUrl = "http://localhost:3000/api/users/delete";
         fetch(apiUrl, {
           method: "DELETE",
           headers: {

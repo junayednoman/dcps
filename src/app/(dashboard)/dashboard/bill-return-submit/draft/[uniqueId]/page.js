@@ -2,6 +2,7 @@
 
 import convertToBengaliNumber from "@/lib/convertToBengaliNumber";
 import { CircularProgress } from "@mui/material";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { LuDownload } from "react-icons/lu";
 const DataDraft = ({ params }) => {
@@ -10,7 +11,7 @@ const DataDraft = ({ params }) => {
   const [loading, setLoading] = useState();
   useEffect(() => {
     setLoading(true);
-    const apiUrl = "https://dmsp.vercel.app/api/bill-return/get-draft";
+    const apiUrl = "http://localhost:3000/api/bill-return/get-draft";
     fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -33,7 +34,7 @@ const DataDraft = ({ params }) => {
         setLoading(false);
       })
       .finally(() => {
-        // setLoading(false);
+        setLoading(false);
       });
   }, [params.uniqueId]);
 
@@ -146,29 +147,15 @@ const DataDraft = ({ params }) => {
   const {
     permitted_post,
     teacher_number,
-    vacency,
+    vacancy,
     women_teacher_number,
+    vacation_consumers,
     working_post,
   } = teacherData.general;
 
+  console.log(teacherData.general);
   // student related data
   const studentData = billData?.student;
-
-  // if (studentData.survey.survey_admitted.length > 0) {
-  //     console.log(studentSurveyAdmitted);
-  // }
-  // if (studentData.survey.survey_admitted_to_other_school.length > 0) {
-  //     const studentSurveyAdmitted = studentData.survey.survey_admitted_to_other_school[0];
-  //     console.log(studentSurveyAdmitted);
-  // }
-  // if (studentData.survey.survey_unadmitted.length > 0) {
-  //     const studentSurveyAdmitted = studentData.survey.survey_unadmitted[0];
-  //     console.log(studentSurveyAdmitted);
-  // }
-  // if (studentData.survey.nursery_four_plus.length > 0) {
-  //     const studentSurveyAdmitted = studentData.survey.nursery_four_plus[0];
-  //     console.log(studentSurveyAdmitted);
-  // }
 
   const studentSurveyAdmitted = studentData.survey.survey_admitted[0];
   const studentSurveyAdmittedToOthersSchool =
@@ -187,17 +174,52 @@ const DataDraft = ({ params }) => {
     survayed_students,
     unadmitted_students,
   } = studentData.asroyon_survey[0];
-  console.log(studentData.asroyon_survey[0]);
+
+  const handleSubmit = (id) => {
+    const currentDate = new Date().toISOString();
+    const updateData = { isDraft: false, updatedDate: currentDate };
+    setLoading(true);
+    const apiUrl = "http://localhost:3000/api/bill-return/update";
+    fetch(apiUrl, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ updateData: updateData, id: billData._id }),
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        toast.error("There was an error!");
+        console.error("There was an error!", error);
+        setLoading(false);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
   return (
     <>
       {billData ? (
         <div id="print-content" className="xl:w-[80%] draftContent">
           <div className="p-8 rounded-md shadow-sm bg-white">
-            {/* school related daa */}
-            <h2 className="md:text-xl text-lg font-semibold main-heading">
-              বিদ্যালয় সংক্রান্ত তথ্য
-            </h2>
+            <div className="flex items-center justify-between">
+              {/* school related daa */}
+              <h2 className="md:text-xl text-lg font-semibold main-heading">
+                বিদ্যালয় সংক্রান্ত তথ্য
+              </h2>
+              <Link
+                href={`http://localhost:3000/dashboard/bill-return-edit/${billData._id}`}
+                className="text-lg font-semibold underline"
+              >
+                Edit
+              </Link>
+            </div>
             <div className="w-full h-[1px] bg-[#008B4C] md:mb-9 mb-5 mt-2 print:mb-6"></div>
             {schoolData ? (
               <div>
@@ -662,7 +684,7 @@ const DataDraft = ({ params }) => {
                       </p>
                       <p>
                         <span className="font-medium">শূন্য পদ: </span>
-                        {vacency}
+                        {vacancy}
                       </p>
                       <p>
                         <span className="font-medium">
@@ -675,6 +697,10 @@ const DataDraft = ({ params }) => {
                           কর্মরত শিক্ষক(মহিলা):{" "}
                         </span>
                         {women_teacher_number}
+                      </p>
+                      <p>
+                        <span className="font-medium">ছুটি ভোগরত শিক্ষক: </span>
+                        {vacation_consumers}
                       </p>
                     </div>
                   ) : (
@@ -1377,6 +1403,7 @@ const DataDraft = ({ params }) => {
           </div>
           <div className="flex items-center gap-10 mt-3 justify-between">
             <button
+              onClick={() => handleSubmit(billData._id)}
               type="submit"
               className="px-6 md:py-[10px] py-[6px] md:pt-[15px] pt-[10px] bg-[#008B4C] border border-[#008B4C] hover:bg-[#006f3d] text-white rounded-md font-semibold capitalize mt-5 print:hidden"
             >

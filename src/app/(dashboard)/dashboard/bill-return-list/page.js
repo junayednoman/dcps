@@ -11,13 +11,13 @@ const BillList = () => {
   const { userName } = useContext(AuthContext);
   useEffect(() => {
     setLoading(true);
-    const apiUrl = "https://dmsp.vercel.app/api/bill-return";
+    const apiUrl = "http://localhost:3000/api/bill-return/list";
     fetch(apiUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(userName),
+      body: JSON.stringify({cluster: userName}),
     })
       .then((response) => {
         return response.json();
@@ -91,10 +91,10 @@ const BillList = () => {
 
   return (
     schoolData && (
-      <div className="p-6 shadow-sm rounded-md bg-white">
+      <div className="md:p-6 p-3 py-6 shadow-sm rounded-md bg-white">
         <div className="flex items-center md:flex-row flex-col justify-between mb-4">
           <h3 className="text-lg font-semibold md:mb-0 mb-3">
-            বিল রিটার্ন তালিকা
+            বিল রিটার্ন তালিকা ({convertToBengaliNumber(schoolData.length)})
           </h3>
           {schoolData.length > 0 && (
             <input
@@ -130,11 +130,17 @@ const BillList = () => {
                         {item.school.general.emis_code}
                       </td>
                       <td className="border px-4 py-3">
-                        {item.school.general.name}
+                        
+                        <Link
+                          href={`/dashboard/bill-details/${item._id}`}
+                          className="font-medium hover:underline"
+                        >
+                          {item.school.general.name}
+                        </Link>
                       </td>
                       <td className="border px-4 py-3 md:block hidden">
                         <Link
-                          href={`/dashboard/bill-details`}
+                          href={`/dashboard/bill-details/${item._id}`}
                           className="text-greenColor font-medium underline"
                         >
                           বিস্তারিত দেখুন

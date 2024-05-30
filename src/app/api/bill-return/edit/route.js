@@ -1,8 +1,9 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import decodeUser from "@/lib/decodeUser";
 import getDb from "@/lib/db";
 import checkJwtExpirity from "@/lib/checkJwtExpirity";
-import decodeUser from "@/lib/decodeUser";
+import { ObjectId } from "mongodb";
 
 export async function POST(req, res) {
   try {
@@ -23,31 +24,34 @@ export async function POST(req, res) {
 
     // verify user role
     const { role } = decodeUser(token);
-    if (role !== "ueo" && role !== "aueo") {
+    if (role !== "head-master") {
       return NextResponse.json({ message: "Forbidden" }, { status: 403 });
     }
 
     const db = await getDb();
-    // uniqueId from the client side
-    const cluster = await req.json();
-    console.log(cluster);
-    const query = { "school.general.cluster": cluster };
+    const bodyData = await req.json();
+    const query = {
+      _id: new ObjectId(bodyData._id),
+      submitted_by: bodyData.formData.submitted_by,
+    };
+    const updateDoc = {
+      $set: bodyData.formData,
+    };
+    const result = await db.collection("bills").updateOne(query, updateDoc);
 
-    const result = await db
-      .collection("bills")
-      .find(role === "ueo" ? {} : query)
-      .project({ "school.general.name": 1, "school.general.emis_code": 1 })
-      .toArray();
+    if (result.modifiedCount !== 1) {
+      return NextResponse.json(
+        { success: false, message: "Failed to post!" },
+        { status: 500 }
+      );
+    }
 
     return NextResponse.json(
-      {
-        success: true,
-        message: "Data fetched successfully!",
-        data: result,
-      },
+      { success: true, message: "Bill return updated successfully!" },
       { status: 200 }
     );
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ message: "Server Error" }, { status: 500 });
   }
 }

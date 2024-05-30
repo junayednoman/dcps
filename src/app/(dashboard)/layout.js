@@ -36,6 +36,7 @@ import { LuUsers } from "react-icons/lu";
 import handleLogout from "@/lib/handleLogout";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/navigation";
 
 // font
 const notoBengali = localFont({
@@ -133,36 +134,43 @@ const subMenuItems = [
   },
 ];
 
-const modalStyle = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 430,
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 4,
-};
+// modal
+const yearOptions = [
+  { value: "2020", label: "২০২০" },
+  { value: "2021", label: "২০২১" },
+  { value: "2022", label: "২০২২" },
+  { value: "2023", label: "২০২৩" },
+  { value: "2024", label: "২০২৪" },
+  { value: "2025", label: "২০২৫" },
+  { value: "2026", label: "২০২৬" },
+  { value: "2027", label: "২০২৭" },
+  { value: "2028", label: "২০২৮" },
+  { value: "2029", label: "২০২৯" },
+  { value: "2030", label: "২০৩০" },
+  { value: "2031", label: "২০৩১" },
+  { value: "2032", label: "২০৩২" },
+  { value: "2033", label: "২০৩৩" },
+];
 
 const monthOptions = [
-  { value: "জানুয়ারী", label: "জানুয়ারী" },
-  { value: "ফেব্রুয়ারী", label: "ফেব্রুয়ারী" },
-  { value: "মার্চ", label: "মার্চ" },
-  { value: "এপ্রিল", label: "এপ্রিল" },
-  { value: "মে", label: "মে" },
-  { value: "জুন", label: "জুন" },
-  { value: "জুলাই", label: "জুলাই" },
-  { value: "আগস্ট", label: "আগস্ট" },
-  { value: "সেপ্টেম্বর", label: "সেপ্টেম্বর" },
-  { value: "অক্টোবর", label: "অক্টোবর" },
-  { value: "নভেম্বর", label: "নভেম্বর" },
-  { value: "ডিসেম্বর", label: "ডিসেম্বর" },
+  { value: "January", label: "জানুয়ারী" },
+  { value: "February", label: "ফেব্রুয়ারী" },
+  { value: "March", label: "মার্চ" },
+  { value: "April", label: "এপ্রিল" },
+  { value: "May", label: "মে" },
+  { value: "June", label: "জুন" },
+  { value: "July", label: "জুলাই" },
+  { value: "August", label: "আগস্ট" },
+  { value: "September", label: "সেপ্টেম্বর" },
+  { value: "October", label: "অক্টোবর" },
+  { value: "November", label: "নভেম্বর" },
+  { value: "December", label: "ডিসেম্বর" },
 ];
 
 const schoolOptions = [
   {
-    value: "খলিলপুর সরকারি প্রাথমিক বিদ্যালয়",
-    label: "খলিলপুর সরকারি প্রাথমিক বিদ্যালয়",
+    value: "নিমারাই সরকারি প্রাথমিক বিদ‌্যালয়",
+    label: "নিমারাই সরকারি প্রাথমিক বিদ‌্যালয়",
   },
   {
     value: "খঞ্জনপুর সরকারি প্রাথমিক বিদ্যালয়",
@@ -175,24 +183,90 @@ const schoolOptions = [
 ];
 
 export default function DashboardLayout({ children }) {
-  const { role, loading } = React.useContext(AuthContext);
-
+  const router = useRouter();
+  // const [loading, setLoading] = React.useState(false);
+  const [billData, setBillData] = React.useState(null);
+  const { userName } = React.useContext(AuthContext);
+  console.log(billData);
   // modal related
   const [modalOpen, setModalOpen] = React.useState(false);
   const handleModalOpen = () => setModalOpen(true);
   const handleModalClose = () => setModalOpen(false);
 
-  const [monthSelectedOption, setMonthSelectedOption] = React.useState(null);
+  const [yearSelectedOption, setyearSelectedOption] = React.useState(null);
+  const handleYearSelectChange = (yearSelectedOption) => {
+    setyearSelectedOption(yearSelectedOption);
+  };
 
+  const [monthSelectedOption, setMonthSelectedOption] = React.useState(null);
   const handleMonthSelectChange = (monthSelectedOption) => {
     setMonthSelectedOption(monthSelectedOption);
   };
-  const [schoolSelectedOption, setSchoolSelectedOption] = React.useState(null);
 
+  const [schoolSelectedOption, setSchoolSelectedOption] = React.useState(null);
   const handleSchoolSelectChange = (schoolSelectedOption) => {
     setSchoolSelectedOption(schoolSelectedOption);
   };
 
+  const handelFormSubmit = (e) => {
+    e.preventDefault();
+    const formData = {
+      date: `${monthSelectedOption.value} ${yearSelectedOption.value}`,
+      school: schoolSelectedOption.value,
+    };
+
+    // setLoading(true);
+    const apiUrl = "http://localhost:3000/api/bill-return/history";
+    fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        cluster: userName,
+        userName: userName,
+        targetDate: formData.date,
+        schoolName: formData.school,
+      }),
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data.data);
+        if (data.success) {
+          setBillData(data.data);
+          router.push({
+            pathname: "/dashboard/bill-return-history",
+            query: data.data,
+          });
+        }
+      })
+      .catch((error) => {
+        toast.error("একটি ইরর ঘটেছে!");
+        console.error("There was an error!", error);
+      })
+      .finally(() => {
+        // setLoading(false);
+        // handleModalClose();
+      });
+
+    // setyearSelectedOption(null);
+    // setMonthSelectedOption(null);
+    // setSchoolSelectedOption(null);
+  };
+  const modalStyle = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 430,
+    bgcolor: "background.paper",
+    boxShadow: 24,
+    p: 4,
+  };
+
+  const { role, loading } = React.useContext(AuthContext);
   const theme = useTheme();
   const [activeMenuItem, setActiveMenuItem] = React.useState("");
   React.useEffect(() => {
@@ -560,8 +634,8 @@ export default function DashboardLayout({ children }) {
                   disablePadding
                   sx={{ display: "block" }}
                 >
-                  <button onClick={handleModalOpen}>
                     <ListItemButton
+                     onClick={handleModalOpen}
                       sx={{
                         minHeight: 48,
                         justifyContent: open ? "initial" : "center",
@@ -591,61 +665,90 @@ export default function DashboardLayout({ children }) {
                         sx={{ opacity: open ? 1 : 0 }}
                       />
                     </ListItemButton>
-                  </button>
-                  <div>
-                    <Modal
-                      aria-labelledby="transition-modal-title"
-                      aria-describedby="transition-modal-description"
-                      open={modalOpen}
-                      onClose={handleModalClose}
-                      closeAfterTransition
-                      slots={{ backdrop: Backdrop }}
-                      slotProps={{
-                        backdrop: {
-                          timeout: 500,
-                        },
-                      }}
-                    >
-                      <Fade in={modalOpen}>
-                        <Box sx={modalStyle}>
-                          <button className="w-full cursor-default">
-                            <IoCloseSharp
-                              onClick={handleModalClose}
-                              className="text-2xl ml-auto cursor-pointer"
-                            />
-                          </button>
-                          <form className="mt-3">
-                            <SearchableSelect
-                              options={monthOptions}
-                              onChange={handleMonthSelectChange}
-                              value={monthSelectedOption}
-                              label={"বিল সাবমিটের মাস সিলেক্ট করুন"}
-                              placeholder={"মাস সিলেক্ট করুন"}
-                            />
-                            <SearchableSelect
-                              options={schoolOptions}
-                              onChange={handleSchoolSelectChange}
-                              value={schoolSelectedOption}
-                              placeholder={"বিদ্যালয় সিলেক্ট করুন"}
-                              label={"বিদ্যালয় সিলেক্ট করুন"}
-                            />
-                            <div className="mt-7">
-                              <Link
-                                onClick={handleModalClose}
-                                href={"/dashboard/bill-return-history"}
-                                className="px-4 py-[6px] pt-2 bg-primaryColor border border-primaryColor hover:bg-textColor text-white rounded-md font-medium capitalize"
-                              >
-                                সার্চ করুন
-                              </Link>
-                            </div>
-                          </form>
-                        </Box>
-                      </Fade>
-                    </Modal>
-                  </div>
                 </ListItem>
               )}
             </List>
+
+            <div>
+              <Modal
+                aria-labelledby="transition-modal-title"
+                aria-describedby="transition-modal-description"
+                open={modalOpen}
+                onClose={handleModalClose}
+                closeAfterTransition
+                slots={{ backdrop: Backdrop }}
+                slotProps={{
+                  backdrop: {
+                    timeout: 500,
+                  },
+                }}
+              >
+                <Fade in={modalOpen}>
+                  <Box sx={modalStyle}>
+                    <button className="w-full cursor-default">
+                      <IoCloseSharp
+                        onClick={handleModalClose}
+                        className="text-2xl ml-auto cursor-pointer"
+                      />
+                    </button>
+                    <form className="mt-3">
+                      <SearchableSelect
+                        options={yearOptions}
+                        onChange={handleYearSelectChange}
+                        value={yearSelectedOption}
+                        label={"বিল সাবমিটের বছর*"}
+                        placeholder={"বিল সাবমিটের বছর সিলেক্ট করুন"}
+                      />
+                      <SearchableSelect
+                        options={monthOptions}
+                        onChange={handleMonthSelectChange}
+                        value={monthSelectedOption}
+                        label={"বিল সাবমিটের মাস*"}
+                        placeholder={"বিল সাবমিটের মাস সিলেক্ট করুন"}
+                      />
+                      <SearchableSelect
+                        options={schoolOptions}
+                        onChange={handleSchoolSelectChange}
+                        value={schoolSelectedOption}
+                        label={"বিদ্যালয়*"}
+                        placeholder={"বিদ্যালয় সিলেক্ট করুন"}
+                      />
+                      <div className="mt-7">
+                        <Tooltip
+                          placement="right"
+                          title={`${
+                            !yearSelectedOption ||
+                            !monthSelectedOption ||
+                            !schoolSelectedOption
+                              ? "Select all options"
+                              : ""
+                          }`}
+                        >
+                          <button
+                            disabled={
+                              !yearSelectedOption ||
+                              !monthSelectedOption ||
+                              !schoolSelectedOption
+                            }
+                            onClick={handelFormSubmit}
+                            href={"/dashboard/bill-return-history"}
+                            className={`px-4 py-[6px] pt-2 bg-primaryColor border border-primaryColor hover:bg-textColor text-white rounded-md font-medium capitalize ${
+                              !yearSelectedOption ||
+                              !monthSelectedOption ||
+                              !schoolSelectedOption
+                                ? "cursor-not-allowed opacity-75"
+                                : "cursor-pointer opacity-100"
+                            }`}
+                          >
+                            সার্চ করুন
+                          </button>
+                        </Tooltip>
+                      </div>
+                    </form>
+                  </Box>
+                </Fade>
+              </Modal>
+            </div>
 
             <Divider />
             <List>

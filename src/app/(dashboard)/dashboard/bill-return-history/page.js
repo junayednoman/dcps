@@ -1,133 +1,230 @@
-"use client"
-import Link from "next/link";
-import { useState } from "react";
-import convertToBengaliNumber from "@/lib/convertToBengaliNumber";
+"use client";
 
-const BillHistory = () => {
-    const tableData = [
-        { id: "১", name: "খলিলপুর সরকারি প্রাথমিক বিদ্যালয়", emis: '34fsdf' },
-        { id: "২", name: "খঞ্জন পুর সরকারি প্রাথমিক বিদ্যালয়", emis: '4r34df34' },
-        { id: "৩", name: "মনুমুখ সরকারি প্রাথমিক বিদ্যালয়", emis: 'dr789' },
-        { id: "৪", name: "মোবারকপুর সরকারি প্রাথমিক বিদ্যালয়", emis: 'er987hui' },
-        { id: "৫", name: "নাদামপুর সরকারি প্রাথমিক বিদ্যালয়", emis: '548094ji' },
-        { id: "৬", name: "নিজ বাহাদুর সরকারি প্রাথমিক বিদ্যালয়", emis: 'ed89e' },
-        { id: "৭", name: "পশ্চিম সাধুহাটি সরকারি প্রাথমিক বিদ্যালয়", emis: 'ewf897' },
-        { id: "৮", name: "পূর্ব লামুয়া হাজি আতিক মিয়া সরকারি প্রাথমিক বিদ্যালয়", emis: 'dsf-0' },
-        { id: "৯", name: "রফিনগর সরকারি প্রাথমিক বিদ্যালয়", emis: 'df8s8f' },
-        { id: "১০", name: "রফিনগর সরকারি প্রাথমিক বিদ্যালয়", emis: 'd87fy' },
-        // Add more data as needed
-    ];
+import SearchableSelect from "@/app/components/SearchableSelect";
+import { AuthContext } from "@/authContext/AuthContext";
+import { Backdrop, Box, Fade, Modal, Tooltip } from "@mui/material";
+import React from "react";
+import { IoCloseSharp } from "react-icons/io5";
 
-    const [currentPage, setCurrentPage] = useState(1);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [itemsPerPage, setItemsPerPage] = useState(5);
+const yearOptions = [
+  { value: "2020", label: "২০২০" },
+  { value: "2021", label: "২০২১" },
+  { value: "2022", label: "২০২২" },
+  { value: "2023", label: "২০২৩" },
+  { value: "2024", label: "২০২৪" },
+  { value: "2025", label: "২০২৫" },
+  { value: "2026", label: "২০২৬" },
+  { value: "2027", label: "২০২৭" },
+  { value: "2028", label: "২০২৮" },
+  { value: "2029", label: "২০২৯" },
+  { value: "2030", label: "২০৩০" },
+  { value: "2031", label: "২০৩১" },
+  { value: "2032", label: "২০৩২" },
+  { value: "2033", label: "২০৩৩" },
+];
 
-    // Filtering data based on search term
-    const filteredData = tableData.filter(
-        (item) =>
-            item.name.includes(searchTerm) ||
-            String(item.atomicNumber).includes(searchTerm)
-    );
+const monthOptions = [
+  { value: "January", label: "জানুয়ারী" },
+  { value: "February", label: "ফেব্রুয়ারী" },
+  { value: "March", label: "মার্চ" },
+  { value: "April", label: "এপ্রিল" },
+  { value: "May", label: "মে" },
+  { value: "June", label: "জুন" },
+  { value: "July", label: "জুলাই" },
+  { value: "August", label: "আগস্ট" },
+  { value: "September", label: "সেপ্টেম্বর" },
+  { value: "October", label: "অক্টোবর" },
+  { value: "November", label: "নভেম্বর" },
+  { value: "December", label: "ডিসেম্বর" },
+];
 
-    // Pagination logic
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
+const schoolOptions = [
+  {
+    value: "নিমারাই সরকারি প্রাথমিক বিদ‌্যালয়",
+    label: "নিমারাই সরকারি প্রাথমিক বিদ‌্যালয়",
+  },
+  {
+    value: "খঞ্জনপুর সরকারি প্রাথমিক বিদ্যালয়",
+    label: "খঞ্জনপুর সরকারি প্রাথমিক বিদ্যালয়",
+  },
+  {
+    value: "মনুমুখ সরকারি প্রাথমিক বিদ্যালয়",
+    label: "মনুমুখ সরকারি প্রাথমিক বিদ্যালয়",
+  },
+];
 
-    // Change page
-    const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-    // Change items per page
-    const changeItemsPerPage = (value) => {
-        setItemsPerPage(value);
-        setCurrentPage(1); // Reset to first page when changing items per page
-    };
-
-    return (
-        <div className="p-6 shadow-sm rounded-md bg-white">
-            <div className="flex items-center md:flex-row flex-col justify-between mb-4">
-                <h3 className="text-lg font-semibold mb-3">জানুয়ারি মাসের বিল রিটার্ন ইতিহাস</h3>
-                <input
-                    type="text"
-                    placeholder="সার্চ করুন..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:border-[#008B4C]"
-                />
-            </div>
-            <table className="w-full table-auto">
-                <thead className="text-left bg-slate-100">
-                    <tr>
-                        <th className="border px-4 py-2">ক্রমিক</th>
-                        <th className="border px-4 py-2 md:block hidden">ইএমআইএস</th>
-                        <th className="border px-4 py-2">নাম</th>
-                        <th className="border px-4 py-2 md:block hidden">একশন</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {currentItems.map((item) => (
-                        <tr key={item.id}>
-                            <td className="border px-4 py-3">{item.id}</td>
-                            <td className="border px-4 py-3 md:block hidden">{item.emis}</td>
-                            <td className="border px-4 py-3">{item.name}</td>
-                            <td className="border px-4 py-3 md:block hidden">
-                                <Link href={`/dashboard/bill-details`} className="text-greenColor font-medium underline">
-                                    বিস্তারিত দেখুন
-                                </Link>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-            {/* Pagination */}
-            <div className="mt-6 flex md:flex-row flex-col gap-8 items-center justify-between">
-                <div className="flex items-center gap-5">
-                    <h5>{convertToBengaliNumber(tableData.length)} টির মধ্যে ১ থেকে {convertToBengaliNumber(itemsPerPage === 9 ? 10 : itemsPerPage)} পর্যন্ত দেখাচ্ছে</h5>
-                    <select
-                        value={itemsPerPage}
-                        onChange={(e) => changeItemsPerPage(parseInt(e.target.value))}
-                        className="px-4 py-2 rounded-md border border-gray-300 focus:outline-none"
-                    >
-                        <option value={5}>5 per page</option>
-                        <option value={10}>10 per page</option>
-                        <option value={20}>20 per page</option>
-                    </select>
-                </div>
-                <div className="flex items-center">
-                    <button
-                        onClick={() => paginate(currentPage - 1)}
-                        disabled={currentPage === 1}
-                        className={`py-1 px-[13px] pt-[7px] mr-2 ${currentPage === 1 ? "bg-gray-300" : "bg-[#008B4C]"
-                            } text-white rounded-md focus:outline-none`}
-                    >
-                        {"<"}
-                    </button>
-                    {Array.from({ length: Math.ceil(filteredData.length / itemsPerPage) }).map(
-                        (_, index) => (
-                            <button
-                                key={index}
-                                onClick={() => paginate(index + 1)}
-                                className={`py-1 px-[13px] pt-[7px] mr-2 ${currentPage === index + 1 ? "bg-[#008B4C]" : "bg-gray-300"
-                                    } text-white rounded-md focus:outline-none`}
-                            >
-                                {index + 1}
-                            </button>
-                        )
-                    )}
-                    <button
-                        onClick={() => paginate(currentPage + 1)}
-                        disabled={currentPage === Math.ceil(filteredData.length / itemsPerPage)}
-                        className={`py-1 px-[13px] pt-[7px] mr-2 ${currentPage === Math.ceil(filteredData.length / itemsPerPage)
-                            ? "bg-gray-300"
-                            : "bg-[#008B4C]"
-                            } text-white rounded-md focus:outline-none`}
-                    >
-                        {">"}
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
+const modalStyle = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 430,
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  p: 4,
 };
 
-export default BillHistory;
+const HistoryPage = () => {
+  const [loading, setLoading] = React.useState(false);
+  const [billData, setBillData] = React.useState(null);
+  const { userName } = React.useContext(AuthContext);
+  console.log(billData);
+  // modal related
+  const [modalOpen, setModalOpen] = React.useState(false);
+  const handleModalOpen = () => setModalOpen(true);
+  const handleModalClose = () => setModalOpen(false);
+
+  const [yearSelectedOption, setyearSelectedOption] = React.useState(null);
+  const handleYearSelectChange = (yearSelectedOption) => {
+    setyearSelectedOption(yearSelectedOption);
+  };
+
+  const [monthSelectedOption, setMonthSelectedOption] = React.useState(null);
+  const handleMonthSelectChange = (monthSelectedOption) => {
+    setMonthSelectedOption(monthSelectedOption);
+  };
+
+  const [schoolSelectedOption, setSchoolSelectedOption] = React.useState(null);
+  const handleSchoolSelectChange = (schoolSelectedOption) => {
+    setSchoolSelectedOption(schoolSelectedOption);
+  };
+
+  const handelFormSubmit = (e) => {
+    e.preventDefault();
+    const formData = {
+      date: `${monthSelectedOption.value} ${yearSelectedOption.value}`,
+      school: schoolSelectedOption.value,
+    };
+
+    setLoading(true);
+    const apiUrl = "http://localhost:3000/api/bill-return/history";
+    fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        cluster: userName,
+        userName: userName,
+        targetDate: formData.date,
+        schoolName: formData.school,
+      }),
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data.data);
+        if (data.success) {
+          setBillData(data.data);
+        }
+      })
+      .catch((error) => {
+        toast.error("একটি ইরর ঘটেছে!");
+        console.error("There was an error!", error);
+      })
+      .finally(() => {
+        setLoading(false);
+        handleModalClose();
+      });
+
+    // setyearSelectedOption(null);
+    // setMonthSelectedOption(null);
+    // setSchoolSelectedOption(null);
+  };
+
+  return (
+    <div>
+      <div className="text-center flex sm:flex-row flex-col items-center md:gap-10 gap-5 p-6">
+        <h3 className="text-2xl font-semibold">বিল রিটার্ন ইতিহাস</h3>
+        <button
+          onClick={handleModalOpen}
+          className="px-4 py-[5px] pt-[8px] bg-[#008B4C] border border-[#008B4C] hover:bg-[#006f3d] text-white rounded-md font-medium capitalize"
+        >
+          সার্চ করুন
+        </button>
+      </div>
+      {/* modal content */}
+      <Modal
+        aria-labelledby="transition-modal-title"
+        aria-describedby="transition-modal-description"
+        open={modalOpen}
+        onClose={handleModalClose}
+        closeAfterTransition
+        slots={{ backdrop: Backdrop }}
+        slotProps={{
+          backdrop: {
+            timeout: 500,
+          },
+        }}
+      >
+        <Fade in={modalOpen}>
+          <Box sx={modalStyle}>
+            <button className="w-full cursor-default">
+              <IoCloseSharp
+                onClick={handleModalClose}
+                className="text-2xl ml-auto cursor-pointer"
+              />
+            </button>
+            <form className="mt-3">
+              <SearchableSelect
+                options={yearOptions}
+                onChange={handleYearSelectChange}
+                value={yearSelectedOption}
+                label={"বিল সাবমিটের বছর*"}
+                placeholder={"বিল সাবমিটের বছর সিলেক্ট করুন"}
+              />
+              <SearchableSelect
+                options={monthOptions}
+                onChange={handleMonthSelectChange}
+                value={monthSelectedOption}
+                label={"বিল সাবমিটের মাস*"}
+                placeholder={"বিল সাবমিটের মাস সিলেক্ট করুন"}
+              />
+              <SearchableSelect
+                options={schoolOptions}
+                onChange={handleSchoolSelectChange}
+                value={schoolSelectedOption}
+                label={"বিদ্যালয়*"}
+                placeholder={"বিদ্যালয় সিলেক্ট করুন"}
+              />
+              <div className="mt-7">
+                <Tooltip
+                  placement="right"
+                  title={`${
+                    !yearSelectedOption ||
+                    !monthSelectedOption ||
+                    !schoolSelectedOption
+                      ? "Select all options"
+                      : ""
+                  }`}
+                >
+                  <button
+                    disabled={
+                      !yearSelectedOption ||
+                      !monthSelectedOption ||
+                      !schoolSelectedOption
+                    }
+                    onClick={handelFormSubmit}
+                    href={"/dashboard/bill-return-history"}
+                    className={`px-4 py-[6px] pt-2 bg-primaryColor border border-primaryColor hover:bg-textColor text-white rounded-md font-medium capitalize ${
+                      !yearSelectedOption ||
+                      !monthSelectedOption ||
+                      !schoolSelectedOption
+                        ? "cursor-not-allowed opacity-75"
+                        : "cursor-pointer opacity-100"
+                    }`}
+                  >
+                    সার্চ করুন
+                  </button>
+                </Tooltip>
+              </div>
+            </form>
+          </Box>
+        </Fade>
+      </Modal>
+    </div>
+  );
+};
+
+export default HistoryPage;
