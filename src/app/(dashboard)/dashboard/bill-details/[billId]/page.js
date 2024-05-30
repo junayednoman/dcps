@@ -50,32 +50,33 @@ const BillDetails = ({ params }) => {
 
   React.useEffect(() => {
     const id = params.billId;
-    setLoading(true);
-    const apiUrl = `http://localhost:3000/api/bill-return/get-single`;
-    fetch(apiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id, cluster: userName }),
-    })
-      .then((response) => {
-        return response.json();
+    if (userName) {
+      setLoading(true);
+      const apiUrl = `http://localhost:3000/api/bill-return/get-single`;
+      fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id, cluster: userName }),
       })
-      .then((data) => {
-        if (data.success) {
-          setBillData(data.data);
-        }
-      })
-      .catch((error) => {
-        toast.error("একটি ইরর ঘটেছে!");
-        console.error("There was an error!", error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
-
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          if (data.success) {
+            setBillData(data.data);
+          }
+        })
+        .catch((error) => {
+          toast.error("একটি ইরর ঘটেছে!");
+          console.error("There was an error!", error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [userName, params]);
   if (loading) {
     return (
       <div className="flex justify-center items-center h-[80vh]">
@@ -86,8 +87,14 @@ const BillDetails = ({ params }) => {
 
   if (!billData) {
     return (
-      <div className="flex justify-center items-center h-[80vh]">
+      <div className="flex justify-center flex-col gap-6 items-center h-[80vh]">
         <h3 className="text-3xl font-semibold text-center">No data found!</h3>
+        <button
+          onClick={() => window.location.reload()}
+          className="px-4 py-[5px] pt-[8px] bg-[#008B4C] border border-[#008B4C] hover:bg-[#006f3d] text-white rounded-md font-medium capitalize"
+        >
+          রিলোড করুন
+        </button>
       </div>
     );
   }

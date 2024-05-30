@@ -7,16 +7,12 @@ import CustomTabPanel from "@/app/components/CutomTabPanel";
 import DataDropdown from "@/app/components/DataDropdown";
 import DataGrid from "@/app/components/DataGrid";
 import PairedData from "@/app/components/PairedData";
-import { CircularProgress } from "@mui/material";
 import convertToBengaliNumber from "@/lib/convertToBengaliNumber";
-import { AuthContext } from "@/authContext/AuthContext";
-import { toast } from "react-toastify";
+import moment from "moment";
+import convertToBengaliMonth from "@/lib/englishMonthConverter";
 
-const HistoryData = () => {
+const HistoryData = ({ billData }) => {
   const [activeItem, setActiveItem] = React.useState("");
-  const [loading, setLoading] = React.useState(false);
-  const [billData, setBillData] = React.useState(null);
-  const { userName } = React.useContext(AuthContext);
   console.log(billData);
 
   function a11yProps(index) {
@@ -49,49 +45,16 @@ const HistoryData = () => {
     setStudentTabValue(newValue);
   };
 
-  React.useEffect(() => {
-    setLoading(true);
-    const apiUrl = "http://localhost:3000/api/bill-return/history";
-    fetch(apiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ cluster: userName, userName: userName }),
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        console.log(data.data);
-        if (data.success) {
-          setBillData(data.data);
-        }
-      })
-      .catch((error) => {
-        toast.error("একটি ইরর ঘটেছে!");
-        console.error("There was an error!", error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, [userName]);
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-[80vh]">
-        <CircularProgress className="spinner" />
-      </div>
-    );
-  }
-
   if (!billData) {
     return (
-      <div className="flex flex-col justify-center items-center h-[80vh]">
-        <h3 className="text-3xl font-semibold text-center">No data found!</h3>
-        <button className="px-6 md:py-[10px] py-[6px] md:pt-[15px] pt-[10px] bg-[#008B4C] border border-[#008B4C] hover:bg-[#006f3d] text-white rounded-md font-semibold capitalize mt-5">
+      <div className="flex flex-col gap-6 justify-center items-center h-[80vh]">
+        <h3 className="text-3xl font-semibold text-center">
+          প্রদানকৃত তথ্যের ভিত্তিতে কোন বিল খুজে পাওয়া যাইনি!
+        </h3>
+        <p>
+          <span className="text-5xl rotate-12 inline-block">👈</span>মেনু থেকে
           আবার সার্চ করুন
-        </button>
+        </p>
       </div>
     );
   }
@@ -213,10 +176,16 @@ const HistoryData = () => {
   const studentAsroyonSurvey = studentData?.asroyon_survey[0];
   console.log(studentAsroyonSurvey);
 
+  moment.locale("bn");
+  const billYear = convertToBengaliNumber(
+    moment(billData.submitted_at).format("YYYY")
+  );
+  const billMonth = convertToBengaliMonth( moment(billData.submitted_at).format("MMMM"));
+
   return (
     <div id="print-content" className="bg-[#FAFAFA] xl:w-[80%] w-full">
       <h2 className="md:text-2xl text-xl font-semibold md:mb-14 mb-8">
-        বিল রিটার্ন বিস্তারিত
+        {billYear} এর {billMonth} মাসের বিল রিটার্ন ইতিহাস
       </h2>
       {!billData ? (
         <div className="flex justify-center items-center h-[80vh]">

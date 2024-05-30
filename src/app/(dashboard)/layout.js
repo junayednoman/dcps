@@ -184,10 +184,7 @@ const schoolOptions = [
 
 export default function DashboardLayout({ children }) {
   const router = useRouter();
-  // const [loading, setLoading] = React.useState(false);
-  const [billData, setBillData] = React.useState(null);
-  const { userName } = React.useContext(AuthContext);
-  console.log(billData);
+  const { userName, setHistoryData } = React.useContext(AuthContext);
   // modal related
   const [modalOpen, setModalOpen] = React.useState(false);
   const handleModalOpen = () => setModalOpen(true);
@@ -215,41 +212,8 @@ export default function DashboardLayout({ children }) {
       school: schoolSelectedOption.value,
     };
 
-    // setLoading(true);
-    const apiUrl = "http://localhost:3000/api/bill-return/history";
-    fetch(apiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        cluster: userName,
-        userName: userName,
-        targetDate: formData.date,
-        schoolName: formData.school,
-      }),
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        console.log(data.data);
-        if (data.success) {
-          setBillData(data.data);
-          router.push({
-            pathname: "/dashboard/bill-return-history",
-            query: data.data,
-          });
-        }
-      })
-      .catch((error) => {
-        toast.error("একটি ইরর ঘটেছে!");
-        console.error("There was an error!", error);
-      })
-      .finally(() => {
-        // setLoading(false);
-        // handleModalClose();
-      });
+    const a = 4; // Your variable
+    router.push(`/dashboard/bill-return-history?date=${formData.date}&school=${formData.school}`);
 
     // setyearSelectedOption(null);
     // setMonthSelectedOption(null);
@@ -634,37 +598,37 @@ export default function DashboardLayout({ children }) {
                   disablePadding
                   sx={{ display: "block" }}
                 >
-                    <ListItemButton
-                     onClick={handleModalOpen}
+                  <ListItemButton
+                    onClick={handleModalOpen}
+                    sx={{
+                      minHeight: 48,
+                      justifyContent: open ? "initial" : "center",
+                      px: 2.5,
+                    }}
+                  >
+                    <ListItemIcon
                       sx={{
-                        minHeight: 48,
-                        justifyContent: open ? "initial" : "center",
-                        px: 2.5,
+                        minWidth: 0,
+                        mr: open ? 3 : "auto",
+                        justifyContent: "center",
                       }}
                     >
-                      <ListItemIcon
-                        sx={{
-                          minWidth: 0,
-                          mr: open ? 3 : "auto",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <FaHistory
-                          style={{
-                            color: activeMenuItem === "history" && "#008B4C",
-                          }}
-                          className="text-xl"
-                        />
-                      </ListItemIcon>
-                      <ListItemText
+                      <FaHistory
                         style={{
                           color: activeMenuItem === "history" && "#008B4C",
                         }}
-                        className={`capitalize mt-2`}
-                        primary={"বিল রিটার্ন ইতিহাস"}
-                        sx={{ opacity: open ? 1 : 0 }}
+                        className="text-xl"
                       />
-                    </ListItemButton>
+                    </ListItemIcon>
+                    <ListItemText
+                      style={{
+                        color: activeMenuItem === "history" && "#008B4C",
+                      }}
+                      className={`capitalize mt-2`}
+                      primary={"বিল রিটার্ন ইতিহাস"}
+                      sx={{ opacity: open ? 1 : 0 }}
+                    />
+                  </ListItemButton>
                 </ListItem>
               )}
             </List>

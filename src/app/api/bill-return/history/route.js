@@ -31,6 +31,11 @@ export async function POST(req, res) {
     const db = await getDb();
     const { cluster, userName, targetDate, schoolName } = await req.json();
 
+    // const cluster = "সাধুহাটি ক্লাস্টার";
+    // const userName = "সাধুহাটি ক্লাস্টার";
+    // const targetDate = "May 2024";
+    // const schoolName = "নিমারাই সরকারি প্রাথমিক বিদ‌্যালয়";
+
     const headmasterQuery = {
       submitted_by: userName,
       "school.general.name": schoolName,
@@ -41,20 +46,23 @@ export async function POST(req, res) {
       "school.general.name": schoolName,
       isDraft: false,
     };
+
     const generalQuery = {
       "school.general.name": schoolName,
       isDraft: false,
     };
+    // const role = "ueo"
 
-    const query =
-      role === "head-master"
-        ? headmasterQuery
-        : role === "aueo"
-        ? aueoQuery
-        : generalQuery;
-
-    const result = await db.collection("bills").findOne(query);
-
+    const result = await db
+      .collection("bills")
+      .findOne(
+        role === "head-master"
+          ? headmasterQuery
+          : role === "aueo"
+          ? aueoQuery
+          : generalQuery
+      );
+    console.log(result);
     if (!result) {
       return NextResponse.json(
         {
@@ -65,8 +73,7 @@ export async function POST(req, res) {
       );
     }
 
-    const submitDate = moment(result.submitted_at).format("MMMM YYYY");
-
+    const submitDate = moment(result?.submitted_at).format("MMMM YYYY");
     if (targetDate !== submitDate) {
       return NextResponse.json(
         {

@@ -10,33 +10,36 @@ const BillList = () => {
   const [schoolData, setSchoolData] = useState(null);
   const { userName } = useContext(AuthContext);
   useEffect(() => {
-    setLoading(true);
-    const apiUrl = "http://localhost:3000/api/bill-return/list";
-    fetch(apiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({cluster: userName}),
-    })
-      .then((response) => {
-        return response.json();
+    if (userName) {
+      setLoading(true);
+      const apiUrl = "http://localhost:3000/api/bill-return/list";
+      fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ cluster: userName }),
       })
-      .then((data) => {
-        // handleModalClose();
-        console.log(data.data);
-        if (data.success) {
-          setSchoolData(data.data);
-        }
-      })
-      .catch((error) => {
-        toast.error("একটি ইরর ঘটেছে!");
-        console.error("There was an error!", error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          // handleModalClose();
+          console.log(data.data);
+          if (data.success) {
+            setSchoolData(data.data);
+          }
+        })
+        .catch((error) => {
+          toast.error("একটি ইরর ঘটেছে!");
+          console.error("There was an error!", error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [userName]);
+  console.log(schoolData);
 
   const tableData = [
     { id: "১", name: "খলিলপুর সরকারি প্রাথমিক বিদ্যালয়", emis: "34fsdf" },
@@ -130,7 +133,6 @@ const BillList = () => {
                         {item.school.general.emis_code}
                       </td>
                       <td className="border px-4 py-3">
-                        
                         <Link
                           href={`/dashboard/bill-details/${item._id}`}
                           className="font-medium hover:underline"
@@ -213,9 +215,11 @@ const BillList = () => {
             </div>
           </>
         ) : (
-          <p className="py-20 text-center text-xl font-semibold">
-            No data found!
-          </p>
+          <div className="flex flex-col gap-6 justify-center">
+            <p className="py-20 text-center text-xl font-semibold">
+              No data found!
+            </p>
+          </div>
         )}
       </div>
     )
