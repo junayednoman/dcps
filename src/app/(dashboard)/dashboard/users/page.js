@@ -21,8 +21,10 @@ const Users = () => {
   const [mutated, setMutated] = useState(false);
 
   const [schoolOptions, setSchoolOptions] = useState(null);
-  useEffect(() => {
-    if (role === "aueo") {
+
+  const handleBtnClick = () => {
+    handleModalOpen();
+    if (role === "aueo" && !schoolOptions) {
       const apiUrl = "http://localhost:3000/api/clusters";
       fetch(apiUrl, {
         method: "POST",
@@ -52,7 +54,7 @@ const Users = () => {
           // setLoading(false);
         });
     }
-  }, []);
+  };
 
   useEffect(() => {
     setDataLoading(true);
@@ -288,7 +290,7 @@ const Users = () => {
     <>
       <div className="mb-6">
         <button
-          onClick={handleModalOpen}
+          onClick={handleBtnClick}
           type="submit"
           disabled={loading}
           className="px-6 md:py-[10px] py-[6px] md:pt-[15px] pt-[10px] bg-[#008B4C] border border-[#008B4C] hover:bg-[#006f3d] text-white rounded-md font-semibold capitalize mt-5"
@@ -512,7 +514,7 @@ const Users = () => {
             </table>
           ) : (
             <p className="py-20 text-center text-xl font-semibold">
-              No data found!
+              কোন তথ্য পাওয়া যাইনি!
             </p>
           )}
         </div>

@@ -5,7 +5,7 @@ import * as React from "react";
 import NumberField from "@/app/components/NumberField";
 import MyDatePicker from "@/app/components/MyDatePicker";
 import AnimateHeight from "react-animate-height";
-import ImageInput from "@/app/components/ImageInput";
+
 import {
   Checkbox,
   CircularProgress,
@@ -21,6 +21,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import { AuthContext } from "@/authContext/AuthContext";
 import { generateUniqueId } from "@/lib/uniqueId";
+import { uploadImageToImageBB } from "@/lib/uploadImage";
 
 const BilReturnSubmit = () => {
   const [activeItem, setActiveItem] = React.useState("");
@@ -135,7 +136,7 @@ const BilReturnSubmit = () => {
   const [loading, setLoading] = React.useState(false);
   const [draftSubmit, setDraftSubmit] = React.useState(false);
   const { userName } = React.useContext(AuthContext);
-  const handleFormSubmit = (values) => {
+  const handleFormSubmit = async(values) => {
     if (values) {
       // console.log(values);
       const formData = {
@@ -208,6 +209,28 @@ const BilReturnSubmit = () => {
       formData.student.admission.class_four = values.class_four;
       formData.student.admission.class_five = values.class_five;
       formData.student.asroyon_survey = values.asroyon_survey;
+      
+      const updatedSalary = await Promise.all(
+        formData.teacher.salary.map(async (item) => {
+          if (item.signature) {
+            try {
+              const response = await uploadImageToImageBB(item.signature);
+              if (response.success) {
+                return { ...item, signature: response.data.display_url };
+              }
+            } catch (error) {
+              setError(error.message);
+              return item;
+            }
+          }
+          return item;
+        })
+      );
+  
+      // Set the updated values back to Formik state
+      formData.teacher.salary = updatedSalary;
+  
+      // API call with the updated form data
       const apiUrl = "http://localhost:3000/api/bill-return/submit";
       fetch(apiUrl, {
         method: "POST",
@@ -216,11 +239,8 @@ const BilReturnSubmit = () => {
         },
         body: JSON.stringify(formData),
       })
-        .then((response) => {
-          return response.json();
-        })
+        .then((response) => response.json())
         .then((data) => {
-          console.log(data);
           if (data && data.message === "Bill return submitted") {
             if (draftSubmit) {
               const newWindow = window.open(
@@ -232,21 +252,17 @@ const BilReturnSubmit = () => {
                 setDraftSubmit(false);
               }
             }
-            console.log(formData.school.stipend);
             toast.success("সফলভাবে সাবমিট হয়েছে!");
           } else {
-            toast.warn("সাবমিট হয়নি");
+            console.error("Submission failed:", data);
           }
         })
         .catch((error) => {
-          toast.error("There was an error!");
           console.error("There was an error!", error);
         })
         .finally(() => {
           setLoading(false);
-          return uniqueId;
         });
-      console.log(formData.teacher);
     }
   };
 
@@ -409,7 +425,7 @@ const BilReturnSubmit = () => {
         // validationSchema={validationSchema}
         onSubmit={handleFormSubmit}
       >
-        {({ isSubmitting, values }) => (
+        {({ isSubmitting, values, setFieldValue }) => (
           <Form>
             {/* school related data */}
             <div className="border bg-white shadow-sm rounded-[4px] md:p-8 p-3">
@@ -2041,11 +2057,32 @@ const BilReturnSubmit = () => {
                                 label="চলতি বছরে মোট নৈমিত্তিক ছুটি"
                                 placeholder="চলতি বছরে মোট নৈমিত্তিক ছুটি সংখ্যা দিন"
                               />
-                              <ImageInput
+                              {/* <ImageInput
                                 name={`salary.${index}.signature`}
                                 label="স্বাক্ষর"
                                 placeholder="সাক্ষর দিন"
-                              />
+                              /> */}
+                              <div className="mb-4">
+                                <label
+                                  className="font-semibold"
+                                  htmlFor={`salary.${index}.signature`}
+                                >
+                                  স্বাক্ষর
+                                </label>
+                                <input
+                                  className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[6px]"
+                                  type="file"
+                                  name={`salary.${index}.signature`}
+                                  id={`salary.${index}.signature`}
+                                  onChange={(event) => {
+                                    const file = event.currentTarget.files[0];
+                                    setFieldValue(
+                                      `salary.${index}.signature`,
+                                      file
+                                    );
+                                  }}
+                                />
+                              </div>
                             </div>
                             <button
                               className={`text-[#ED1C24] font-semibold`}

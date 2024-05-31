@@ -179,7 +179,9 @@ const BilReturnSubmit = ({ params }) => {
   if (!billData) {
     return (
       <div className="flex justify-center items-center h-[80vh]">
-        <h3 className="text-3xl font-semibold text-center">No data found!</h3>
+        <h3 className="text-3xl font-semibold text-center">
+          কোন তথ্য পাওয়া যাইনি!
+        </h3>
       </div>
     );
   }

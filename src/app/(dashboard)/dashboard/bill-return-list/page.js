@@ -217,7 +217,7 @@ const BillList = () => {
         ) : (
           <div className="flex flex-col gap-6 justify-center">
             <p className="py-20 text-center text-xl font-semibold">
-              No data found!
+              কোন তথ্য পাওয়া যাইনি!
             </p>
           </div>
         )}

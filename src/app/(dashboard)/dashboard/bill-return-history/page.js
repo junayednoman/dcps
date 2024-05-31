@@ -35,7 +35,7 @@ const HistoryPage = () => {
           return response.json();
         })
         .then((data) => {
-          if (data.success && data.message !== "No data found!") {
+          if (data.success && data.message !== "কোন তথ্য পাওয়া যাইনি!") {
             setBillData(data.data);
           } else {
             setBillData(null);
@@ -66,8 +66,8 @@ const HistoryPage = () => {
           প্রদানকৃত তথ্যের ভিত্তিতে কোন বিল খুজে পাওয়া যাইনি!
         </h3>
         <p>
-          <span className="text-5xl rotate-12 inline-block">👈</span>মেনু থেকে
-          আবার সার্চ করুন
+          <span className="text-5xl rotate-12 inline-block">👈</span>সাইডবার
+          থেকে আবার সার্চ করুন
         </p>
       </div>
     );

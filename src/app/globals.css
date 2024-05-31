@@ -250,8 +250,10 @@ select option {
   height: auto;
 }
 
-.draftContent p {
-  font-size: 15px;
+.draftContent p span {
+  font-size: 15px !important;
+  color: #2c3e50 !important;
+  font-weight: 600 !important;
 }
 
 .spinner {

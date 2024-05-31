@@ -166,23 +166,8 @@ const monthOptions = [
   { value: "November", label: "নভেম্বর" },
   { value: "December", label: "ডিসেম্বর" },
 ];
-
-const schoolOptions = [
-  {
-    value: "নিমারাই সরকারি প্রাথমিক বিদ‌্যালয়",
-    label: "নিমারাই সরকারি প্রাথমিক বিদ‌্যালয়",
-  },
-  {
-    value: "খঞ্জনপুর সরকারি প্রাথমিক বিদ্যালয়",
-    label: "খঞ্জনপুর সরকারি প্রাথমিক বিদ্যালয়",
-  },
-  {
-    value: "মনুমুখ সরকারি প্রাথমিক বিদ্যালয়",
-    label: "মনুমুখ সরকারি প্রাথমিক বিদ্যালয়",
-  },
-];
-
 export default function DashboardLayout({ children }) {
+  const { role, loading } = React.useContext(AuthContext);
   const router = useRouter();
   const { userName, setHistoryData } = React.useContext(AuthContext);
   // modal related
@@ -201,23 +186,27 @@ export default function DashboardLayout({ children }) {
   };
 
   const [schoolSelectedOption, setSchoolSelectedOption] = React.useState(null);
+  console.log("schoolSelectedOption,", schoolSelectedOption, role);
   const handleSchoolSelectChange = (schoolSelectedOption) => {
     setSchoolSelectedOption(schoolSelectedOption);
   };
 
+  /////////////////////// HANDLE HISTORY FORM SUBMIT ///////////////////////
   const handelFormSubmit = (e) => {
     e.preventDefault();
     const formData = {
       date: `${monthSelectedOption.value} ${yearSelectedOption.value}`,
-      school: schoolSelectedOption.value,
+      school: role === "head-master" ? userName : schoolSelectedOption.value,
     };
 
     const a = 4; // Your variable
-    router.push(`/dashboard/bill-return-history?date=${formData.date}&school=${formData.school}`);
-
-    // setyearSelectedOption(null);
-    // setMonthSelectedOption(null);
-    // setSchoolSelectedOption(null);
+    router.push(
+      `/dashboard/bill-return-history?date=${formData.date}&school=${formData.school}`
+    );
+    handleModalClose();
+    setyearSelectedOption(null);
+    setMonthSelectedOption(null);
+    setSchoolSelectedOption(null);
   };
   const modalStyle = {
     position: "absolute",
@@ -230,7 +219,6 @@ export default function DashboardLayout({ children }) {
     p: 4,
   };
 
-  const { role, loading } = React.useContext(AuthContext);
   const theme = useTheme();
   const [activeMenuItem, setActiveMenuItem] = React.useState("");
   React.useEffect(() => {
@@ -247,7 +235,7 @@ export default function DashboardLayout({ children }) {
     } else if (location.includes("users")) {
       setActiveMenuItem("users");
     }
-  }, []);
+  }, [role, userName]);
 
   const [open, setOpen] = React.useState(true);
   const handleDrawerOpen = () => {
@@ -257,6 +245,42 @@ export default function DashboardLayout({ children }) {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  const [schoolOptions, setSchoolOptions] = React.useState(null);
+  const handleHistoryClick = () => {
+    handleModalOpen();
+    if (role === "aueo" && !schoolOptions) {
+      const apiUrl = "http://localhost:3000/api/clusters";
+      fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userName),
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          console.log(data.data);
+          if (data.success) {
+            const schoolOptions = data.data.schools.map((school) => ({
+              value: school.name,
+              label: school.name,
+            }));
+            setSchoolOptions(schoolOptions);
+          }
+        })
+        .catch((error) => {
+          toast.error("There was an error!");
+          console.error("There was an error!", error);
+        })
+        .finally(() => {
+          // setLoading(false);
+        });
+    }
+  };
+
   if (loading) {
     return <Loading />;
   }
@@ -599,7 +623,7 @@ export default function DashboardLayout({ children }) {
                   sx={{ display: "block" }}
                 >
                   <ListItemButton
-                    onClick={handleModalOpen}
+                    onClick={handleHistoryClick}
                     sx={{
                       minHeight: 48,
                       justifyContent: open ? "initial" : "center",
@@ -670,43 +694,71 @@ export default function DashboardLayout({ children }) {
                         label={"বিল সাবমিটের মাস*"}
                         placeholder={"বিল সাবমিটের মাস সিলেক্ট করুন"}
                       />
-                      <SearchableSelect
-                        options={schoolOptions}
-                        onChange={handleSchoolSelectChange}
-                        value={schoolSelectedOption}
-                        label={"বিদ্যালয়*"}
-                        placeholder={"বিদ্যালয় সিলেক্ট করুন"}
-                      />
+                      {role !== "head-master" && (
+                        <SearchableSelect
+                          options={role === "aueo" && schoolOptions}
+                          onChange={handleSchoolSelectChange}
+                          value={schoolSelectedOption}
+                          label={"বিদ্যালয়*"}
+                          placeholder={"বিদ্যালয় সিলেক্ট করুন"}
+                        />
+                      )}
                       <div className="mt-7">
-                        <Tooltip
-                          placement="right"
-                          title={`${
-                            !yearSelectedOption ||
-                            !monthSelectedOption ||
-                            !schoolSelectedOption
-                              ? "Select all options"
-                              : ""
-                          }`}
-                        >
-                          <button
-                            disabled={
-                              !yearSelectedOption ||
-                              !monthSelectedOption ||
-                              !schoolSelectedOption
-                            }
-                            onClick={handelFormSubmit}
-                            href={"/dashboard/bill-return-history"}
-                            className={`px-4 py-[6px] pt-2 bg-primaryColor border border-primaryColor hover:bg-textColor text-white rounded-md font-medium capitalize ${
-                              !yearSelectedOption ||
-                              !monthSelectedOption ||
-                              !schoolSelectedOption
-                                ? "cursor-not-allowed opacity-75"
-                                : "cursor-pointer opacity-100"
+                        {role === "head-master" ? (
+                          <Tooltip
+                            placement="right"
+                            title={`${
+                              !yearSelectedOption || !monthSelectedOption
+                                ? "Select all options"
+                                : ""
                             }`}
                           >
-                            সার্চ করুন
-                          </button>
-                        </Tooltip>
+                            <button
+                              disabled={
+                                !yearSelectedOption || !monthSelectedOption
+                              }
+                              onClick={handelFormSubmit}
+                              href={"/dashboard/bill-return-history"}
+                              className={`px-4 py-[6px] pt-2 bg-primaryColor border border-primaryColor hover:bg-textColor text-white rounded-md font-medium capitalize ${
+                                !yearSelectedOption || !monthSelectedOption
+                                  ? "cursor-not-allowed opacity-75"
+                                  : "cursor-pointer opacity-100"
+                              }`}
+                            >
+                              সার্চ করুন
+                            </button>
+                          </Tooltip>
+                        ) : (
+                          <Tooltip
+                            placement="right"
+                            title={`${
+                              !yearSelectedOption ||
+                              !monthSelectedOption ||
+                              !schoolSelectedOption
+                                ? "Select all options"
+                                : ""
+                            }`}
+                          >
+                            <button
+                              disabled={
+                                !yearSelectedOption ||
+                                !monthSelectedOption ||
+                                !schoolSelectedOption
+                              }
+                              onClick={handelFormSubmit}
+                              href={"/dashboard/bill-return-history"}
+                              className={`px-4 py-[6px] pt-2 bg-primaryColor border border-primaryColor hover:bg-textColor text-white rounded-md font-medium capitalize ${
+                                !yearSelectedOption ||
+                                !monthSelectedOption ||
+                                !schoolSelectedOption
+                                  ? "cursor-not-allowed opacity-75"
+                                  : "cursor-pointer opacity-100"
+                              }`}
+                            >
+                              সার্চ করুন
+                            </button>
+                          </Tooltip>
+                        )}
                       </div>
                     </form>
                   </Box>

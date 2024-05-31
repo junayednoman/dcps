@@ -2,6 +2,7 @@
 
 import convertToBengaliNumber from "@/lib/convertToBengaliNumber";
 import { CircularProgress } from "@mui/material";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { LuDownload } from "react-icons/lu";
@@ -275,7 +276,7 @@ const DataDraft = ({ params }) => {
                       </p>
                     </div>
                   ) : (
-                    <div className="p-8">No data found</div>
+                    <div className="p-8">কোন তথ্য পাওয়া যাইনি</div>
                   )}
                 </div>
 
@@ -469,7 +470,7 @@ const DataDraft = ({ params }) => {
                       </div>
                     </>
                   ) : (
-                    <div className="p-8">No data found</div>
+                    <div className="p-8">কোন তথ্য পাওয়া যাইনি</div>
                   )}
                 </div>
 
@@ -545,7 +546,7 @@ const DataDraft = ({ params }) => {
                       </p>
                     </div>
                   ) : (
-                    <div className="p-8">No data found</div>
+                    <div className="p-8">কোন তথ্য পাওয়া যাইনি</div>
                   )}
                 </div>
 
@@ -585,7 +586,7 @@ const DataDraft = ({ params }) => {
                       </p>
                     </div>
                   ) : (
-                    <div className="p-8">No data found</div>
+                    <div className="p-8">কোন তথ্য পাওয়া যাইনি</div>
                   )}
                 </div>
 
@@ -621,7 +622,7 @@ const DataDraft = ({ params }) => {
                       </p>
                     </div>
                   ) : (
-                    <div className="p-8">No data found</div>
+                    <div className="p-8">কোন তথ্য পাওয়া যাইনি</div>
                   )}
                 </div>
 
@@ -651,12 +652,12 @@ const DataDraft = ({ params }) => {
                       </div>
                     ))
                   ) : (
-                    <div className="p-8">No data found</div>
+                    <div className="p-8">কোন তথ্য পাওয়া যাইনি</div>
                   )}
                 </div>
               </div>
             ) : (
-              <div className="p-8">No data found</div>
+              <div className="p-8">কোন তথ্য পাওয়া যাইনি</div>
             )}
           </div>
 
@@ -704,7 +705,7 @@ const DataDraft = ({ params }) => {
                       </p>
                     </div>
                   ) : (
-                    <div className="p-8">No data found</div>
+                    <div className="p-8">কোন তথ্য পাওয়া যাইনি</div>
                   )}
                 </div>
                 <div className="mt-12">
@@ -715,7 +716,7 @@ const DataDraft = ({ params }) => {
                     teacherData.salary.map((salaryItem, index) => (
                       <div
                         key={index}
-                        className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col"
+                        className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col mb-7"
                       >
                         <span className="text-base font-semibold">
                           শিক্ষক {convertToBengaliNumber(index + 1)}ঃ
@@ -782,8 +783,8 @@ const DataDraft = ({ params }) => {
                           <span className="font-medium">জিপিএফ নং: </span>
                           {salaryItem.gpf}
                         </p>
-                        <p>
-                          <span className="font-medium">
+                        <p className="font-medium text-xl">
+                          <span className="font-medium inline-block">
                             সক্রিয় মোবাইল নং:{" "}
                           </span>
                           {salaryItem.mobile_number}
@@ -794,14 +795,14 @@ const DataDraft = ({ params }) => {
                           </span>
                           {salaryItem.current_year_occasional_vacation}
                         </p>
-                        <p>
-                          <span className="font-medium">স্বাক্ষর: </span>
-                          {salaryItem.signature}
-                        </p>
+                        <div className="felx items-center text-[16px]">
+                          <span className="font-medium inline-block">স্বাক্ষর: </span>
+                          <Image className="inline-block ml-3" width={80} height={40} src={salaryItem.signature} alt="signature"></Image>
+                        </div>
                       </div>
                     ))
                   ) : (
-                    <div className="p-8">No data found</div>
+                    <div className="p-8">কোন তথ্য পাওয়া যাইনি</div>
                   )}
                 </div>
 
@@ -837,7 +838,7 @@ const DataDraft = ({ params }) => {
                       </div>
                     ))
                   ) : (
-                    <div className="p-8">No data found</div>
+                    <div className="p-8">কোন তথ্য পাওয়া যাইনি</div>
                   )}
                 </div>
 
@@ -871,12 +872,12 @@ const DataDraft = ({ params }) => {
                       </div>
                     ))
                   ) : (
-                    <div className="p-8">No data found</div>
+                    <div className="p-8">কোন তথ্য পাওয়া যাইনি</div>
                   )}
                 </div>
               </div>
             ) : (
-              <div className="p-8">No data found</div>
+              <div className="p-8">কোন তথ্য পাওয়া যাইনি</div>
             )}
           </div>
 
@@ -962,7 +963,7 @@ const DataDraft = ({ params }) => {
                     </div>
                   </>
                 ) : (
-                  <div className="p-8">No data found</div>
+                  <div className="p-8">কোন তথ্য পাওয়া যাইনি</div>
                 )}
               </div>
               <div className="mt-12">
@@ -1422,7 +1423,7 @@ const DataDraft = ({ params }) => {
           </div>
         </div>
       ) : (
-        <div className="p-8">No data found</div>
+        <div className="p-8">কোন তথ্য পাওয়া যাইনি</div>
       )}
     </>
   );

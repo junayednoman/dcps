@@ -48,7 +48,10 @@ export async function POST(req, res) {
       .toArray();
 
     if (result.length < 1) {
-      return NextResponse.json({ message: "No data found!" }, { status: 404 });
+      return NextResponse.json(
+        { message: "কোন তথ্য পাওয়া যাইনি!" },
+        { status: 404 }
+      );
     }
 
     // calculate the stats

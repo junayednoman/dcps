@@ -47,31 +47,18 @@ const Summery = () => {
       </div>
     );
   }
-  console.log(stats);
-  const tableData = [
-    {
-      id: "১",
-      permitted_posts: "৩",
-      active_post: "৪",
-      teachers_on_vacation: "৩",
-    },
-    // Add more data as needed
-  ];
   return (
     <div className="p-6 shadow-sm rounded-md bg-white">
       <div className="flex items-center md:flex-row flex-col justify-between mb-4">
         <h3 className="text-lg font-semibold md:mb-0 mb-3">
           বিল রিটার্ন সারাংশ
         </h3>
-        <input
-          type="text"
-          placeholder="সার্চ করুন..."
-          className="px-4 py-2 mr-4 rounded-md border border-gray-300 focus:outline-none focus:border-[#008B4C]"
-        />
       </div>
       {!stats ? (
         <div className="flex justify-center items-center py-20">
-          <h3 className="text-2xl font-semibold text-center">No data found!</h3>
+          <h3 className="text-2xl font-semibold text-center">
+            কোন তথ্য পাওয়া যাইনি!
+          </h3>
         </div>
       ) : (
         <table className="w-full table-auto">

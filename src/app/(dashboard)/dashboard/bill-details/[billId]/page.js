@@ -11,6 +11,7 @@ import { CircularProgress } from "@mui/material";
 import convertToBengaliNumber from "@/lib/convertToBengaliNumber";
 import { AuthContext } from "@/authContext/AuthContext";
 import { toast } from "react-toastify";
+import Image from "next/image";
 
 const BillDetails = ({ params }) => {
   const [activeItem, setActiveItem] = React.useState("");
@@ -88,7 +89,9 @@ const BillDetails = ({ params }) => {
   if (!billData) {
     return (
       <div className="flex justify-center flex-col gap-6 items-center h-[80vh]">
-        <h3 className="text-3xl font-semibold text-center">No data found!</h3>
+        <h3 className="text-3xl font-semibold text-center">
+          কোন তথ্য পাওয়া যাইনি!
+        </h3>
         <button
           onClick={() => window.location.reload()}
           className="px-4 py-[5px] pt-[8px] bg-[#008B4C] border border-[#008B4C] hover:bg-[#006f3d] text-white rounded-md font-medium capitalize"
@@ -589,7 +592,18 @@ const BillDetails = ({ params }) => {
                       label={"চলতি বছরে মোট নৈমিত্তিক ছুটি"}
                       value={salary.current_year_occasional_vacation}
                     />
-                    <PairedData label={"স্বাক্ষর"} value={salary.signature} />
+                    <div className="p-2 pb-[6px] px-3 border border-[#008b4c1a] bg-[#008b4c06] rounded-[4px]">
+                      <div className="text-black">
+                        <span className="font-medium">স্বাক্ষরঃ </span>
+                        <Image
+                          className="inline-block ml-3"
+                          width={80}
+                          height={40}
+                          src={salary.signature}
+                          alt="signature"
+                        ></Image>
+                      </div>
+                    </div>
                   </DataGrid>
                 </div>
               ))}

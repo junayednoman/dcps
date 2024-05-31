@@ -10,6 +10,7 @@ import PairedData from "@/app/components/PairedData";
 import convertToBengaliNumber from "@/lib/convertToBengaliNumber";
 import moment from "moment";
 import convertToBengaliMonth from "@/lib/englishMonthConverter";
+import Image from "next/image";
 
 const HistoryData = ({ billData }) => {
   const [activeItem, setActiveItem] = React.useState("");
@@ -52,8 +53,8 @@ const HistoryData = ({ billData }) => {
           প্রদানকৃত তথ্যের ভিত্তিতে কোন বিল খুজে পাওয়া যাইনি!
         </h3>
         <p>
-          <span className="text-5xl rotate-12 inline-block">👈</span>মেনু থেকে
-          আবার সার্চ করুন
+          <span className="text-5xl rotate-12 inline-block">👈</span>সাইডবার
+          থেকে আবার সার্চ করুন
         </p>
       </div>
     );
@@ -180,7 +181,9 @@ const HistoryData = ({ billData }) => {
   const billYear = convertToBengaliNumber(
     moment(billData.submitted_at).format("YYYY")
   );
-  const billMonth = convertToBengaliMonth( moment(billData.submitted_at).format("MMMM"));
+  const billMonth = convertToBengaliMonth(
+    moment(billData.submitted_at).format("MMMM")
+  );
 
   return (
     <div id="print-content" className="bg-[#FAFAFA] xl:w-[80%] w-full">
@@ -189,7 +192,9 @@ const HistoryData = ({ billData }) => {
       </h2>
       {!billData ? (
         <div className="flex justify-center items-center h-[80vh]">
-          <h3 className="text-3xl font-semibold text-center">No data found!</h3>
+          <h3 className="text-3xl font-semibold text-center">
+            কোন তথ্য পাওয়া যাইনি!
+          </h3>
         </div>
       ) : (
         <>
@@ -587,10 +592,12 @@ const HistoryData = ({ billData }) => {
                           label={"চলতি বছরে মোট নৈমিত্তিক ছুটি"}
                           value={salary.current_year_occasional_vacation}
                         />
-                        <PairedData
-                          label={"স্বাক্ষর"}
-                          value={salary.signature}
-                        />
+                        <div className="p-2 pb-[6px] px-3 border border-[#008b4c1a] bg-[#008b4c06] rounded-[4px]">
+                          <div className="text-black">
+                            <span className="font-medium">স্বাক্ষরঃ </span>
+                            <Image className="inline-block ml-3" width={80} height={40} src={salary.signature} alt="signature"></Image>
+                          </div>
+                        </div>
                       </DataGrid>
                     </div>
                   ))}

@@ -21,20 +21,18 @@ export async function POST(req, res) {
     }
 
     // verify user role
-    // const { role } = decodeUser(token);
-    // if (role === "aueo") {
-    //   return NextResponse.json({ message: "Forbidden" }, { status: 403 });
-    // }
 
     const db = await getDb();
     const cluster = await req.json();
     const query = { cluster_name: cluster };
 
     const result = await db.collection("clusters").findOne(query);
-    console.log(result);
 
     if (!result) {
-      return NextResponse.json({ message: "Failed to fetch" }, { status: 500 });
+      return NextResponse.json(
+        { success: false, message: "কোন তথ্য পাওয়া যাইনি" },
+        { status: 404 }
+      );
     }
 
     return NextResponse.json(
