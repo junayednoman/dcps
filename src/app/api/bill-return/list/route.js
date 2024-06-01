@@ -28,11 +28,19 @@ export async function POST(req, res) {
     const { cluster } = await req.json();
 
     const query = { "school.general.cluster": cluster, isDraft: false };
-
+    const ueoQuery = {
+      isDraft: false,
+      isAUEOVerified: true,
+    };
     const result = await db
       .collection("bills")
-      .find(role === "ueo" ? { isDraft: false } : query)
-      .project({ "school.general.name": 1, "school.general.emis_code": 1 })
+      .find(role === "ueo" ? ueoQuery : query)
+      .project({
+        "school.general.name": 1,
+        "school.general.emis_code": 1,
+        isAUEOVerified: 1,
+        isUEOVerified: 1,
+      })
       .toArray();
 
     return NextResponse.json(

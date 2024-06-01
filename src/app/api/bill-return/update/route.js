@@ -22,12 +22,6 @@ export async function PATCH(req, res) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    // verify user role
-    const { role } = decodeUser(token);
-    if (role !== "head-master") {
-      return NextResponse.json({ message: "Forbidden" }, { status: 403 });
-    }
-
     const db = await getDb();
     const body = await req.json();
     const updateData = body.updateData;
@@ -37,8 +31,7 @@ export async function PATCH(req, res) {
     };
     const updateDoc = {
       $set: {
-        updatedDate: updateData.updatedDate,
-        isDraft: updateData.isDraft,
+        ...updateData
       },
     };
     const result = await db.collection("bills").updateOne(query, updateDoc);
@@ -52,8 +45,8 @@ export async function PATCH(req, res) {
 
     return NextResponse.json({
       success: true,
-      message: "Bill return submitted",
-      data: body,
+      message: "Bill return updated successfully",
+      data: result,
     });
   } catch (error) {
     console.error(error);

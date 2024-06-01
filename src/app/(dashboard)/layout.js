@@ -191,6 +191,20 @@ export default function DashboardLayout({ children }) {
     setSchoolSelectedOption(schoolSelectedOption);
   };
 
+  // handle logout
+  const handleSidebarLogout = () => {
+    handleLogout()
+      .then((res) => {
+        console.log(res);
+        if (res.isLoggedOut) {
+          window.location = "/";
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   /////////////////////// HANDLE HISTORY FORM SUBMIT ///////////////////////
   const handelFormSubmit = (e) => {
     e.preventDefault();
@@ -250,7 +264,7 @@ export default function DashboardLayout({ children }) {
   const handleHistoryClick = () => {
     handleModalOpen();
     if (role === "aueo" && !schoolOptions) {
-      const apiUrl = "http://localhost:3000/api/clusters";
+      const apiUrl = "https://dmsp.vercel.app/api/clusters";
       fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -800,7 +814,7 @@ export default function DashboardLayout({ children }) {
               ))}
               {/* { label: "লগ আউট", link: "/dashboard/help", icon: <MdOutlineLogout className='text-xl' /> }, */}
               <ListItem
-                onClick={handleLogout}
+                onClick={handleSidebarLogout}
                 disablePadding
                 sx={{ display: "block" }}
               >

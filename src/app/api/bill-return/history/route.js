@@ -31,11 +31,6 @@ export async function POST(req, res) {
     const db = await getDb();
     const { cluster, userName, targetDate, schoolName } = await req.json();
 
-    // const cluster = "সাধুহাটি ক্লাস্টার";
-    // const userName = "সাধুহাটি ক্লাস্টার";
-    // const targetDate = "May 2024";
-    // const schoolName = "নিমারাই সরকারি প্রাথমিক বিদ‌্যালয়";
-
     const headmasterQuery = {
       submitted_by: userName,
       "school.general.name": schoolName,

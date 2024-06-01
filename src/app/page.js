@@ -1,14 +1,14 @@
 import psLogo from "@/media/ps.svg"
 import govLogo from "@/media/gov.svg"
 import Image from "next/image";
-import BodyContainer from "./components/BodyContainer";
 import LoginForm from "./components/LoginForm";
+import BodyContainer from "./components/BodyContainer";
 
 export default function Home() {
   return (
     <main>
       <BodyContainer>
-        <div className="md:my-14 my-10">
+        <div className="md:my-14 my-10 px-4">
           <div className="text-center">
             <div className="flex justify-between items-center gap-6 mb-8">
               <a href="https://www.dpe.gov.bd/" target="_blank">
@@ -21,7 +21,7 @@ export default function Home() {
             </div>
 
           </div>
-          <div className=" w-full md:w-[550px] mx-auto md:pt-[80px] pt-14">
+          <div className=" w-full md:w-[500px] mx-auto md:pt-[80px] pt-14">
             <h4 className="md:text-[27px] text-2xl mb-3 font-semibold">সাইন ইন করুন</h4>
             <div>
               <LoginForm />

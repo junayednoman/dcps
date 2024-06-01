@@ -17,7 +17,8 @@ const BillDetails = ({ params }) => {
   const [activeItem, setActiveItem] = React.useState("");
   const [billData, setBillData] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
-  const { userName } = React.useContext(AuthContext);
+  const { userName, role } = React.useContext(AuthContext);
+  const [showVerify, setShowVerify] = React.useState(false);
 
   function a11yProps(index) {
     return {
@@ -50,10 +51,29 @@ const BillDetails = ({ params }) => {
   };
 
   React.useEffect(() => {
+    if (role !== "head-master") {
+      if (role === "ueo" && !billData?.isUEOVerified) {
+        if (billData?.isAUEOVerified) {
+          setShowVerify(true);
+        } else {
+          setShowVerify(false);
+        }
+      } else if (role === "aueo" && !billData?.isAUEOVerified) {
+        setShowVerify(true);
+      } else {
+        setShowVerify(false);
+      }
+    } else {
+      setShowVerify(false);
+    }
+  }, [role, billData]);
+  console.log(showVerify);
+
+  React.useEffect(() => {
     const id = params.billId;
     if (userName) {
       setLoading(true);
-      const apiUrl = `http://localhost:3000/api/bill-return/get-single`;
+      const apiUrl = `https://dmsp.vercel.app/api/bill-return/get-single`;
       fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -219,6 +239,43 @@ const BillDetails = ({ params }) => {
   const class_five = studentData.admission.class_five[0];
   const studentAsroyonSurvey = studentData.asroyon_survey[0];
   console.log(studentAsroyonSurvey);
+
+  const handleBillVerify = () => {
+    const currentDate = new Date().toISOString();
+    const aueoUpdateData = { isAUEOVerified: true, updatedDate: currentDate };
+    const ueoUpdateData = { isUEOVerified: true, updatedDate: currentDate };
+    setLoading(true);
+    const apiUrl = "https://dmsp.vercel.app/api/bill-return/update";
+    fetch(apiUrl, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        updateData: role === "aueo" ? aueoUpdateData : ueoUpdateData,
+        id: billData._id,
+      }),
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        if (data.success) {
+          toast.success("সফলভাবে এপ্রোভ হয়েছে!");
+          setTimeout(() => {
+            window.location.reload();
+          }, 1300);
+        }
+      })
+      .catch((error) => {
+        toast.error("There was an error!");
+        console.error("There was an error!", error);
+        setLoading(false);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
   return (
     <div id="print-content" className="bg-[#FAFAFA] xl:w-[80%] w-full">
@@ -1186,12 +1243,15 @@ const BillDetails = ({ params }) => {
         </div>
       </div>
       <div className="flex items-center justify-between">
-        <button
-          type="submit"
-          className="px-6 md:py-[10px] py-[6px] md:pt-[15px] pt-[10px] bg-[#008B4C] border border-[#008B4C] hover:bg-[#006f3d] text-white rounded-md font-semibold capitalize mt-5"
-        >
-          ভেরিফাই করুন
-        </button>
+        {showVerify && (
+          <button
+            onClick={handleBillVerify}
+            type="submit"
+            className="px-6 md:py-[10px] py-[6px] md:pt-[15px] pt-[10px] bg-[#008B4C] border border-[#008B4C] hover:bg-[#006f3d] text-white rounded-md font-semibold capitalize mt-5"
+          >
+            {role  === "ueo" ? "এপ্রুভ করুন" : "ভেরিফাই করুন"}
+          </button>
+        )}
       </div>
     </div>
   );

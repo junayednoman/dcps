@@ -5,9 +5,11 @@ import * as Yup from "yup";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import { LiaEyeSlash, LiaEyeSolid } from "react-icons/lia";
+import { Checkbox, FormControlLabel } from "@mui/material";
+import Link from "next/link";
 
 const validationSchema = Yup.object().shape({
-  unique_id: Yup.string().required("ইনিক আইডি আবশ্যক"),
+  unique_id: Yup.string().required("ইউজার আইডি আবশ্যক"),
   password: Yup.string().required("পাসওয়ার্ড আবশ্যক"),
 });
 
@@ -16,7 +18,7 @@ const LoginForm = () => {
   const [loading, setLoading] = useState(false);
   const handleSubmit = async (values) => {
     setLoading(true);
-    const apiUrl = "http://localhost:3000/api/auth/sign-in";
+    const apiUrl = "https://dmsp.vercel.app/api/auth/sign-in";
     fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -56,6 +58,11 @@ const LoginForm = () => {
       });
   };
 
+  const checkBoxColor = {
+    unchecked: "#000", // tomato color for unchecked state
+    checked: "#008B4C", // limegreen color for checked state
+  };
+
   return (
     <>
       <Formik
@@ -63,17 +70,16 @@ const LoginForm = () => {
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
       >
-        {({ isSubmitting }) => (
+        {() => (
           <Form>
             <div className="mb-4">
               <label className="font-semibold" htmlFor="unique_id">
                 আইডি*
               </label>
-              {/* <TextField label="বিদ্যালয়ের নাম" placeholder={"বিদ্যালয়ের EMIS কোড দিন"} /> */}
               <Field
                 id="unique_id"
                 name="unique_id"
-                placeholder="বিদ্যালয়ের EMIS কোড দিন"
+                placeholder="আপনার ইউজার আইডি দিন"
                 className="md:h-[50px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1"
                 type="text"
               />
@@ -119,11 +125,33 @@ const LoginForm = () => {
               />
             </div>
 
+            <div className="my-3 flex items-center justify-between rememberMe">
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    sx={{
+                      color: checkBoxColor.unchecked,
+                      "&.Mui-checked": {
+                        color: checkBoxColor.checked,
+                      },
+                    }}
+                  />
+                }
+                label="Remember me"
+              />
+              <Link
+                href={"/forget-password"}
+                className="font-semibold text-[#008B4C]"
+              >
+                পাসওয়ার্ড ভুলে গেছেন?
+              </Link>
+            </div>
+
             <div>
               <button
                 type="submit"
                 disabled={loading}
-                className="px-6 md:py-[10px] py-[6px] md:pt-[15px] pt-[10px] bg-primaryColor border border-primaryColor hover:bg-textColor text-white rounded-md font-semibold capitalize mt-1"
+                className="px-6 md:py-[10px] py-[6px] md:pt-[15px] pt-[10px] bg-[#006f3d] border border-[#006f3d] hover:bg-[#00532e] text-white rounded-md font-semibold capitalize mt-1 w-full"
               >{`${loading ? "লোড হচ্ছে..." : "সাইন ইন"}`}</button>
             </div>
           </Form>

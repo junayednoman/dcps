@@ -136,7 +136,7 @@ const BilReturnSubmit = () => {
   const [loading, setLoading] = React.useState(false);
   const [draftSubmit, setDraftSubmit] = React.useState(false);
   const { userName } = React.useContext(AuthContext);
-  const handleFormSubmit = async(values) => {
+  const handleFormSubmit = async (values) => {
     if (values) {
       // console.log(values);
       const formData = {
@@ -209,7 +209,7 @@ const BilReturnSubmit = () => {
       formData.student.admission.class_four = values.class_four;
       formData.student.admission.class_five = values.class_five;
       formData.student.asroyon_survey = values.asroyon_survey;
-      
+
       const updatedSalary = await Promise.all(
         formData.teacher.salary.map(async (item) => {
           if (item.signature) {
@@ -226,12 +226,12 @@ const BilReturnSubmit = () => {
           return item;
         })
       );
-  
+
       // Set the updated values back to Formik state
       formData.teacher.salary = updatedSalary;
-  
+
       // API call with the updated form data
-      const apiUrl = "http://localhost:3000/api/bill-return/submit";
+      const apiUrl = "https://dmsp.vercel.app/api/bill-return/submit";
       fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -263,6 +263,7 @@ const BilReturnSubmit = () => {
         .finally(() => {
           setLoading(false);
         });
+      // console.log(formData.isDraft);
     }
   };
 
@@ -3627,6 +3628,7 @@ const BilReturnSubmit = () => {
               <button
                 disabled={loading && !draftSubmit}
                 type="submit"
+                onClick={() => setDraftSubmit(false)}
                 className="px-6 md:py-[10px] py-[6px] md:pt-[15px] pt-[10px] bg-[#008B4C] border border-[#008B4C] hover:bg-[#006f3d] text-white rounded-md font-semibold capitalize mt-5"
               >
                 {loading && !draftSubmit ? (

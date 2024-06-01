@@ -11,10 +11,22 @@ import convertToBengaliNumber from "@/lib/convertToBengaliNumber";
 import moment from "moment";
 import convertToBengaliMonth from "@/lib/englishMonthConverter";
 import Image from "next/image";
+import Link from "next/link";
+import { AuthContext } from "@/authContext/AuthContext";
 
 const HistoryData = ({ billData }) => {
+  const { role, userName } = React.useContext(AuthContext);
+  const [showEdit, setShowEdit] = React.useState(false);
   const [activeItem, setActiveItem] = React.useState("");
-  console.log(billData);
+
+  // show or hide edit option
+  React.useEffect(() => {
+    if (role === "head-master" && userName === billData.submitted_by) {
+      setShowEdit(true);
+    } else {
+      setShowEdit(false);
+    }
+  }, [role, userName, billData]);
 
   function a11yProps(index) {
     return {
@@ -185,11 +197,28 @@ const HistoryData = ({ billData }) => {
     moment(billData.submitted_at).format("MMMM")
   );
 
+  console.log(showEdit);
+
   return (
     <div id="print-content" className="bg-[#FAFAFA] xl:w-[80%] w-full">
-      <h2 className="md:text-2xl text-xl font-semibold md:mb-14 mb-8">
-        {billYear} এর {billMonth} মাসের বিল রিটার্ন ইতিহাস
-      </h2>
+      <div className=" md:mb-14 mb-4">
+        <h2 className="md:text-2xl text-xl font-semibold">
+          {billYear} সালের {billMonth} মাসের বিল রিটার্ন ইতিহাস
+        </h2>
+        <p className="mt-2 mb-8">
+          {billData.isUEOVerified ? (
+            <p className="text-[#008B4C] font-medium">
+              উপজেলা শিক্ষা অফিসার এপ্রুভ করেছেন
+            </p>
+          ) : billData.isAUEOVerified ? (
+            <p className="text-[#B41E8E] font-medium">
+              সহকারি শিক্ষা অফিসার এপ্রুভ করেছেন
+            </p>
+          ) : (
+            <p className="text-[#ED1C24] font-medium">এপ্রুভ করা হয়নি</p>
+          )}
+        </p>
+      </div>
       {!billData ? (
         <div className="flex justify-center items-center h-[80vh]">
           <h3 className="text-3xl font-semibold text-center">
@@ -201,9 +230,19 @@ const HistoryData = ({ billData }) => {
           {/* school related data */}
           <div className="flex lg:flex-row flex-col md:gap-8 gap-5">
             <div className="border bg-white shadow-sm rounded-[4px] p-8 w-full">
-              <h2 className="md:text-xl text-lg font-semibold md:mb-8">
-                বিদ্যালয় সংক্রান্ত তথ্য
-              </h2>
+              <div className=" flex items-center justify-between md:mb-8 mb-3">
+                <h2 className="md:text-xl text-lg font-semibold">
+                  বিদ্যালয় সংক্রান্ত তথ্য
+                </h2>
+                {showEdit && (
+                  <Link
+                    href={`/dashboard/bill-return-edit/${billData._id}`}
+                    className="md:text-xl text-lg font-semibold"
+                  >
+                    এডিট করুন
+                  </Link>
+                )}
+              </div>
               <Box sx={{ width: "100%" }}>
                 <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
                   <Tabs
@@ -531,10 +570,10 @@ const HistoryData = ({ billData }) => {
                 <CustomTabPanel value={teacherTabValue} index={1}>
                   {teacherSalary.map((salary, idx) => (
                     <div key={idx} className="pt-6">
-                      <span className="text-lg font-semibold">
+                      <span className="text-lg font-semibold mt-3">
                         শিক্ষক {convertToBengaliNumber(idx + 1)}ঃ
                       </span>
-                      <DataGrid>
+                      <DataGrid mtZero={true}>
                         <PairedData
                           label={"শিক্ষকের নাম"}
                           value={salary.name}
@@ -595,7 +634,13 @@ const HistoryData = ({ billData }) => {
                         <div className="p-2 pb-[6px] px-3 border border-[#008b4c1a] bg-[#008b4c06] rounded-[4px]">
                           <div className="text-black">
                             <span className="font-medium">স্বাক্ষরঃ </span>
-                            <Image className="inline-block ml-3" width={80} height={40} src={salary.signature} alt="signature"></Image>
+                            <Image
+                              className="inline-block ml-3"
+                              width={80}
+                              height={40}
+                              src={salary.signature}
+                              alt="signature"
+                            ></Image>
                           </div>
                         </div>
                       </DataGrid>
@@ -1184,14 +1229,6 @@ const HistoryData = ({ billData }) => {
                 </Box>
               </div>
             </div>
-          </div>
-          <div className="flex items-center justify-between">
-            <button
-              type="submit"
-              className="px-6 md:py-[10px] py-[6px] md:pt-[15px] pt-[10px] bg-[#008B4C] border border-[#008B4C] hover:bg-[#006f3d] text-white rounded-md font-semibold capitalize mt-5"
-            >
-              ভেরিফাই করুন
-            </button>
           </div>
         </>
       )}

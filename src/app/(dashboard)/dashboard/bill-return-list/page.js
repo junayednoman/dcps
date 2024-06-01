@@ -9,10 +9,11 @@ const BillList = () => {
   const [loading, setLoading] = useState(false);
   const [schoolData, setSchoolData] = useState(null);
   const { userName } = useContext(AuthContext);
+  console.log(schoolData);
   useEffect(() => {
     if (userName) {
       setLoading(true);
-      const apiUrl = "http://localhost:3000/api/bill-return/list";
+      const apiUrl = "https://dmsp.vercel.app/api/bill-return/list";
       fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -120,7 +121,9 @@ const BillList = () => {
                       ইএমআইএস
                     </th>
                     <th className="border px-4 py-2">নাম</th>
-                    <th className="border px-4 py-2 md:block hidden">একশন</th>
+                    <th className="border px-4 py-2 md:block hidden">
+                      এপ্রুভ করেছেন
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -141,12 +144,19 @@ const BillList = () => {
                         </Link>
                       </td>
                       <td className="border px-4 py-3 md:block hidden">
-                        <Link
-                          href={`/dashboard/bill-details/${item._id}`}
-                          className="text-greenColor font-medium underline"
-                        >
-                          বিস্তারিত দেখুন
-                        </Link>
+                        {item.isUEOVerified ? (
+                          <p className="text-[#008B4C] font-medium">
+                            উপজেলা শিক্ষা অফিসার
+                          </p>
+                        ) : item.isAUEOVerified ? (
+                          <p className="text-[#B41E8E] font-medium">
+                            সহকারি শিক্ষা অফিসার
+                          </p>
+                        ) : (
+                          <p className="text-[#ED1C24] font-medium">
+                            এপ্রুভ করা হইনি
+                          </p>
+                        )}
                       </td>
                     </tr>
                   ))}

@@ -12,7 +12,7 @@ const DataDraft = ({ params }) => {
   const [loading, setLoading] = useState();
   useEffect(() => {
     setLoading(true);
-    const apiUrl = "http://localhost:3000/api/bill-return/get-draft";
+    const apiUrl = "https://dmsp.vercel.app/api/bill-return/get-draft";
     fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -180,7 +180,7 @@ const DataDraft = ({ params }) => {
     const currentDate = new Date().toISOString();
     const updateData = { isDraft: false, updatedDate: currentDate };
     setLoading(true);
-    const apiUrl = "http://localhost:3000/api/bill-return/update";
+    const apiUrl = "https://dmsp.vercel.app/api/bill-return/update";
     fetch(apiUrl, {
       method: "PATCH",
       headers: {
@@ -215,7 +215,7 @@ const DataDraft = ({ params }) => {
                 বিদ্যালয় সংক্রান্ত তথ্য
               </h2>
               <Link
-                href={`http://localhost:3000/dashboard/bill-return-edit/${billData._id}`}
+                href={`https://dmsp.vercel.app/dashboard/bill-return-edit/${billData._id}`}
                 className="text-lg font-semibold underline"
               >
                 Edit
@@ -796,8 +796,16 @@ const DataDraft = ({ params }) => {
                           {salaryItem.current_year_occasional_vacation}
                         </p>
                         <div className="felx items-center text-[16px]">
-                          <span className="font-medium inline-block">স্বাক্ষর: </span>
-                          <Image className="inline-block ml-3" width={80} height={40} src={salaryItem.signature} alt="signature"></Image>
+                          <span className="font-medium inline-block">
+                            স্বাক্ষর:{" "}
+                          </span>
+                          <Image
+                            className="inline-block ml-3"
+                            width={80}
+                            height={40}
+                            src={salaryItem.signature}
+                            alt="signature"
+                          ></Image>
                         </div>
                       </div>
                     ))
