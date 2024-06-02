@@ -73,7 +73,7 @@ const BillDetails = ({ params }) => {
     const id = params.billId;
     if (userName) {
       setLoading(true);
-      const apiUrl = `https://dmsp.vercel.app/api/bill-return/get-single`;
+      const apiUrl = `http://localhost:3000/api/bill-return/get-single`;
       fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -245,7 +245,7 @@ const BillDetails = ({ params }) => {
     const aueoUpdateData = { isAUEOVerified: true, updatedDate: currentDate };
     const ueoUpdateData = { isUEOVerified: true, updatedDate: currentDate };
     setLoading(true);
-    const apiUrl = "https://dmsp.vercel.app/api/bill-return/update";
+    const apiUrl = "http://localhost:3000/api/bill-return/update";
     fetch(apiUrl, {
       method: "PATCH",
       headers: {
@@ -1249,7 +1249,7 @@ const BillDetails = ({ params }) => {
             type="submit"
             className="px-6 md:py-[10px] py-[6px] md:pt-[15px] pt-[10px] bg-[#008B4C] border border-[#008B4C] hover:bg-[#006f3d] text-white rounded-md font-semibold capitalize mt-5"
           >
-            {role  === "ueo" ? "এপ্রুভ করুন" : "ভেরিফাই করুন"}
+            {role === "ueo" ? "এপ্রুভ করুন" : "ভেরিফাই করুন"}
           </button>
         )}
       </div>

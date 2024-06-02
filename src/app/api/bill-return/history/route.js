@@ -30,23 +30,29 @@ export async function POST(req, res) {
 
     const db = await getDb();
     const { cluster, userName, targetDate, schoolName } = await req.json();
+    console.log(cluster, userName, targetDate, schoolName);
 
     const headmasterQuery = {
       submitted_by: userName,
       "school.general.name": schoolName,
+      submitted_date: targetDate,
       isDraft: false,
     };
     const aueoQuery = {
       "school.general.cluster": cluster,
       "school.general.name": schoolName,
+      submitted_date: targetDate,
       isDraft: false,
     };
 
     const generalQuery = {
       "school.general.name": schoolName,
+      submitted_date: targetDate,
       isDraft: false,
     };
     // const role = "ueo"
+
+    console.log(targetDate);
 
     const result = await db
       .collection("bills")
@@ -57,23 +63,13 @@ export async function POST(req, res) {
           ? aueoQuery
           : generalQuery
       );
+
     console.log(result);
     if (!result) {
       return NextResponse.json(
         {
           success: false,
           message: "কোন তথ্য পাওয়া যাইনি!",
-        },
-        { status: 404 }
-      );
-    }
-
-    const submitDate = moment(result?.submitted_at).format("MMMM YYYY");
-    if (targetDate !== submitDate) {
-      return NextResponse.json(
-        {
-          success: false,
-          message: "Failed to fetch data!",
         },
         { status: 404 }
       );

@@ -22,6 +22,7 @@ import { ToastContainer, toast } from "react-toastify";
 import { AuthContext } from "@/authContext/AuthContext";
 import { generateUniqueId } from "@/lib/uniqueId";
 import { uploadImageToImageBB } from "@/lib/uploadImage";
+import moment from "moment";
 
 const BilReturnSubmit = () => {
   const [activeItem, setActiveItem] = React.useState("");
@@ -169,6 +170,9 @@ const BilReturnSubmit = () => {
       formData.submitted_by = userName;
       formData.isDraft = draftSubmit ? true : false;
       formData.submitted_at = currentDate;
+      formData.submitted_date = moment(formData.submitted_at).format(
+        "MMMM YYYY"
+      );
       formData.updated_at = "";
       formData.school.general = values.school.general;
       formData.school.conference = values.school.conference;
@@ -231,7 +235,7 @@ const BilReturnSubmit = () => {
       formData.teacher.salary = updatedSalary;
 
       // API call with the updated form data
-      const apiUrl = "https://dmsp.vercel.app/api/bill-return/submit";
+      const apiUrl = "http://localhost:3000/api/bill-return/submit";
       fetch(apiUrl, {
         method: "POST",
         headers: {

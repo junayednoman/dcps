@@ -13,7 +13,7 @@ const Summery = () => {
   useEffect(() => {
     if (userName) {
       setLoading(true);
-      const apiUrl = `https://dmsp.vercel.app/api/bill-return/summery`;
+      const apiUrl = `http://localhost:3000/api/bill-return/summery`;
       fetch(apiUrl, {
         method: "POST",
         headers: {
