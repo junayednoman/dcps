@@ -12,6 +12,7 @@ import convertToBengaliNumber from "@/lib/convertToBengaliNumber";
 import { AuthContext } from "@/authContext/AuthContext";
 import { toast } from "react-toastify";
 import Image from "next/image";
+import DataGridForAttendance from "@/app/components/DataGridForAttendance";
 
 const BillDetails = ({ params }) => {
   const [activeItem, setActiveItem] = React.useState("");
@@ -73,7 +74,7 @@ const BillDetails = ({ params }) => {
     const id = params.billId;
     if (userName) {
       setLoading(true);
-      const apiUrl = `https://dmsp.vercel.app/api/bill-return/get-single`;
+      const apiUrl = `http://localhost:3000/api/bill-return/get-single`;
       fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -222,6 +223,8 @@ const BillDetails = ({ params }) => {
   const teacherSalary = teacherData.salary;
   const teacherVacations = teacherData.vacation;
   const unauthorized_teacher = teacherData.unauthorized_teacher;
+  const teacher_attendance = teacherData?.attendance;
+
   // student related data
   const studentData = billData?.student;
 
@@ -237,6 +240,11 @@ const BillDetails = ({ params }) => {
   const class_three = studentData.admission.class_three[0];
   const class_four = studentData.admission.class_four[0];
   const class_five = studentData.admission.class_five[0];
+  const class_six = studentData.admission.class_six[0];
+  const class_seven = studentData.admission.class_seven[0];
+  const class_eight = studentData.admission.class_eight[0];
+  console.log(studentData);
+
   const studentAsroyonSurvey = studentData.asroyon_survey[0];
   console.log(studentAsroyonSurvey);
 
@@ -245,7 +253,7 @@ const BillDetails = ({ params }) => {
     const aueoUpdateData = { isAUEOVerified: true, updatedDate: currentDate };
     const ueoUpdateData = { isUEOVerified: true, updatedDate: currentDate };
     setLoading(true);
-    const apiUrl = "https://dmsp.vercel.app/api/bill-return/update";
+    const apiUrl = "http://localhost:3000/api/bill-return/update";
     fetch(apiUrl, {
       method: "PATCH",
       headers: {
@@ -332,15 +340,70 @@ const BillDetails = ({ params }) => {
               <div className="pt-6">
                 <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4 gap-y-4">
                   <PairedData label={"ভবন সংখ্যা"} value={buildings} />
-                  <PairedData
-                    label={"ভবন ১ নির্মাণের সন"}
-                    value={building_date_1}
-                  />
-                  <PairedData label={"ভবন ১ এর ধরন"} value={building_type_1} />
-                  <PairedData
-                    label={"ভবন ১ এর বর্তমান অবস্থা"}
-                    value={building_condition_1}
-                  />
+                  {buildings >= 1 && (
+                    <>
+                      <PairedData
+                        label={"ভবন ১ নির্মাণের সন"}
+                        value={building_date_1}
+                      />
+                      <PairedData
+                        label={"ভবন ১ এর ধরন"}
+                        value={building_type_1}
+                      />
+                      <PairedData
+                        label={"ভবন ১ এর বর্তমান অবস্থা"}
+                        value={building_condition_1}
+                      />
+                    </>
+                  )}
+                  {buildings >= 2 && (
+                    <>
+                      <PairedData
+                        label={"ভবন ২ নির্মাণের সন"}
+                        value={building_date_2}
+                      />
+                      <PairedData
+                        label={"ভবন ২ এর ধরন"}
+                        value={building_type_2}
+                      />
+                      <PairedData
+                        label={"ভবন ২ এর বর্তমান অবস্থা"}
+                        value={building_condition_2}
+                      />
+                    </>
+                  )}
+                  {buildings >= 3 && (
+                    <>
+                      <PairedData
+                        label={"ভবন ৩ নির্মাণের সন"}
+                        value={building_date_3}
+                      />
+                      <PairedData
+                        label={"ভবন ৩ এর ধরন"}
+                        value={building_type_3}
+                      />
+                      <PairedData
+                        label={"ভবন ৩ এর বর্তমান অবস্থা"}
+                        value={building_condition_3}
+                      />
+                    </>
+                  )}
+                  {buildings >= 4 && (
+                    <>
+                      <PairedData
+                        label={"ভবন ৪ নির্মাণের সন"}
+                        value={building_date_4}
+                      />
+                      <PairedData
+                        label={"ভবন ৪ এর ধরন"}
+                        value={building_type_4}
+                      />
+                      <PairedData
+                        label={"ভবন ৪ এর বর্তমান অবস্থা"}
+                        value={building_condition_4}
+                      />
+                    </>
+                  )}
                   <PairedData
                     label={"প্রধান শিক্ষকের কক্ষ"}
                     value={headmaster_room}
@@ -566,6 +629,7 @@ const BillDetails = ({ params }) => {
                 <Tab label="বেতন সংক্রান্ত তথ্য" {...a11yProps(1)} />
                 <Tab label="ছুটি সংক্রান্ত তথ্য" {...a11yProps(2)} />
                 <Tab label="অননুমোদিত শিক্ষক তথ্য" {...a11yProps(3)} />
+                <Tab label="হাজিরা সংক্রান্ত তথ্য" {...schoolTabIndexes(4)} />
               </Tabs>
             </Box>
             {/* general data */}
@@ -702,6 +766,91 @@ const BillDetails = ({ params }) => {
                   value={unauthorized_teacher[0].last_present_date}
                 />
               </DataGrid>
+            </CustomTabPanel>
+            <CustomTabPanel value={teacherTabValue} index={4}>
+              <DataGrid>
+                <PairedData
+                  label={"হাজিরা শুরুর তারিখ"}
+                  value={teacherData.hajira_from}
+                />
+                <PairedData
+                  label={"হাজিরা শেষের তারিখ"}
+                  value={teacherData.hajira_to}
+                />
+              </DataGrid>
+
+              {teacher_attendance?.map((attendance, index) => (
+                <DataDropdown
+                  key={index}
+                  title={
+                    index === 0
+                      ? `প্রধান শিক্ষক (${attendance.name})`
+                      : `সহকারী শিক্ষক-${convertToBengaliNumber(index)} (${
+                          attendance.name
+                        })`
+                  }
+                  itemKey={`attendance-${index}`}
+                  activeItem={activeItem}
+                  setActiveItem={setActiveItem}
+                >
+                  {attendance?.days?.map((day, idx) => (
+                    <div key={idx} className="mt-3 p-5 px-6 border rounded-md">
+                      <h5 className="font-semibold">
+                        {idx < 21
+                          ? `পূর্ববর্তী মাসের দিন-${convertToBengaliNumber(
+                              idx + 11
+                            )}  এর উপস্থিতি`
+                          : `পরবর্তী মাসের দিন-${convertToBengaliNumber(
+                              idx - 20
+                            )}  এর উপস্থিতি`}
+                      </h5>
+                      {day?.status === "present" ? (
+                        <DataGridForAttendance mtZero={true}>
+                          <PairedData
+                            label={"উপস্থিত কিনা"}
+                            value={"উপস্থিত"}
+                          ></PairedData>
+                          <PairedData
+                            label={"আগমন"}
+                            value={day?.coming_time}
+                          ></PairedData>
+                          <PairedData
+                            label={"প্রস্থান"}
+                            value={day?.leaving_time}
+                          ></PairedData>
+                          <div className="p-2 pb-[6px] px-3 border border-[#008b4c1a] bg-[#008b4c06] rounded-[4px]">
+                            <div className="text-black">
+                              <span className="font-medium">স্বাক্ষরঃ </span>
+                              <Image
+                                className="inline-block ml-3"
+                                width={80}
+                                height={20}
+                                src={
+                                  "https://i.ibb.co/yyQLBv2/04c683fbd9f24c509df57b559bdc0e91.jpg"
+                                }
+                                alt="signature"
+                              ></Image>
+                            </div>
+                          </div>
+                        </DataGridForAttendance>
+                      ) : day?.status === "absent" ? (
+                        <DataGrid mtZero={true}>
+                          <PairedData
+                            label={"উপস্থিত কিনা"}
+                            value="অনুপস্থিত"
+                          ></PairedData>
+                          <PairedData
+                            label={"অনুপস্থিতর কারণ"}
+                            value={day?.absence_reason}
+                          ></PairedData>
+                        </DataGrid>
+                      ) : (
+                        <p className="mt-2">কোন তথ্য পাওয়া যায়নি!</p>
+                      )}
+                    </div>
+                  ))}
+                </DataDropdown>
+              ))}
             </CustomTabPanel>
           </Box>
         </div>
@@ -1133,31 +1282,52 @@ const BillDetails = ({ params }) => {
                       />
                     </DataGrid>
                   </DataDropdown>
-                  {/* <DataDropdown
+                  <DataDropdown
                     title={"ষষ্ঠ শ্রেণি"}
                     itemKey={"classsix"}
                     activeItem={activeItem}
                     setActiveItem={setActiveItem}
                   >
                     <DataGrid mtZero={true}>
-                      <PairedData label={"মুসলিম ছাত্র"} value={"ছুটিশেষ"} />
-                      <PairedData label={"মুসলিম ছাত্রী"} value={"ছুটিশেষ"} />
+                      <PairedData
+                        label={"মুসলিম ছাত্র"}
+                        value={class_six.muslim_boy_student}
+                      />
+                      <PairedData
+                        label={"মুসলিম ছাত্রী"}
+                        value={class_six.muslim_girl_student}
+                      />
                       <PairedData
                         label={"মোট মুসলিম শিক্ষার্থী"}
-                        value={"ছুটিশেষ"}
+                        value={class_six.muslim_total_student}
                       />
-                      <PairedData label={"হিন্দু ছাত্র"} value={"ছুটিশেষ"} />
-                      <PairedData label={"হিন্দু ছাত্রী"} value={"ছুটিশেষ"} />
+                      <PairedData
+                        label={"হিন্দু ছাত্র"}
+                        value={class_six.hindu_boy_student}
+                      />
+                      <PairedData
+                        label={"হিন্দু ছাত্রী"}
+                        value={class_six.hindu_girl_student}
+                      />
                       <PairedData
                         label={"মোট হিন্দু শিক্ষার্থী"}
-                        value={"ছুটিশেষ"}
+                        value={class_six.hindu_total_student}
                       />
-                      <PairedData label={"মোট ছাত্র"} value={"ছুটিশেষ"} />
-                      <PairedData label={"মোট ছাত্রী"} value={"ছুটিশেষ"} />
-                      <PairedData label={"মোট শিক্ষার্থী"} value={"ছুটিশেষ"} />
+                      <PairedData
+                        label={"মোট ছাত্র"}
+                        value={class_six.total_boy_student}
+                      />
+                      <PairedData
+                        label={"মোট ছাত্রী"}
+                        value={class_six.total_girl_student}
+                      />
+                      <PairedData
+                        label={"মোট শিক্ষার্থী"}
+                        value={class_six.total_student}
+                      />
                       <PairedData
                         label={"বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী"}
-                        value={"ছুটিশেষ"}
+                        value={class_six.special_demanded_student}
                       />
                     </DataGrid>
                   </DataDropdown>
@@ -1168,24 +1338,45 @@ const BillDetails = ({ params }) => {
                     setActiveItem={setActiveItem}
                   >
                     <DataGrid mtZero={true}>
-                      <PairedData label={"মুসলিম ছাত্র"} value={"ছুটিশেষ"} />
-                      <PairedData label={"মুসলিম ছাত্রী"} value={"ছুটিশেষ"} />
+                      <PairedData
+                        label={"মুসলিম ছাত্র"}
+                        value={class_seven.muslim_boy_student}
+                      />
+                      <PairedData
+                        label={"মুসলিম ছাত্রী"}
+                        value={class_seven.muslim_girl_student}
+                      />
                       <PairedData
                         label={"মোট মুসলিম শিক্ষার্থী"}
-                        value={"ছুটিশেষ"}
+                        value={class_seven.muslim_total_student}
                       />
-                      <PairedData label={"হিন্দু ছাত্র"} value={"ছুটিশেষ"} />
-                      <PairedData label={"হিন্দু ছাত্রী"} value={"ছুটিশেষ"} />
+                      <PairedData
+                        label={"হিন্দু ছাত্র"}
+                        value={class_seven.hindu_boy_student}
+                      />
+                      <PairedData
+                        label={"হিন্দু ছাত্রী"}
+                        value={class_seven.hindu_girl_student}
+                      />
                       <PairedData
                         label={"মোট হিন্দু শিক্ষার্থী"}
-                        value={"ছুটিশেষ"}
+                        value={class_seven.hindu_total_student}
                       />
-                      <PairedData label={"মোট ছাত্র"} value={"ছুটিশেষ"} />
-                      <PairedData label={"মোট ছাত্রী"} value={"ছুটিশেষ"} />
-                      <PairedData label={"মোট শিক্ষার্থী"} value={"ছুটিশেষ"} />
+                      <PairedData
+                        label={"মোট ছাত্র"}
+                        value={class_seven.total_boy_student}
+                      />
+                      <PairedData
+                        label={"মোট ছাত্রী"}
+                        value={class_seven.total_girl_student}
+                      />
+                      <PairedData
+                        label={"মোট শিক্ষার্থী"}
+                        value={class_seven.total_student}
+                      />
                       <PairedData
                         label={"বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী"}
-                        value={"ছুটিশেষ"}
+                        value={class_seven.special_demanded_student}
                       />
                     </DataGrid>
                   </DataDropdown>
@@ -1196,27 +1387,48 @@ const BillDetails = ({ params }) => {
                     setActiveItem={setActiveItem}
                   >
                     <DataGrid mtZero={true}>
-                      <PairedData label={"মুসলিম ছাত্র"} value={"ছুটিশেষ"} />
-                      <PairedData label={"মুসলিম ছাত্রী"} value={"ছুটিশেষ"} />
+                      <PairedData
+                        label={"মুসলিম ছাত্র"}
+                        value={class_eight.muslim_boy_student}
+                      />
+                      <PairedData
+                        label={"মুসলিম ছাত্রী"}
+                        value={class_eight.muslim_girl_student}
+                      />
                       <PairedData
                         label={"মোট মুসলিম শিক্ষার্থী"}
-                        value={"ছুটিশেষ"}
+                        value={class_eight.muslim_total_student}
                       />
-                      <PairedData label={"হিন্দু ছাত্র"} value={"ছুটিশেষ"} />
-                      <PairedData label={"হিন্দু ছাত্রী"} value={"ছুটিশেষ"} />
+                      <PairedData
+                        label={"হিন্দু ছাত্র"}
+                        value={class_eight.hindu_boy_student}
+                      />
+                      <PairedData
+                        label={"হিন্দু ছাত্রী"}
+                        value={class_eight.hindu_girl_student}
+                      />
                       <PairedData
                         label={"মোট হিন্দু শিক্ষার্থী"}
-                        value={"ছুটিশেষ"}
+                        value={class_eight.hindu_total_student}
                       />
-                      <PairedData label={"মোট ছাত্র"} value={"ছুটিশেষ"} />
-                      <PairedData label={"মোট ছাত্রী"} value={"ছুটিশেষ"} />
-                      <PairedData label={"মোট শিক্ষার্থী"} value={"ছুটিশেষ"} />
+                      <PairedData
+                        label={"মোট ছাত্র"}
+                        value={class_eight.total_boy_student}
+                      />
+                      <PairedData
+                        label={"মোট ছাত্রী"}
+                        value={class_eight.total_girl_student}
+                      />
+                      <PairedData
+                        label={"মোট শিক্ষার্থী"}
+                        value={class_eight.total_student}
+                      />
                       <PairedData
                         label={"বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী"}
-                        value={"ছুটিশেষ"}
+                        value={class_eight.special_demanded_student}
                       />
                     </DataGrid>
-                  </DataDropdown> */}
+                  </DataDropdown>
                 </div>
               </CustomTabPanel>
 

@@ -264,7 +264,7 @@ export default function DashboardLayout({ children }) {
   const handleHistoryClick = () => {
     handleModalOpen();
     if (role === "aueo" && !schoolOptions) {
-      const apiUrl = "https://dmsp.vercel.app/api/clusters";
+      const apiUrl = "http://localhost:3000/api/clusters";
       fetch(apiUrl, {
         method: "POST",
         headers: {

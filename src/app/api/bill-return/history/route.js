@@ -50,9 +50,6 @@ export async function POST(req, res) {
       submitted_date: targetDate,
       isDraft: false,
     };
-    // const role = "ueo"
-
-    console.log(targetDate);
 
     const result = await db
       .collection("bills")

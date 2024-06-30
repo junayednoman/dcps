@@ -27,10 +27,11 @@ const BilReturnSubmit = ({ params }) => {
   const [activeItem, setActiveItem] = React.useState("");
   const { userName } = React.useContext(AuthContext);
   const [billData, setBillData] = React.useState(null);
+  console.log(billData?.student);
   React.useEffect(() => {
     const id = params.dataId;
     setLoading(true);
-    const apiUrl = `https://dmsp.vercel.app/api/bill-return/get-single`;
+    const apiUrl = `http://localhost:3000/api/bill-return/get-single`;
     fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -263,6 +264,9 @@ const BilReturnSubmit = ({ params }) => {
         stipendYearSelectedOption.value || billData.school.stipend.stipend_year;
       formData.teacher.general = values.teacher.general;
       formData.teacher.salary = values.salary;
+      formData.teacher.attendance = billData?.teacher?.attendance;
+      formData.teacher.hajira_from = billData?.teacher?.hajira_from;
+      formData.teacher.hajira_to = billData?.teacher?.hajira_to;
 
       // set salary array data
       values.salary.map((dev, idx) => {
@@ -385,8 +389,26 @@ const BilReturnSubmit = ({ params }) => {
         billData.student.admission.class_five
       );
       formData.student.admission.class_six = values.class_six;
+      // set class_six data
+      setArrayFieldValue(
+        values.class_six,
+        formData.student.admission.class_six,
+        billData.student.admission.class_six
+      );
       formData.student.admission.class_seven = values.class_seven;
+      // set class_seven data
+      setArrayFieldValue(
+        values.class_seven,
+        formData.student.admission.class_seven,
+        billData.student.admission.class_seven
+      );
       formData.student.admission.class_eight = values.class_eight;
+      // set class_eight data
+      setArrayFieldValue(
+        values.class_eight,
+        formData.student.admission.class_eight,
+        billData.student.admission.class_eight
+      );
 
       formData.student.asroyon_survey = values.asroyon_survey;
       // set asroyon_survey data
@@ -396,13 +418,13 @@ const BilReturnSubmit = ({ params }) => {
         billData.student.asroyon_survey
       );
 
-      const apiUrl = `https://dmsp.vercel.app/api/bill-return/edit`;
+      const apiUrl = `http://localhost:3000/api/bill-return/edit`;
       fetch(apiUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ formData, _id: params.dataId }),
+        body: JSON.stringify({ ...billData, formData, _id: params.dataId }),
       })
         .then((response) => {
           return response.json();
@@ -422,7 +444,6 @@ const BilReturnSubmit = ({ params }) => {
         .finally(() => {
           setSubmitLoading(false);
         });
-      console.log("values, ", formData);
     }
   };
 
@@ -543,6 +564,9 @@ const BilReturnSubmit = ({ params }) => {
   const class_three = studentData.admission.class_three;
   const class_four = studentData.admission.class_four;
   const class_five = studentData.admission.class_five;
+  const class_six = studentData.admission.class_six;
+  const class_seven = studentData.admission.class_seven;
+  const class_eight = studentData.admission.class_eight;
   const studentAsroyonSurvey = studentData.asroyon_survey;
 
   return (
@@ -718,7 +742,7 @@ const BilReturnSubmit = ({ params }) => {
                   />
                   <div className="mb-4">
                     <label className="font-semibold" htmlFor="cluster">
-                      ক্লাস্টার*
+                      ক্লাস্টার
                     </label>
                     <Field
                       className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]"
@@ -735,7 +759,7 @@ const BilReturnSubmit = ({ params }) => {
                       </option>
                       <option value="সাধুহাটি ক্লাস্টার">সাধুহাটি</option>
                       <option value="কামালপুর ক্লাস্টার">কামালপুর</option>
-                      <option value="ভাঁদ‌গাঁও ক্লাস্টার">ভাঁদ‌গাঁও</option>
+                      <option value="ভাদগাঁও ক্লাস্টার">ভাদগাঁও</option>
                       <option value="শ্যামরারবাজার ক্লাস্টার">
                         শ্যামরারবাজার
                       </option>
@@ -932,7 +956,7 @@ const BilReturnSubmit = ({ params }) => {
                             className="font-semibold"
                             htmlFor={`building_type_1`}
                           >
-                            ভবন ১ এর ধরন*
+                            ভবন ১ এর ধরন
                           </label>
                           <Field
                             className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]"
@@ -951,6 +975,7 @@ const BilReturnSubmit = ({ params }) => {
                             </option>
                             <option value="পাকা">পাকা</option>
                             <option value="সেমিপাকা">সেমিপাকা</option>
+                            <option value="টিনশেড">টিনশেড</option>
                           </Field>
                         </div>
                         <div className="mb-4">
@@ -978,7 +1003,6 @@ const BilReturnSubmit = ({ params }) => {
                             <option value="ভালো">ভালো</option>
                             <option value="জরাজীর্ণ">জরাজীর্ণ</option>
                             <option value="পরিত্যাক্ত">পরিত্যাক্ত</option>
-                            <option value="পরিত্যাক্ত">ঝুঁকিপূর্ণ</option>
                           </Field>
                         </div>
                       </div>
@@ -1285,7 +1309,7 @@ const BilReturnSubmit = ({ params }) => {
                     infrastructureBorderWall.wall === "আছে" ? (
                       <div className="mb-4">
                         <label className="font-semibold" htmlFor="border_wall">
-                          সীমানা প্রাচীরের অর্থায়ন ধরন*
+                          সীমানা প্রাচীরের অর্থায়ন ধরন
                         </label>
                         <Field
                           className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]"
@@ -3755,6 +3779,424 @@ const BilReturnSubmit = ({ params }) => {
                       </ul>
                     </AnimateHeight>
                   </div>
+
+                  {/* data for class_six students */}
+                  <div className="mt-3">
+                    <button
+                      type="button"
+                      className={`relative border-gray-300 flex justify-between items-center w-full px-4 py-3 text-sm font-medium text-left rounded-lg border ${
+                        studentAccordionActive === "class_six"
+                          ? " bg-slate-200"
+                          : "  bg-slate-100"
+                      }  ${
+                        studentAccordionActive === "class_six" ? "active" : ""
+                      }`}
+                      onClick={() => studentTogglePara("class_six")}
+                    >
+                      <h5 className="text-gray-900 text-[16px]">
+                        ষষ্ঠ শ্রেণি
+                      </h5>
+                      <svg
+                        className={`w-4 h-4 ml-2 duration-500 ${
+                          studentAccordionActive === "class_six"
+                            ? "rotate-180"
+                            : ""
+                        }`}
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M19 9l-7 7-7-7"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </button>
+
+                    <AnimateHeight
+                      duration={300}
+                      height={
+                        studentAccordionActive === "class_six" ? "auto" : 0
+                      }
+                    >
+                      <ul className="p-5">
+                        <FieldArray name="class_six">
+                          {() => (
+                            <div>
+                              {class_six.map((classItem, index) => (
+                                <div key={index}>
+                                  <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4">
+                                    {/* data for muslim students */}
+                                    <NumberField
+                                      name={`class_six.${index}.muslim_boy_student`}
+                                      label="মুসলিম ছাত্র"
+                                      placeholder="ছাত্র সংখ্যা দিন"
+                                      defaultValue={
+                                        classItem.muslim_boy_student
+                                      }
+                                    />
+                                    <NumberField
+                                      name={`class_six.${index}.muslim_girl_student`}
+                                      label="মুসলিম ছাত্রী"
+                                      placeholder="ছাত্রী সংখ্যা দিন"
+                                      defaultValue={
+                                        classItem.muslim_girl_student
+                                      }
+                                    />
+                                    <NumberField
+                                      name={`class_six.${index}.muslim_total_student`}
+                                      label="মোট মুসলিম শিক্ষার্থী"
+                                      placeholder="মোট সংখ্যা দিন"
+                                      defaultValue={
+                                        classItem.muslim_total_student
+                                      }
+                                    />
+
+                                    {/* data for hindu students */}
+                                    <NumberField
+                                      name={`class_six.${index}.hindu_boy_student`}
+                                      label="হিন্দু ছাত্র"
+                                      placeholder="ছাত্র সংখ্যা দিন"
+                                      defaultValue={classItem.hindu_boy_student}
+                                    />
+                                    <NumberField
+                                      name={`class_six.${index}.hindu_girl_student`}
+                                      label="হিন্দু ছাত্রী"
+                                      placeholder="ছাত্রী সংখ্যা দিন"
+                                      defaultValue={
+                                        classItem.hindu_girl_student
+                                      }
+                                    />
+                                    <NumberField
+                                      name={`class_six.${index}.hindu_total_student`}
+                                      label="মোট হিন্দু শিক্ষার্থী"
+                                      placeholder="মোট সংখ্যা দিন"
+                                      defaultValue={
+                                        classItem.hindu_total_student
+                                      }
+                                    />
+
+                                    {/* data for total students */}
+                                    <NumberField
+                                      name={`class_six.${index}.total_boy_student`}
+                                      label="মোট ছাত্র"
+                                      placeholder="ছাত্র সংখ্যা দিন"
+                                      defaultValue={classItem.total_boy_student}
+                                    />
+                                    <NumberField
+                                      name={`class_six.${index}.total_girl_student`}
+                                      label="মোট ছাত্রী"
+                                      placeholder="ছাত্রী সংখ্যা দিন"
+                                      defaultValue={
+                                        classItem.total_girl_student
+                                      }
+                                    />
+                                    <NumberField
+                                      name={`class_six.${index}.total_student`}
+                                      label="মোট শিক্ষার্থী"
+                                      placeholder="মোট সংখ্যা দিন"
+                                      defaultValue={classItem.total_student}
+                                    />
+
+                                    <NumberField
+                                      name={`class_six.${index}.special_demanded_student`}
+                                      label="বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী"
+                                      placeholder="মোট সংখ্যা দিন"
+                                      defaultValue={
+                                        classItem.special_demanded_student
+                                      }
+                                    />
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </FieldArray>
+                      </ul>
+                    </AnimateHeight>
+                  </div>
+
+                  {/* data for class_seven students */}
+                  <div className="mt-3">
+                    <button
+                      type="button"
+                      className={`relative border-gray-300 flex justify-between items-center w-full px-4 py-3 text-sm font-medium text-left rounded-lg border ${
+                        studentAccordionActive === "class_seven"
+                          ? " bg-slate-200"
+                          : "  bg-slate-100"
+                      }  ${
+                        studentAccordionActive === "class_seven" ? "active" : ""
+                      }`}
+                      onClick={() => studentTogglePara("class_seven")}
+                    >
+                      <h5 className="text-gray-900 text-[16px]">
+                        সপ্তম শ্রেণি
+                      </h5>
+                      <svg
+                        className={`w-4 h-4 ml-2 duration-500 ${
+                          studentAccordionActive === "class_seven"
+                            ? "rotate-180"
+                            : ""
+                        }`}
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M19 9l-7 7-7-7"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </button>
+
+                    <AnimateHeight
+                      duration={300}
+                      height={
+                        studentAccordionActive === "class_seven" ? "auto" : 0
+                      }
+                    >
+                      <ul className="p-5">
+                        <FieldArray name="class_seven">
+                          {() => (
+                            <div>
+                              {class_seven.map((classItem, index) => (
+                                <div key={index}>
+                                  <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4">
+                                    {/* data for muslim students */}
+                                    <NumberField
+                                      name={`class_seven.${index}.muslim_boy_student`}
+                                      label="মুসলিম ছাত্র"
+                                      placeholder="ছাত্র সংখ্যা দিন"
+                                      defaultValue={
+                                        classItem.muslim_boy_student
+                                      }
+                                    />
+                                    <NumberField
+                                      name={`class_seven.${index}.muslim_girl_student`}
+                                      label="মুসলিম ছাত্রী"
+                                      placeholder="ছাত্রী সংখ্যা দিন"
+                                      defaultValue={
+                                        classItem.muslim_girl_student
+                                      }
+                                    />
+                                    <NumberField
+                                      name={`class_seven.${index}.muslim_total_student`}
+                                      label="মোট মুসলিম শিক্ষার্থী"
+                                      placeholder="মোট সংখ্যা দিন"
+                                      defaultValue={
+                                        classItem.muslim_total_student
+                                      }
+                                    />
+
+                                    {/* data for hindu students */}
+                                    <NumberField
+                                      name={`class_seven.${index}.hindu_boy_student`}
+                                      label="হিন্দু ছাত্র"
+                                      placeholder="ছাত্র সংখ্যা দিন"
+                                      defaultValue={classItem.hindu_boy_student}
+                                    />
+                                    <NumberField
+                                      name={`class_seven.${index}.hindu_girl_student`}
+                                      label="হিন্দু ছাত্রী"
+                                      placeholder="ছাত্রী সংখ্যা দিন"
+                                      defaultValue={
+                                        classItem.hindu_girl_student
+                                      }
+                                    />
+                                    <NumberField
+                                      name={`class_seven.${index}.hindu_total_student`}
+                                      label="মোট হিন্দু শিক্ষার্থী"
+                                      placeholder="মোট সংখ্যা দিন"
+                                      defaultValue={
+                                        classItem.hindu_total_student
+                                      }
+                                    />
+
+                                    {/* data for total students */}
+                                    <NumberField
+                                      name={`class_seven.${index}.total_boy_student`}
+                                      label="মোট ছাত্র"
+                                      placeholder="ছাত্র সংখ্যা দিন"
+                                      defaultValue={classItem.total_boy_student}
+                                    />
+                                    <NumberField
+                                      name={`class_seven.${index}.total_girl_student`}
+                                      label="মোট ছাত্রী"
+                                      placeholder="ছাত্রী সংখ্যা দিন"
+                                      defaultValue={
+                                        classItem.total_girl_student
+                                      }
+                                    />
+                                    <NumberField
+                                      name={`class_seven.${index}.total_student`}
+                                      label="মোট শিক্ষার্থী"
+                                      placeholder="মোট সংখ্যা দিন"
+                                      defaultValue={classItem.total_student}
+                                    />
+
+                                    <NumberField
+                                      name={`class_seven.${index}.special_demanded_student`}
+                                      label="বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী"
+                                      placeholder="মোট সংখ্যা দিন"
+                                      defaultValue={
+                                        classItem.special_demanded_student
+                                      }
+                                    />
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </FieldArray>
+                      </ul>
+                    </AnimateHeight>
+                  </div>
+
+                  {/* data for class_eight students */}
+                  <div className="mt-3">
+                    <button
+                      type="button"
+                      className={`relative border-gray-300 flex justify-between items-center w-full px-4 py-3 text-sm font-medium text-left rounded-lg border ${
+                        studentAccordionActive === "class_eight"
+                          ? " bg-slate-200"
+                          : "  bg-slate-100"
+                      }  ${
+                        studentAccordionActive === "class_eight" ? "active" : ""
+                      }`}
+                      onClick={() => studentTogglePara("class_eight")}
+                    >
+                      <h5 className="text-gray-900 text-[16px]">
+                      অষ্টম শ্রেণি
+                      </h5>
+                      <svg
+                        className={`w-4 h-4 ml-2 duration-500 ${
+                          studentAccordionActive === "class_eight"
+                            ? "rotate-180"
+                            : ""
+                        }`}
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M19 9l-7 7-7-7"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </button>
+
+                    <AnimateHeight
+                      duration={300}
+                      height={
+                        studentAccordionActive === "class_eight" ? "auto" : 0
+                      }
+                    >
+                      <ul className="p-5">
+                        <FieldArray name="class_eight">
+                          {() => (
+                            <div>
+                              {class_eight.map((classItem, index) => (
+                                <div key={index}>
+                                  <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4">
+                                    {/* data for muslim students */}
+                                    <NumberField
+                                      name={`class_eight.${index}.muslim_boy_student`}
+                                      label="মুসলিম ছাত্র"
+                                      placeholder="ছাত্র সংখ্যা দিন"
+                                      defaultValue={
+                                        classItem.muslim_boy_student
+                                      }
+                                    />
+                                    <NumberField
+                                      name={`class_eight.${index}.muslim_girl_student`}
+                                      label="মুসলিম ছাত্রী"
+                                      placeholder="ছাত্রী সংখ্যা দিন"
+                                      defaultValue={
+                                        classItem.muslim_girl_student
+                                      }
+                                    />
+                                    <NumberField
+                                      name={`class_eight.${index}.muslim_total_student`}
+                                      label="মোট মুসলিম শিক্ষার্থী"
+                                      placeholder="মোট সংখ্যা দিন"
+                                      defaultValue={
+                                        classItem.muslim_total_student
+                                      }
+                                    />
+
+                                    {/* data for hindu students */}
+                                    <NumberField
+                                      name={`class_eight.${index}.hindu_boy_student`}
+                                      label="হিন্দু ছাত্র"
+                                      placeholder="ছাত্র সংখ্যা দিন"
+                                      defaultValue={classItem.hindu_boy_student}
+                                    />
+                                    <NumberField
+                                      name={`class_eight.${index}.hindu_girl_student`}
+                                      label="হিন্দু ছাত্রী"
+                                      placeholder="ছাত্রী সংখ্যা দিন"
+                                      defaultValue={
+                                        classItem.hindu_girl_student
+                                      }
+                                    />
+                                    <NumberField
+                                      name={`class_eight.${index}.hindu_total_student`}
+                                      label="মোট হিন্দু শিক্ষার্থী"
+                                      placeholder="মোট সংখ্যা দিন"
+                                      defaultValue={
+                                        classItem.hindu_total_student
+                                      }
+                                    />
+
+                                    {/* data for total students */}
+                                    <NumberField
+                                      name={`class_eight.${index}.total_boy_student`}
+                                      label="মোট ছাত্র"
+                                      placeholder="ছাত্র সংখ্যা দিন"
+                                      defaultValue={classItem.total_boy_student}
+                                    />
+                                    <NumberField
+                                      name={`class_eight.${index}.total_girl_student`}
+                                      label="মোট ছাত্রী"
+                                      placeholder="ছাত্রী সংখ্যা দিন"
+                                      defaultValue={
+                                        classItem.total_girl_student
+                                      }
+                                    />
+                                    <NumberField
+                                      name={`class_eight.${index}.total_student`}
+                                      label="মোট শিক্ষার্থী"
+                                      placeholder="মোট সংখ্যা দিন"
+                                      defaultValue={classItem.total_student}
+                                    />
+
+                                    <NumberField
+                                      name={`class_eight.${index}.special_demanded_student`}
+                                      label="বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী"
+                                      placeholder="মোট সংখ্যা দিন"
+                                      defaultValue={
+                                        classItem.special_demanded_student
+                                      }
+                                    />
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </FieldArray>
+                      </ul>
+                    </AnimateHeight>
+                  </div>
+                  
                 </div>
               </DataDropdown>
               <DataDropdown

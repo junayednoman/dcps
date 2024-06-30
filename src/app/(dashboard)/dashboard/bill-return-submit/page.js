@@ -7,6 +7,7 @@ import MyDatePicker from "@/app/components/MyDatePicker";
 import AnimateHeight from "react-animate-height";
 
 import {
+  Box,
   Checkbox,
   CircularProgress,
   FormControl,
@@ -20,9 +21,169 @@ import SearchableSelect from "@/app/components/SearchableSelect";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import { AuthContext } from "@/authContext/AuthContext";
+import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import convertToBengaliNumber from "@/lib/convertToBengaliNumber";
+import dayjs from "dayjs";
+import ImageInput2 from "@/app/components/ImageInput2";
 import { generateUniqueId } from "@/lib/uniqueId";
-import { uploadImageToImageBB } from "@/lib/uploadImage";
 import moment from "moment";
+
+const initialValues = {
+  unique_id: "",
+  hajira_from: "",
+  hajira_to: "",
+  submitter_info: {
+    submitted_by: "",
+  },
+  budgets: [{}],
+  school: {
+    general: {
+      name: "",
+      cluster: "",
+      village_moholla: "",
+      word_number: "",
+      post_office: "",
+      union_corporation: "",
+      emis_code: "",
+      email: "",
+      founded_date: "",
+      grade: "",
+      shifts: "",
+    },
+    infrastructure: {
+      building: {
+        buildings: "",
+        building_date_1: "",
+        building_type_1: "",
+        building_condition_1: "",
+        building_date_2: "",
+        building_type_2: "",
+        building_condition_2: "",
+        building_date_3: "",
+        building_type_3: "",
+        building_condition_3: "",
+        building_date_4: "",
+        building_type_4: "",
+        building_condition_4: "",
+      },
+      headmaster_room: "",
+      office_rooms: "",
+      class_rooms: "",
+      useable_class_rooms: "",
+      multimedia_rooms: "",
+      separated_nursery_class: "",
+      border_wall: {
+        wall: "",
+        funding_type: "",
+        founded_date: "",
+      },
+      toilets: "",
+      wash_block: "",
+      wash_block_founded_date: "",
+      others: {
+        shahid_minar: "",
+        freedom_fight_corner: "",
+        rasel_corner: "",
+        garden: "",
+        internet: "",
+        laptop: {
+          total: "",
+          actives: "",
+        },
+        multimedia: {
+          total: "",
+          actives: "",
+        },
+        piano: {
+          total: "",
+          actives: "",
+        },
+        electricity_connection: "",
+      },
+      water: {
+        tube_wells: "",
+        tube_wells_condition: "",
+        deep_tube_wells: "",
+        deep_tube_wells_condition: "",
+      },
+    },
+    land: {
+      total_amount: "",
+      take_overed: "",
+      dispossessed: "",
+      is_registered: "",
+      registration_ownership: "",
+      khatian_number: "",
+      dag_number: "",
+      dolil_number: "",
+      dolil_year: "",
+      is_namjaried: "",
+      namjari_ownership: "",
+      is_cased: "",
+      taxt_condition: "",
+    },
+    stipend: {
+      stipend_year: "",
+      total_consumer: "",
+      demand: "",
+      distributed: "",
+    },
+    conference: {
+      smc: "",
+      pta: "",
+      mother: "",
+      guardian: "",
+      yard: "",
+      staff_meeting: "",
+    },
+    development: {
+      // ...budgets
+    },
+  },
+  permitted_post: "",
+  teacher: {
+    general: {
+      permitted_post: "",
+      working_post: "",
+      vacancy: "",
+      teacher_number: "",
+      women_teacher_number: "",
+      vacation_consumers: "",
+    },
+    attendance: Array(6).fill({
+      name: "",
+      days: Array(31).fill({
+        status: "option",
+        coming_time: null,
+        leaving_time: null,
+        signature: "",
+        absence_reason: "",
+      }),
+    }),
+  },
+  students: {
+    admission: {},
+  },
+  salary: [{}],
+  vacations: [{}],
+  nursery_four_plus: [{}],
+  nursery_five_plus: [{}],
+  class_one: [{}],
+  class_two: [{}],
+  class_three: [{}],
+  class_four: [{}],
+  class_five: [{}],
+  class_six: [{}],
+  class_seven: [{}],
+  class_eight: [{}],
+  asroyon_survey: [{}],
+  survey_total: [{}],
+  survey_admitted: [{}],
+  survey_unadmitted: [{}],
+  survey_admitted_to_other_school: [{}],
+  unauthorized_teacher: [{}],
+};
 
 const BilReturnSubmit = () => {
   const [activeItem, setActiveItem] = React.useState("");
@@ -138,8 +299,8 @@ const BilReturnSubmit = () => {
   const [draftSubmit, setDraftSubmit] = React.useState(false);
   const { userName } = React.useContext(AuthContext);
   const handleFormSubmit = async (values) => {
+    setLoading(true);
     if (values) {
-      // console.log(values);
       const formData = {
         unique_id: "",
         school: {
@@ -162,8 +323,6 @@ const BilReturnSubmit = () => {
           asroyon_survey: {},
         },
       };
-
-      setLoading(true);
       const currentDate = new Date().toISOString();
       const uniqueId = generateUniqueId();
       formData.unique_id = uniqueId;
@@ -195,8 +354,11 @@ const BilReturnSubmit = () => {
       values.school.infrastructure.wash_block = washBlock;
       values.school.land.is_registered = registration;
       values.school.land.is_namjaried = namjari;
-      values.school.stipend.stipend_year = stipendYearSelectedOption.value;
+      values.school.stipend.stipend_year = stipendYearSelectedOption?.value;
       formData.teacher.general = values.teacher.general;
+      formData.teacher.attendance = values.teacher.attendance;
+      formData.teacher.hajira_from = values.hajira_from;
+      formData.teacher.hajira_to = values.hajira_to;
       formData.teacher.salary = values.salary;
       formData.teacher.vacation = values.vacations;
       formData.teacher.unauthorized_teacher = values.unauthorized_teacher;
@@ -212,6 +374,9 @@ const BilReturnSubmit = () => {
       formData.student.admission.class_three = values.class_three;
       formData.student.admission.class_four = values.class_four;
       formData.student.admission.class_five = values.class_five;
+      formData.student.admission.class_six = values.class_six;
+      formData.student.admission.class_seven = values.class_seven;
+      formData.student.admission.class_eight = values.class_eight;
       formData.student.asroyon_survey = values.asroyon_survey;
 
       const updatedSalary = await Promise.all(
@@ -235,7 +400,7 @@ const BilReturnSubmit = () => {
       formData.teacher.salary = updatedSalary;
 
       // API call with the updated form data
-      const apiUrl = "https://dmsp.vercel.app/api/bill-return/submit";
+      const apiUrl = "http://localhost:3000/api/bill-return/submit";
       fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -266,8 +431,8 @@ const BilReturnSubmit = () => {
         })
         .finally(() => {
           setLoading(false);
+          window.location.reload();
         });
-      // console.log(formData.isDraft);
     }
   };
 
@@ -283,154 +448,11 @@ const BilReturnSubmit = () => {
         বিল রিটার্ন সাবমিট
       </h2>
       <Formik
-        initialValues={{
-          unique_id: "",
-          submitter_info: {
-            submitted_by: "",
-          },
-          budgets: [{}],
-          school: {
-            general: {
-              name: "",
-              cluster: "",
-              village_moholla: "",
-              word_number: "",
-              post_office: "",
-              union_corporation: "",
-              emis_code: "",
-              email: "",
-              founded_date: "",
-              grade: "",
-              shifts: "",
-            },
-            infrastructure: {
-              building: {
-                buildings: "",
-                building_date_1: "",
-                building_type_1: "",
-                building_condition_1: "",
-                building_date_2: "",
-                building_type_2: "",
-                building_condition_2: "",
-                building_date_3: "",
-                building_type_3: "",
-                building_condition_3: "",
-                building_date_4: "",
-                building_type_4: "",
-                building_condition_4: "",
-              },
-              headmaster_room: "",
-              office_rooms: "",
-              class_rooms: "",
-              useable_class_rooms: "",
-              multimedia_rooms: "",
-              separated_nursery_class: "",
-              border_wall: {
-                wall: "",
-                funding_type: "",
-                founded_date: "",
-              },
-              toilets: "",
-              wash_block: "",
-              wash_block_founded_date: "",
-              others: {
-                shahid_minar: "",
-                freedom_fight_corner: "",
-                rasel_corner: "",
-                garden: "",
-                internet: "",
-                laptop: {
-                  total: "",
-                  actives: "",
-                },
-                multimedia: {
-                  total: "",
-                  actives: "",
-                },
-                piano: {
-                  total: "",
-                  actives: "",
-                },
-                electricity_connection: "",
-              },
-              water: {
-                tube_wells: "",
-                tube_wells_condition: "",
-                deep_tube_wells: "",
-                deep_tube_wells_condition: "",
-              },
-            },
-            land: {
-              total_amount: "",
-              take_overed: "",
-              dispossessed: "",
-              is_registered: "",
-              registration_ownership: "",
-              khatian_number: "",
-              dag_number: "",
-              dolil_number: "",
-              dolil_year: "",
-              is_namjaried: "",
-              namjari_ownership: "",
-              is_cased: "",
-              taxt_condition: "",
-            },
-            stipend: {
-              stipend_year: "",
-              total_consumer: "",
-              demand: "",
-              distributed: "",
-            },
-            conference: {
-              smc: "",
-              pta: "",
-              mother: "",
-              guardian: "",
-              yard: "",
-              staff_meeting: "",
-            },
-            development: {
-              // ...budgets
-            },
-          },
-          permitted_post: "",
-          teacher: {
-            general: {
-              permitted_post: "",
-              working_post: "",
-              vacancy: "",
-              teacher_number: "",
-              women_teacher_number: "",
-              vacation_consumers: "",
-            },
-          },
-          students: {
-            admission: {},
-          },
-          salary: [{}],
-          vacations: [{}],
-          nursery_four_plus: [{}],
-          nursery_five_plus: [{}],
-          class_one: [{}],
-          class_two: [{}],
-          class_three: [{}],
-          class_four: [{}],
-          class_five: [{}],
-          class_six: [{}],
-          class_seven: [{}],
-          class_eight: [{}],
-          class_eight: [{}],
-          asroyon_survey: [{}],
-          survey_total: [{}],
-          survey_admitted: [{}],
-          survey_unadmitted: [{}],
-          survey_admitted_to_other_school: [{}],
-          unauthorized_teacher: [{}],
-        }}
+        initialValues={initialValues}
         // validationSchema={validationSchema}
         onSubmit={handleFormSubmit}
       >
-        {({ isSubmitting, values, setFieldValue }) => (
+        {({ touched, values, setFieldValue, errors }) => (
           <Form>
             {/* school related data */}
             <div className="border bg-white shadow-sm rounded-[4px] md:p-8 p-3">
@@ -451,7 +473,7 @@ const BilReturnSubmit = () => {
                   />
                   <div className="mb-4">
                     <label className="font-semibold" htmlFor="cluster">
-                      ক্লাস্টার*
+                      ক্লাস্টার
                     </label>
                     <Field
                       className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]"
@@ -468,7 +490,7 @@ const BilReturnSubmit = () => {
                       </option>
                       <option value="সাধুহাটি ক্লাস্টার">সাধুহাটি</option>
                       <option value="কামালপুর ক্লাস্টার">কামালপুর</option>
-                      <option value="ভাঁদ‌গাঁও ক্লাস্টার">ভাঁদ‌গাঁও</option>
+                      <option value="ভাদগাঁও ক্লাস্টার">ভাদগাঁও</option>
                       <option value="শ্যামরারবাজার ক্লাস্টার">
                         শ্যামরারবাজার
                       </option>
@@ -554,7 +576,7 @@ const BilReturnSubmit = () => {
                       </option>
                     </Field>
                   </div>
-                  {/* <TextField name="school.general.union_corporation" label="ইউনিয়ন/পৌরসভা" placeholder={"ইউনিয়ন/পৌরসভা লিখুন"} /> */}
+
                   <TextField
                     name="school.general.emis_code"
                     label="EMIS কোড"
@@ -673,6 +695,7 @@ const BilReturnSubmit = () => {
                             </option>
                             <option value="পাকা">পাকা</option>
                             <option value="সেমিপাকা">সেমিপাকা</option>
+                            <option value="টিনশেড">টিনশেড</option>
                           </Field>
                         </div>
                         <div className="mb-4">
@@ -698,7 +721,6 @@ const BilReturnSubmit = () => {
                             <option value="ভালো">ভালো</option>
                             <option value="জরাজীর্ণ">জরাজীর্ণ</option>
                             <option value="পরিত্যাক্ত">পরিত্যাক্ত</option>
-                            <option value="পরিত্যাক্ত">ঝুঁকিপূর্ণ</option>
                           </Field>
                         </div>
                       </div>
@@ -1010,6 +1032,7 @@ const BilReturnSubmit = () => {
                         ওয়াশ ব্লক*
                       </label>
                       <Field
+                        value={washBlock}
                         onChange={handleWashBlockChange}
                         className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]"
                         as="select"
@@ -2062,11 +2085,6 @@ const BilReturnSubmit = () => {
                                 label="চলতি বছরে মোট নৈমিত্তিক ছুটি"
                                 placeholder="চলতি বছরে মোট নৈমিত্তিক ছুটি সংখ্যা দিন"
                               />
-                              {/* <ImageInput
-                                name={`salary.${index}.signature`}
-                                label="স্বাক্ষর"
-                                placeholder="সাক্ষর দিন"
-                              /> */}
                               <div className="mb-4">
                                 <label
                                   className="font-semibold"
@@ -2271,6 +2289,339 @@ const BilReturnSubmit = () => {
                     )}
                   </FieldArray>
                 </div>
+              </DataDropdown>
+              <DataDropdown
+                title="হাজিরা সংক্রান্ত তথ্য"
+                itemKey={"hajira"}
+                activeItem={activeItem}
+                setActiveItem={setActiveItem}
+              >
+                <div className="pt-4 grid md:grid-cols-2 grid-cols-1 w-full gap-x-4">
+                  <MyDatePicker
+                    name={"hajira_from"}
+                    label={"হাজিরা শুরুর তারিখ"}
+                  />
+                  <MyDatePicker
+                    name={"hajira_to"}
+                    label={"হাজিরা শেষের তারিখ"}
+                  />
+                </div>
+                {values.teacher.attendance.map((teacher, teacherIndex) => (
+                  <div key={teacherIndex}>
+                    <div className="mt-4">
+                      <button
+                        type="button"
+                        className={`relative border-gray-300 flex justify-between items-center w-full px-4 py-3 text-sm font-medium text-left rounded-lg border ${
+                          schoolAccordionActive === `teacher_${teacherIndex}`
+                            ? " bg-slate-200"
+                            : "  bg-slate-100"
+                        } ${
+                          schoolAccordionActive === `teacher_${teacherIndex}`
+                            ? "active"
+                            : ""
+                        }`}
+                        onClick={() =>
+                          schoolTogglePara(`teacher_${teacherIndex}`)
+                        }
+                      >
+                        <h5 className="text-gray-900 text-[16px]">
+                          {teacherIndex === 0
+                            ? "প্রধান শিক্ষক"
+                            : `সহকারী শিক্ষক ${convertToBengaliNumber(
+                                teacherIndex
+                              )}`}
+                        </h5>
+                        <svg
+                          className={`w-4 h-4 ml-2 duration-500 ${
+                            schoolAccordionActive === `teacher_${teacherIndex}`
+                              ? "rotate-180"
+                              : ""
+                          }`}
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M19 9l-7 7-7-7"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </button>
+
+                      <AnimateHeight
+                        duration={300}
+                        height={
+                          schoolAccordionActive === `teacher_${teacherIndex}`
+                            ? "auto"
+                            : 0
+                        }
+                      >
+                        <ul className="p-5">
+                          {/* here shoudl have a field for taking every teacher name */}
+                          <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 w-full gap-x-6 pt-4">
+                            <TextField
+                              label={"শিক্ষকের নাম"}
+                              placeholder={'শিক্ষকের নাম লিখুন'}
+                              name={`teacher.attendance.${teacherIndex}.name`}
+                            />
+                          </div>
+                          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <Box key={teacherIndex} sx={{ mb: 4 }}>
+                              <FieldArray
+                                name={`teacher.attendance.${teacherIndex}.days`}
+                              >
+                                {() => (
+                                  <>
+                                    {teacher.days.map((day, dayIndex) => (
+                                      <Box
+                                        key={dayIndex}
+                                        sx={{
+                                          display: "flex",
+                                          gap: 2,
+                                          mb: 2,
+                                        }}
+                                      >
+                                        <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 w-full gap-x-6 pt-4">
+                                          <div>
+                                            <label
+                                              className="font-semibold"
+                                              htmlFor={`teacher.attendance.${teacherIndex}.days.${dayIndex}.status`}
+                                            >
+                                              {dayIndex < 21
+                                                ? `পূর্ববর্তী মাসের দিন-${convertToBengaliNumber(
+                                                    dayIndex + 11
+                                                  )}  এর উপস্থিতি`
+                                                : `পরবর্তী মাসের দিন-${convertToBengaliNumber(
+                                                    dayIndex - 20
+                                                  )}  এর উপস্থিতি`}
+                                            </label>
+                                            <Field
+                                              as="select"
+                                              name={`teacher.attendance.${teacherIndex}.days.${dayIndex}.status`}
+                                              className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]"
+                                            >
+                                              <option value="option">
+                                                একটি অপশন সিলেক্ট করুন
+                                              </option>
+                                              <option value="present">
+                                                উপস্থিত
+                                              </option>
+                                              <option value="absent">
+                                                অনুপস্থিত
+                                              </option>
+                                              <option value="holiday">
+                                                সরকারী ছুটি
+                                              </option>
+                                              <option value="reserved-vacation">
+                                                সংরক্ষিত ছুটি
+                                              </option>
+                                            </Field>
+                                          </div>
+
+                                          {values.teacher.attendance[
+                                            teacherIndex
+                                          ].days[dayIndex].status ===
+                                            "present" && (
+                                            <>
+                                              <div>
+                                                <label
+                                                  className="font-semibold"
+                                                  htmlFor={`teacher.attendance.${teacherIndex}.days.${dayIndex}.coming_time`}
+                                                >
+                                                  {dayIndex < 21
+                                                    ? `পূর্ববর্তী মাসের দিন-${convertToBengaliNumber(
+                                                        dayIndex + 11
+                                                      )}  এর আগমন`
+                                                    : `পরবর্তী মাসের দিন-${convertToBengaliNumber(
+                                                        dayIndex - 20
+                                                      )}  এর আগমন`}
+                                                </label>
+                                                <Field
+                                                  name={`teacher.attendance.${teacherIndex}.days.${dayIndex}.coming_time`}
+                                                >
+                                                  {({ field }) => (
+                                                    <TimePicker
+                                                      value={
+                                                        field.value
+                                                          ? dayjs(
+                                                              field.value,
+                                                              "HH:mm A"
+                                                            )
+                                                          : null
+                                                      }
+                                                      onChange={(newValue) =>
+                                                        setFieldValue(
+                                                          field.name,
+                                                          dayjs(
+                                                            newValue
+                                                          ).format("hh:mm A")
+                                                        )
+                                                      }
+                                                      renderInput={(params) => (
+                                                        <TextField
+                                                          {...params}
+                                                          id={`teacher.attendance.${teacherIndex}.days.${dayIndex}.coming_time`}
+                                                          error={
+                                                            touched.teacher
+                                                              ?.attendance?.[
+                                                              teacherIndex
+                                                            ]?.days?.[dayIndex]
+                                                              ?.coming_time &&
+                                                            !!errors.teacher
+                                                              ?.attendance?.[
+                                                              teacherIndex
+                                                            ]?.days?.[dayIndex]
+                                                              ?.coming_time
+                                                          }
+                                                          helperText={
+                                                            touched.teacher
+                                                              ?.attendance?.[
+                                                              teacherIndex
+                                                            ]?.days?.[dayIndex]
+                                                              ?.coming_time &&
+                                                            errors.teacher
+                                                              ?.attendance?.[
+                                                              teacherIndex
+                                                            ]?.days?.[dayIndex]
+                                                              ?.coming_time
+                                                          }
+                                                        />
+                                                      )}
+                                                    />
+                                                  )}
+                                                </Field>
+                                              </div>
+
+                                              <div>
+                                                <label
+                                                  className="font-semibold"
+                                                  htmlFor={`teacher.attendance.${teacherIndex}.days.${dayIndex}.leaving_time`}
+                                                >
+                                                  {dayIndex < 21
+                                                    ? `পূর্ববর্তী মাসের দিন-${convertToBengaliNumber(
+                                                        dayIndex + 11
+                                                      )}  এর প্রস্থান`
+                                                    : `পরবর্তী মাসের দিন-${convertToBengaliNumber(
+                                                        dayIndex - 20
+                                                      )}  এর প্রস্থান`}
+                                                </label>
+                                                <Field
+                                                  name={`teacher.attendance.${teacherIndex}.days.${dayIndex}.leaving_time`}
+                                                >
+                                                  {({ field }) => (
+                                                    <TimePicker
+                                                      value={
+                                                        field.value
+                                                          ? dayjs(
+                                                              field.value,
+                                                              "HH:mm A"
+                                                            )
+                                                          : null
+                                                      }
+                                                      onChange={(newValue) =>
+                                                        setFieldValue(
+                                                          field.name,
+                                                          dayjs(
+                                                            newValue
+                                                          ).format("hh:mm A")
+                                                        )
+                                                      }
+                                                      renderInput={(params) => (
+                                                        <TextField
+                                                          {...params}
+                                                          id={`teacher.attendance.${teacherIndex}.days.${dayIndex}.leaving_time`}
+                                                          error={
+                                                            touched.teacher
+                                                              ?.attendance?.[
+                                                              teacherIndex
+                                                            ]?.days?.[dayIndex]
+                                                              ?.leaving_time &&
+                                                            !!errors.teacher
+                                                              ?.attendance?.[
+                                                              teacherIndex
+                                                            ]?.days?.[dayIndex]
+                                                              ?.leaving_time
+                                                          }
+                                                          helperText={
+                                                            touched.teacher
+                                                              ?.attendance?.[
+                                                              teacherIndex
+                                                            ]?.days?.[dayIndex]
+                                                              ?.leaving_time &&
+                                                            errors.teacher
+                                                              ?.attendance?.[
+                                                              teacherIndex
+                                                            ]?.days?.[dayIndex]
+                                                              ?.leaving_time
+                                                          }
+                                                        />
+                                                      )}
+                                                    />
+                                                  )}
+                                                </Field>
+                                              </div>
+
+                                              <ImageInput2
+                                                label={"সাক্ষর দিন"}
+                                                name={`teacher.attendance.${teacherIndex}.days.${dayIndex}.signature`}
+                                              />
+                                            </>
+                                          )}
+
+                                          {values.teacher.attendance[
+                                            teacherIndex
+                                          ].days[dayIndex].status ===
+                                            "absent" && (
+                                            <div>
+                                              <label
+                                                className="font-semibold"
+                                                htmlFor={`teacher.attendance.${teacherIndex}.days.${dayIndex}.absence_reason`}
+                                              >
+                                                অনুপস্থিতির কারণ
+                                              </label>
+                                              <Field
+                                                as="select"
+                                                name={`teacher.attendance.${teacherIndex}.days.${dayIndex}.absence_reason`}
+                                                className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]"
+                                              >
+                                                <option
+                                                  className="text-gray-300"
+                                                  value="একটি অপশন সিলেক্ট করুন"
+                                                  selected
+                                                >
+                                                  একটি অপশন সিলেক্ট করুন
+                                                </option>
+                                                <option value="চিকিৎসা">
+                                                  চিকিৎসা
+                                                </option>
+                                                <option value="বহিঃবাংলাদেশ">
+                                                  বহিঃবাংলাদেশ
+                                                </option>
+                                                <option value="মাতৃত্ত্ব">
+                                                  মাতৃত্ব
+                                                </option>
+                                                <option value="নৈমিত্তিক ছুটি">
+                                                নৈমিত্তিক ছুটি
+                                                </option>
+                                              </Field>
+                                            </div>
+                                          )}
+                                        </div>
+                                      </Box>
+                                    ))}
+                                  </>
+                                )}
+                              </FieldArray>
+                            </Box>
+                          </LocalizationProvider>
+                        </ul>
+                      </AnimateHeight>
+                    </div>
+                  </div>
+                ))}
               </DataDropdown>
             </div>
 
@@ -3638,7 +3989,7 @@ const BilReturnSubmit = () => {
                 {loading && !draftSubmit ? (
                   <p className="text-white flex items-center gap-2">
                     <CircularProgress className="btnSpinner" />
-                    <span>লোড হচ্ছে...</span>
+                    <span>সাবমিট হচ্ছে...</span>
                   </p>
                 ) : (
                   "সাবমিট করুন"
@@ -3652,7 +4003,7 @@ const BilReturnSubmit = () => {
               >
                 {loading && draftSubmit ? (
                   <p className="text-white flex items-center gap-2">
-                    <span>লোড হচ্ছে...</span>
+                    <span>সাবমিট হচ্ছে...</span>
                     <CircularProgress className="btnSpinner" />
                   </p>
                 ) : (

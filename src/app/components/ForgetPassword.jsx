@@ -15,7 +15,7 @@ const ForgetPassword = () => {
   const [loading, setLoading] = useState(false);
   const handleSubmit = async (values) => {
     setLoading(true);
-    const apiUrl = "https://dmsp.vercel.app/api/auth/forget-password";
+    const apiUrl = "http://localhost:3000/api/auth/forget-password";
     fetch(apiUrl, {
       method: "POST",
       headers: {

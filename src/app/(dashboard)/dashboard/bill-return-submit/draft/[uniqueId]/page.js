@@ -12,7 +12,7 @@ const DataDraft = ({ params }) => {
   const [loading, setLoading] = useState();
   useEffect(() => {
     setLoading(true);
-    const apiUrl = "https://dmsp.vercel.app/api/bill-return/get-draft";
+    const apiUrl = "http://localhost:3000/api/bill-return/get-draft";
     fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -170,6 +170,10 @@ const DataDraft = ({ params }) => {
   const class_three = studentData.admission.class_three[0];
   const class_four = studentData.admission.class_four[0];
   const class_five = studentData.admission.class_five[0];
+  const class_six = studentData.admission.class_six[0];
+  const class_seven = studentData.admission.class_seven[0];
+  const class_eight = studentData.admission.class_eight[0];
+
   const {
     admitted_releted_school_students,
     survayed_students,
@@ -180,7 +184,7 @@ const DataDraft = ({ params }) => {
     const currentDate = new Date().toISOString();
     const updateData = { isDraft: false, updatedDate: currentDate };
     setLoading(true);
-    const apiUrl = "https://dmsp.vercel.app/api/bill-return/update";
+    const apiUrl = "http://localhost:3000/api/bill-return/update";
     fetch(apiUrl, {
       method: "PATCH",
       headers: {
@@ -215,7 +219,7 @@ const DataDraft = ({ params }) => {
                 বিদ্যালয় সংক্রান্ত তথ্য
               </h2>
               <Link
-                href={`https://dmsp.vercel.app/dashboard/bill-return-edit/${billData._id}`}
+                href={`http://localhost:3000/dashboard/bill-return-edit/${billData._id}`}
                 className="text-lg font-semibold underline"
               >
                 Edit
@@ -291,24 +295,94 @@ const DataDraft = ({ params }) => {
                           <span className="font-medium">ভবন সংখ্যা: </span>
                           {buildings}
                         </p>
-                        <>
-                          <p>
-                            <span className="font-medium">
-                              ভবন ১ নির্মাণের সন:{" "}
-                            </span>
-                            {building_date_1}
-                          </p>
-                          <p>
-                            <span className="font-medium">ভবন ১ এর ধরন: </span>
-                            {building_type_1}
-                          </p>
-                          <p>
-                            <span className="font-medium">
-                              ভবন ১ এর বর্তমান অবস্থা*:{" "}
-                            </span>
-                            {building_condition_1}
-                          </p>
-                        </>
+                        {buildings >= 1 && (
+                          <>
+                            <p>
+                              <span className="font-medium">
+                                ভবন ১ নির্মাণের সন:{" "}
+                              </span>
+                              {building_date_1}
+                            </p>
+                            <p>
+                              <span className="font-medium">
+                                ভবন ১ এর ধরন:{" "}
+                              </span>
+                              {building_type_1}
+                            </p>
+                            <p>
+                              <span className="font-medium">
+                                ভবন ১ এর বর্তমান অবস্থা:{" "}
+                              </span>
+                              {building_condition_1}
+                            </p>
+                          </>
+                        )}
+                        {buildings >= 2 && (
+                          <>
+                            <p>
+                              <span className="font-medium">
+                                ভবন ২ নির্মাণের সন:{" "}
+                              </span>
+                              {building_date_2}
+                            </p>
+                            <p>
+                              <span className="font-medium">
+                                ভবন ২ এর ধরন:{" "}
+                              </span>
+                              {building_type_2}
+                            </p>
+                            <p>
+                              <span className="font-medium">
+                                ভবন ২ এর বর্তমান অবস্থা:{" "}
+                              </span>
+                              {building_condition_2}
+                            </p>
+                          </>
+                        )}
+                        {buildings >= 3 && (
+                          <>
+                            <p>
+                              <span className="font-medium">
+                                ভবন ৩ নির্মাণের সন:{" "}
+                              </span>
+                              {building_date_3}
+                            </p>
+                            <p>
+                              <span className="font-medium">
+                                ভবন ৩ এর ধরন:{" "}
+                              </span>
+                              {building_type_3}
+                            </p>
+                            <p>
+                              <span className="font-medium">
+                                ভবন ৩ এর বর্তমান অবস্থা:{" "}
+                              </span>
+                              {building_condition_3}
+                            </p>
+                          </>
+                        )}
+                        {buildings >= 4 && (
+                          <>
+                            <p>
+                              <span className="font-medium">
+                                ভবন ৪ নির্মাণের সন:{" "}
+                              </span>
+                              {building_date_3}
+                            </p>
+                            <p>
+                              <span className="font-medium">
+                                ভবন ৪ এর ধরন:{" "}
+                              </span>
+                              {building_type_3}
+                            </p>
+                            <p>
+                              <span className="font-medium">
+                                ভবন ৪ এর বর্তমান অবস্থা:{" "}
+                              </span>
+                              {building_condition_3}
+                            </p>
+                          </>
+                        )}
                       </div>
                       <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col mt-10">
                         <p>
@@ -1350,35 +1424,165 @@ const DataDraft = ({ params }) => {
                       </p>
                     </div>
                   )}
-                  {/* <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col mt-10">
-                                            <span className="text-base font-semibold">ষষ্ঠ শ্রেণিঃ</span>
-                                        </div>
-                                        <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col mt-10">
-                                            <span className="text-base font-semibold">সপ্তম শ্রেণিঃ</span>
-                                            <p><span className="font-medium">মুসলিম ছাত্র: </span>৪</p>
-                                            <p><span className="font-medium">মুসলিম ছাত্রী: </span>৪</p>
-                                            <p><span className="font-medium">মুসলিম মোট শিক্ষার্থী: </span>৪</p>
-                                            <p><span className="font-medium">হিন্দু ছাত্র: </span>৪</p>
-                                            <p><span className="font-medium">হিন্দু ছাত্রী: </span>৪</p>
-                                            <p><span className="font-medium">হিন্দু মোট শিক্ষার্থী: </span>৪</p>
-                                            <p><span className="font-medium">হিন্দু: </span>৪</p>
-                                            <p><span className="font-medium">মোট ছাত্রী: </span>৪</p>
-                                            <p><span className="font-medium">মোট শিক্ষার্থী: </span>৪</p>
-                                            <p><span className="font-medium">বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী: </span>৪</p>
-                                        </div>
-                                        <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col mt-10">
-                                            <span className="text-base font-semibold">অষ্টম শ্রেণিঃ</span>
-                                            <p><span className="font-medium">মুসলিম ছাত্র: </span>৪</p>
-                                            <p><span className="font-medium">মুসলিম ছাত্রী: </span>৪</p>
-                                            <p><span className="font-medium">মুসলিম মোট শিক্ষার্থী: </span>৪</p>
-                                            <p><span className="font-medium">হিন্দু ছাত্র: </span>৪</p>
-                                            <p><span className="font-medium">হিন্দু ছাত্রী: </span>৪</p>
-                                            <p><span className="font-medium">হিন্দু মোট শিক্ষার্থী: </span>৪</p>
-                                            <p><span className="font-medium">হিন্দু: </span>৪</p>
-                                            <p><span className="font-medium">মোট ছাত্রী: </span>৪</p>
-                                            <p><span className="font-medium">মোট শিক্ষার্থী: </span>৪</p>
-                                            <p><span className="font-medium">বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী: </span>৪</p>
-                                        </div> */}
+                  {class_six && (
+                    <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col mt-10">
+                      <span className="text-base font-semibold">
+                        ষষ্ঠ শ্রেণিঃ
+                      </span>
+                      <p>
+                        <span className="font-medium">মুসলিম ছাত্র: </span>
+                        {class_six.muslim_boy_student}
+                      </p>
+                      <p>
+                        <span className="font-medium">মুসলিম ছাত্রী: </span>
+                        {class_six.muslim_girl_student}
+                      </p>
+                      <p>
+                        <span className="font-medium">
+                          মুসলিম মোট শিক্ষার্থী:{" "}
+                        </span>
+                        {class_six.muslim_total_student}
+                      </p>
+                      <p>
+                        <span className="font-medium">হিন্দু ছাত্র: </span>
+                        {class_six.hindu_boy_student}
+                      </p>
+                      <p>
+                        <span className="font-medium">হিন্দু ছাত্রী: </span>
+                        {class_six.hindu_girl_student}
+                      </p>
+                      <p>
+                        <span className="font-medium">
+                          হিন্দু মোট শিক্ষার্থী:{" "}
+                        </span>
+                        {class_six.hindu_total_student}
+                      </p>
+                      <p>
+                        <span className="font-medium">মোট ছাত্র: </span>
+                        {class_six.total_boy_student}
+                      </p>
+                      <p>
+                        <span className="font-medium">মোট ছাত্রী: </span>
+                        {class_six.total_girl_student}
+                      </p>
+                      <p>
+                        <span className="font-medium">মোট শিক্ষার্থী: </span>
+                        {class_six.total_student}
+                      </p>
+                      <p>
+                        <span className="font-medium">
+                          বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী:{" "}
+                        </span>
+                        {class_six.special_demanded_student}
+                      </p>
+                    </div>
+                  )}
+                  {class_seven && (
+                    <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col mt-10">
+                      <span className="text-base font-semibold">
+                        সপ্তম শ্রেণিঃ
+                      </span>
+                      <p>
+                        <span className="font-medium">মুসলিম ছাত্র: </span>
+                        {class_seven.muslim_boy_student}
+                      </p>
+                      <p>
+                        <span className="font-medium">মুসলিম ছাত্রী: </span>
+                        {class_seven.muslim_girl_student}
+                      </p>
+                      <p>
+                        <span className="font-medium">
+                          মুসলিম মোট শিক্ষার্থী:{" "}
+                        </span>
+                        {class_seven.muslim_total_student}
+                      </p>
+                      <p>
+                        <span className="font-medium">হিন্দু ছাত্র: </span>
+                        {class_seven.hindu_boy_student}
+                      </p>
+                      <p>
+                        <span className="font-medium">হিন্দু ছাত্রী: </span>
+                        {class_seven.hindu_girl_student}
+                      </p>
+                      <p>
+                        <span className="font-medium">
+                          হিন্দু মোট শিক্ষার্থী:{" "}
+                        </span>
+                        {class_seven.hindu_total_student}
+                      </p>
+                      <p>
+                        <span className="font-medium">মোট ছাত্র: </span>
+                        {class_seven.total_boy_student}
+                      </p>
+                      <p>
+                        <span className="font-medium">মোট ছাত্রী: </span>
+                        {class_seven.total_girl_student}
+                      </p>
+                      <p>
+                        <span className="font-medium">মোট শিক্ষার্থী: </span>
+                        {class_seven.total_student}
+                      </p>
+                      <p>
+                        <span className="font-medium">
+                          বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী:{" "}
+                        </span>
+                        {class_seven.special_demanded_student}
+                      </p>
+                    </div>
+                  )}
+                  {class_eight && (
+                    <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col mt-10">
+                      <span className="text-base font-semibold">
+                        অষ্টম শ্রেণিঃ
+                      </span>
+                      <p>
+                        <span className="font-medium">মুসলিম ছাত্র: </span>
+                        {class_eight.muslim_boy_student}
+                      </p>
+                      <p>
+                        <span className="font-medium">মুসলিম ছাত্রী: </span>
+                        {class_eight.muslim_girl_student}
+                      </p>
+                      <p>
+                        <span className="font-medium">
+                          মুসলিম মোট শিক্ষার্থী:{" "}
+                        </span>
+                        {class_eight.muslim_total_student}
+                      </p>
+                      <p>
+                        <span className="font-medium">হিন্দু ছাত্র: </span>
+                        {class_eight.hindu_boy_student}
+                      </p>
+                      <p>
+                        <span className="font-medium">হিন্দু ছাত্রী: </span>
+                        {class_eight.hindu_girl_student}
+                      </p>
+                      <p>
+                        <span className="font-medium">
+                          হিন্দু মোট শিক্ষার্থী:{" "}
+                        </span>
+                        {class_eight.hindu_total_student}
+                      </p>
+                      <p>
+                        <span className="font-medium">মোট ছাত্র: </span>
+                        {class_eight.total_boy_student}
+                      </p>
+                      <p>
+                        <span className="font-medium">মোট ছাত্রী: </span>
+                        {class_eight.total_girl_student}
+                      </p>
+                      <p>
+                        <span className="font-medium">মোট শিক্ষার্থী: </span>
+                        {class_eight.total_student}
+                      </p>
+                      <p>
+                        <span className="font-medium">
+                          বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী:{" "}
+                        </span>
+                        {class_eight.special_demanded_student}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="mt-12">

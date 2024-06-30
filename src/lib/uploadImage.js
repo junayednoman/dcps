@@ -18,4 +18,3 @@ export const uploadImageToImageBB = async (file) => {
       throw new Error('Error uploading image');
     }
   };
-  

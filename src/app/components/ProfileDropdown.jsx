@@ -1,6 +1,6 @@
 import { IconButton } from "@mui/material";
 import React, { useState, useRef, useContext } from "react";
-import man from "../../media/man.jpg";
+import man from "../../media/account.png";
 import Image from "next/image";
 import Link from "next/link";
 import { FaRegUser } from "react-icons/fa";
@@ -34,7 +34,7 @@ function ProfileDropdown() {
           <Image
             className="rounded-full md:w-[35px] w-[28px] cursor-pointer"
             src={man}
-            alt="man-image"
+            alt="image"
             width={200}
             height={100}
           ></Image>
