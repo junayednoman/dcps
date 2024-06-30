@@ -31,7 +31,7 @@ const BilReturnSubmit = ({ params }) => {
   React.useEffect(() => {
     const id = params.dataId;
     setLoading(true);
-    const apiUrl = `http://localhost:3000/api/bill-return/get-single`;
+    const apiUrl = `https://dmsp.vercel.app/api/bill-return/get-single`;
     fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -418,7 +418,7 @@ const BilReturnSubmit = ({ params }) => {
         billData.student.asroyon_survey
       );
 
-      const apiUrl = `http://localhost:3000/api/bill-return/edit`;
+      const apiUrl = `https://dmsp.vercel.app/api/bill-return/edit`;
       fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -3793,9 +3793,7 @@ const BilReturnSubmit = ({ params }) => {
                       }`}
                       onClick={() => studentTogglePara("class_six")}
                     >
-                      <h5 className="text-gray-900 text-[16px]">
-                        ষষ্ঠ শ্রেণি
-                      </h5>
+                      <h5 className="text-gray-900 text-[16px]">ষষ্ঠ শ্রেণি</h5>
                       <svg
                         className={`w-4 h-4 ml-2 duration-500 ${
                           studentAccordionActive === "class_six"
@@ -4072,7 +4070,7 @@ const BilReturnSubmit = ({ params }) => {
                       onClick={() => studentTogglePara("class_eight")}
                     >
                       <h5 className="text-gray-900 text-[16px]">
-                      অষ্টম শ্রেণি
+                        অষ্টম শ্রেণি
                       </h5>
                       <svg
                         className={`w-4 h-4 ml-2 duration-500 ${
@@ -4196,7 +4194,6 @@ const BilReturnSubmit = ({ params }) => {
                       </ul>
                     </AnimateHeight>
                   </div>
-                  
                 </div>
               </DataDropdown>
               <DataDropdown

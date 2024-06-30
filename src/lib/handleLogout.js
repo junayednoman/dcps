@@ -1,5 +1,5 @@
 export default async function handleLogout() {
-  const apiUrl = "http://localhost:3000/api/auth/logout";
+  const apiUrl = "https://dmsp.vercel.app/api/auth/logout";
   try {
     const response = await fetch(apiUrl, {
       method: "POST",

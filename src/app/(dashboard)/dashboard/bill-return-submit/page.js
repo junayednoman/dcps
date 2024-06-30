@@ -400,7 +400,7 @@ const BilReturnSubmit = () => {
       formData.teacher.salary = updatedSalary;
 
       // API call with the updated form data
-      const apiUrl = "http://localhost:3000/api/bill-return/submit";
+      const apiUrl = "https://dmsp.vercel.app/api/bill-return/submit";
       fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -2364,7 +2364,7 @@ const BilReturnSubmit = () => {
                           <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 w-full gap-x-6 pt-4">
                             <TextField
                               label={"শিক্ষকের নাম"}
-                              placeholder={'শিক্ষকের নাম লিখুন'}
+                              placeholder={"শিক্ষকের নাম লিখুন"}
                               name={`teacher.attendance.${teacherIndex}.name`}
                             />
                           </div>
@@ -2604,7 +2604,7 @@ const BilReturnSubmit = () => {
                                                   মাতৃত্ব
                                                 </option>
                                                 <option value="নৈমিত্তিক ছুটি">
-                                                নৈমিত্তিক ছুটি
+                                                  নৈমিত্তিক ছুটি
                                                 </option>
                                               </Field>
                                             </div>
