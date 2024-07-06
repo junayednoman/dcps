@@ -61,7 +61,7 @@ const BilReturnSubmit = ({ params }) => {
   React.useEffect(() => {
     const id = params.dataId;
     setLoading(true);
-    const apiUrl = `http://localhost:3000/api/bill-return/get-single`;
+    const apiUrl = `https://dmsp.vercel.app/api/bill-return/get-single`;
     fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -448,7 +448,7 @@ const BilReturnSubmit = ({ params }) => {
         billData.student.asroyon_survey
       );
 
-      const apiUrl = `http://localhost:3000/api/bill-return/edit`;
+      const apiUrl = `https://dmsp.vercel.app/api/bill-return/edit`;
       fetch(apiUrl, {
         method: "POST",
         headers: {
