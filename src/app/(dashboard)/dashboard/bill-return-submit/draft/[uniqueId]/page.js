@@ -1,18 +1,25 @@
 "use client";
 
+import DataDropdown from "@/app/components/DataDropdown";
+import DataGrid from "@/app/components/DataGrid";
+import DataGridForAttendance from "@/app/components/DataGridForAttendance";
+import PairedData from "@/app/components/PairedData";
 import convertToBengaliNumber from "@/lib/convertToBengaliNumber";
 import { CircularProgress } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { LuDownload } from "react-icons/lu";
+
 const DataDraft = ({ params }) => {
   const [billData, setBillData] = useState(null);
+
+  const [activeDropdown, setActiveDropdown] = useState("");
 
   const [loading, setLoading] = useState();
   useEffect(() => {
     setLoading(true);
-    const apiUrl = "https://dmsp.vercel.app/api/bill-return/get-draft";
+    const apiUrl = "http://localhost:3000/api/bill-return/get-draft";
     fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -42,11 +49,19 @@ const DataDraft = ({ params }) => {
   const handlePrint = () => {
     window.print();
   };
+  console.log("bill-data, ", billData);
 
-  if (loading || !billData) {
+  if (loading) {
     return (
       <div className="flex justify-center items-center h-[80vh]">
         <CircularProgress className="spinner" />
+      </div>
+    );
+  }
+  if (!billData) {
+    return (
+      <div className="text-center text-5xl font-semibold mt-14">
+        <p>No data found!</p>
       </div>
     );
   }
@@ -145,6 +160,8 @@ const DataDraft = ({ params }) => {
 
   // teacher data
   const teacherData = billData?.teacher;
+  const teacher_attendance = teacherData?.attendance;
+  console.log(teacher_attendance);
   const {
     permitted_post,
     teacher_number,
@@ -184,7 +201,7 @@ const DataDraft = ({ params }) => {
     const currentDate = new Date().toISOString();
     const updateData = { isDraft: false, updatedDate: currentDate };
     setLoading(true);
-    const apiUrl = "https://dmsp.vercel.app/api/bill-return/update";
+    const apiUrl = "http://localhost:3000/api/bill-return/update";
     fetch(apiUrl, {
       method: "PATCH",
       headers: {
@@ -218,12 +235,16 @@ const DataDraft = ({ params }) => {
               <h2 className="md:text-xl text-lg font-semibold main-heading">
                 বিদ্যালয় সংক্রান্ত তথ্য
               </h2>
-              <Link
-                href={`https://dmsp.vercel.app/dashboard/bill-return-edit/${billData._id}`}
-                className="text-lg font-semibold underline"
-              >
-                Edit
-              </Link>
+              {billData.isAUEOVerified || billData.isUEOVerified ? (
+                ""
+              ) : (
+                <Link
+                  href={`http://localhost:3000/dashboard/bill-return-edit/${billData._id}`}
+                  className="text-lg font-semibold underline"
+                >
+                  Edit
+                </Link>
+              )}
             </div>
             <div className="w-full h-[1px] bg-[#008B4C] md:mb-9 mb-5 mt-2 print:mb-6"></div>
             {schoolData ? (
@@ -924,6 +945,7 @@ const DataDraft = ({ params }) => {
                   )}
                 </div>
 
+                {/* unauthorized teacher data */}
                 <div className="mt-12">
                   <h4 className="md:text-[17px] text-lg font-semibold md:mb-5 mb-4 print:mb-4 print:text-xl text-[#008B4C]">
                     অননুমোদিত শিক্ষক তথ্য
@@ -956,6 +978,100 @@ const DataDraft = ({ params }) => {
                   ) : (
                     <div className="p-8">কোন তথ্য পাওয়া যাইনি</div>
                   )}
+                </div>
+
+                {/* teacher attandence data */}
+                <div className="mt-12">
+                  <h4 className="md:text-[17px] text-lg font-semibold md:mb-5 mb-4 print:mb-4 print:text-xl text-[#008B4C]">
+                    হাজিরা সংক্রান্ত তথ্য
+                  </h4>
+                  <div className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col">
+                    <p>
+                      <span className="font-medium">হাজিরা শুরুর তারিখ: </span>
+                      {teacherData.hajira_from}
+                    </p>
+                    <p>
+                      <span className="font-medium">হাজিরা শেষের তারিখ: </span>
+                      {teacherData.hajira_to}
+                    </p>
+                  </div>
+                  {teacher_attendance?.map((attendance, index) => (
+                    <DataDropdown
+                      key={index}
+                      title={
+                        index === 0
+                          ? `প্রধান শিক্ষক (${attendance.name})`
+                          : `সহকারী শিক্ষক-${convertToBengaliNumber(index)} (${
+                              attendance.name
+                            })`
+                      }
+                      itemKey={`attendance-${index}`}
+                      activeItem={activeDropdown}
+                      setActiveItem={setActiveDropdown}
+                    >
+                      {attendance?.days?.map((day, idx) => (
+                        <div
+                          key={idx}
+                          className="mt-3 p-5 px-6 border rounded-md"
+                        >
+                          <h5 className="font-semibold">
+                            {idx < 21
+                              ? `পূর্ববর্তী মাসের দিন-${convertToBengaliNumber(
+                                  idx + 11
+                                )}  এর উপস্থিতি`
+                              : `পরবর্তী মাসের দিন-${convertToBengaliNumber(
+                                  idx - 20
+                                )}  এর উপস্থিতি`}
+                          </h5>
+                          {day?.status === "present" ? (
+                            <DataGridForAttendance mtZero={true}>
+                              <PairedData
+                                label={"উপস্থিত কিনা"}
+                                value={"উপস্থিত"}
+                              ></PairedData>
+                              <PairedData
+                                label={"আগমন"}
+                                value={day?.coming_time}
+                              ></PairedData>
+                              <PairedData
+                                label={"প্রস্থান"}
+                                value={day?.leaving_time}
+                              ></PairedData>
+                              <div className="p-2 pb-[6px] px-3 border border-[#008b4c1a] bg-[#008b4c06] rounded-[4px]">
+                                <div className="text-black">
+                                  <span className="font-medium">
+                                    স্বাক্ষরঃ{" "}
+                                  </span>
+                                  <Image
+                                    className="inline-block ml-3"
+                                    width={80}
+                                    height={20}
+                                    src={day.signature}
+                                    alt="signature"
+                                  ></Image>
+                                </div>
+                              </div>
+                            </DataGridForAttendance>
+                          ) : day?.status === "absent" ? (
+                            <DataGrid mtZero={true}>
+                              <PairedData
+                                label={"উপস্থিত কিনা"}
+                                value="অনুপস্থিত"
+                              ></PairedData>
+                              <PairedData
+                                label={"অনুপস্থিতর কারণ"}
+                                value={day?.absence_reason}
+                              ></PairedData>
+                            </DataGrid>
+                          ) : day.status === "option" ? (
+                            <p className="mt-2">কোন তথ্য পাওয়া যায়নি!</p>
+                          ) : (
+                            <p className="mt-2">{day.status}</p>
+                          )}
+                        </div>
+                      ))}
+                    </DataDropdown>
+                  ))}
                 </div>
               </div>
             ) : (

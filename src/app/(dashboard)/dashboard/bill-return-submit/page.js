@@ -28,6 +28,7 @@ import dayjs from "dayjs";
 import ImageInput2 from "@/app/components/ImageInput2";
 import { generateUniqueId } from "@/lib/uniqueId";
 import moment from "moment";
+import { budgetYearOptions } from "../bill-return-edit/[dataId]/page";
 
 const initialValues = {
   unique_id: "",
@@ -151,7 +152,7 @@ const initialValues = {
       women_teacher_number: "",
       vacation_consumers: "",
     },
-    attendance: Array(6).fill({
+    attendance: Array(15).fill({
       name: "",
       days: Array(31).fill({
         status: "option",
@@ -185,7 +186,28 @@ const initialValues = {
   unauthorized_teacher: [{}],
 };
 
+const monthOptions = [
+  { value: "January", label: "জানুয়ারী" },
+  { value: "February", label: "ফেব্রুয়ারী" },
+  { value: "March", label: "মার্চ" },
+  { value: "April", label: "এপ্রিল" },
+  { value: "May", label: "মে" },
+  { value: "June", label: "জুন" },
+  { value: "July", label: "জুলাই" },
+  { value: "August", label: "আগস্ট" },
+  { value: "September", label: "সেপ্টেম্বর" },
+  { value: "October", label: "অক্টোবর" },
+  { value: "November", label: "নভেম্বর" },
+  { value: "December", label: "ডিসেম্বর" },
+];
+
+
 const BilReturnSubmit = () => {
+  const [monthSelectedOption, setMonthSelectedOption] = React.useState(null);
+  const handleMonthSelectChange = (monthSelectedOption) => {
+    setMonthSelectedOption(monthSelectedOption);
+  };
+
   const [activeItem, setActiveItem] = React.useState("");
 
   const [buildingNumber, setBuildingNumber] = React.useState(0);
@@ -281,12 +303,35 @@ const BilReturnSubmit = () => {
   };
 
   const stipendYearOptions = [
-    { value: "2020", label: "2020" },
-    { value: "2021", label: "2021" },
-    { value: "2022", label: "2022" },
-    { value: "2023", label: "2023" },
-    { value: "2024", label: "2024" },
+    { value: "2014-2015", label: "2014-2015" },
+    { value: "2015-2016", label: "2015-2016" },
+    { value: "2016-2017", label: "2016-2017" },
+    { value: "2017-2018", label: "2017-2018" },
+    { value: "2018-2019", label: "2018-2019" },
+    { value: "2019-2020", label: "2019-2020" },
+    { value: "2020-2021", label: "2020-2021" },
+    { value: "2021-2022", label: "2021-2022" },
+    { value: "2022-2023", label: "2022-2023" },
+    { value: "2023-2024", label: "2023-2024" },
+    { value: "2024-2025", label: "2024-2025" },
+    { value: "2025-2026", label: "2025-2026" },
+    { value: "2026-2027", label: "2026-2027" },
+    { value: "2027-2028", label: "2027-2028" },
+    { value: "2028-2029", label: "2028-2029" },
+    { value: "2029-2030", label: "2029-2030" },
+    { value: "2030-2031", label: "2030-2031" },
+    { value: "2031-2032", label: "2031-2032" },
+    { value: "2032-2033", label: "2032-2033" },
+    { value: "2033-2034", label: "2033-2034" },
+    { value: "2034-2035", label: "2034-2035" },
+    { value: "2035-2036", label: "2035-2036" },
+    { value: "2036-2037", label: "2036-2037" },
+    { value: "2037-2038", label: "2037-2038" },
+    { value: "2038-2039", label: "2038-2039" },
+    { value: "2039-2040", label: "2039-2040" },
+    { value: "2040-2041", label: "2040-2041" }
   ];
+  
 
   const [stipendYearSelectedOption, setStipendYearSelectedOption] =
     React.useState("");
@@ -329,11 +374,12 @@ const BilReturnSubmit = () => {
       formData.submitted_by = userName;
       formData.isDraft = draftSubmit ? true : false;
       formData.submitted_at = currentDate;
-      formData.submitted_date = moment(formData.submitted_at).format(
-        "MMMM YYYY"
-      );
+      formData.submitted_date = `${monthSelectedOption.value} ${moment(formData.submitted_at).format(
+        "YYYY"
+      )}`
       formData.updated_at = "";
       formData.school.general = values.school.general;
+      formData.school.general.bill_month = monthSelectedOption?.value;
       formData.school.conference = values.school.conference;
       formData.school.development = values.budgets;
       formData.school.infrastructure = values.school.infrastructure;
@@ -400,7 +446,7 @@ const BilReturnSubmit = () => {
       formData.teacher.salary = updatedSalary;
 
       // API call with the updated form data
-      const apiUrl = "https://dmsp.vercel.app/api/bill-return/submit";
+      const apiUrl = "http://localhost:3000/api/bill-return/submit";
       fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -466,6 +512,15 @@ const BilReturnSubmit = () => {
                 setActiveItem={setActiveItem}
               >
                 <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4 pt-4">
+                  <div className="mb-4">
+                    <h1 className="font-semibold">বিলের মাস</h1>
+                    <SearchableSelect
+                      options={monthOptions}
+                      onChange={handleMonthSelectChange}
+                      value={monthSelectedOption}
+                      placeholder={"মাস সিলেক্ট করুন"}
+                    />
+                  </div>
                   <TextField
                     name="school.general.name"
                     label="বিদ্যালয়ের নাম"
@@ -1581,17 +1636,17 @@ const BilReturnSubmit = () => {
                       </Field>
                     </div>
                   )}
-                  <NumberField
+                  <TextField
                     name="school.land.khatian_number"
                     label="খতিয়ান নং"
                     placeholder="খতিয়ান নং দিন"
                   />
-                  <NumberField
+                  <TextField
                     name="school.land.dag_number"
                     label="দাগ নং"
                     placeholder="দাগ নং দিন"
                   />
-                  <NumberField
+                  <TextField
                     name="school.land.dolil_number"
                     label="দলিল নং"
                     placeholder="দলিল নং দিন"
@@ -1704,14 +1759,14 @@ const BilReturnSubmit = () => {
                   <SearchableSelect
                     className="h-[44px]"
                     options={stipendYearOptions}
-                    label={"সর্বশেষ প্রান্তিকের বছর"}
-                    placeholder={"একটি বছর সিলেক্ট করুন"}
+                    label={"অর্থ বছর"}
+                    placeholder={"একটি অর্থ বছর সিলেক্ট করুন"}
                     onChange={stipendYearSelectChange}
                     value={stipendYearSelectedOption}
                   />
                   <div className="mb-4">
                     <label className="font-semibold" htmlFor={"latest_season"}>
-                      সর্বশেষ প্রান্তিকের মৌসুম
+                      সর্বশেষ প্রান্তিক
                     </label>
                     <Field
                       className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]"
@@ -1741,7 +1796,7 @@ const BilReturnSubmit = () => {
                   />
                   <NumberField
                     name="school.stipend.demand"
-                    label="উপবৃত্তির চাহিদা"
+                    label="উপবৃত্তির চাহিদা(টাকা)"
                     placeholder="উপবৃত্তির চাহিদা দিন"
                   />
                   <NumberField
@@ -1863,21 +1918,17 @@ const BilReturnSubmit = () => {
                                 >
                                   একটি অপশন সিলেক্ট করুন
                                 </option>
-                                <option value={"2014-2015"}>2014-2015</option>
-                                <option value={"2015-2016"}>2015-2016</option>
-                                <option value={"2016-2017"}>2016-2017</option>
-                                <option value={"2017-2018"}>2017-2018</option>
-                                <option value={"2018-2019"}>2018-2019</option>
-                                <option value={"2019-2020"}>2019-2020</option>
-                                <option value={"2020-2021"}>2020-2021</option>
-                                <option value={"2021-2022"}>2021-2022</option>
-                                <option value={"2022-2023"}>2022-2023</option>
+                                {budgetYearOptions.map((year) => (
+                                  <option key={year} value={year}>
+                                    {year}
+                                  </option>
+                                ))}
                               </Field>
                             </div>
                             <NumberField
                               name={`budgets.${index}.amount`}
-                              label="অর্থের পরিমান"
-                              placeholder="অর্থের পরিমান লিখুন"
+                              label="বরাদ্দকৃত অর্থ"
+                              placeholder="বরাদ্দকৃত অর্থের পরিমান লিখুন"
                             />
                           </div>
                           <button
@@ -2065,7 +2116,7 @@ const BilReturnSubmit = () => {
                                 placeholder="শিক্ষা ভাতার পরিমান দিন"
                               />
                               {/* <NumberField name={`salary.${index}.educational_allowance`} label="শিক্ষা ভাতা" placeholder="শিক্ষা ভাতার পরিমান দিন" /> */}
-                              <NumberField
+                              <TextField
                                 name={`salary.${index}.bank_account_no`}
                                 label="ব্যাংক হিসাব নং"
                                 placeholder="ব্যাংক হিসাব নং দিন"
@@ -2229,7 +2280,7 @@ const BilReturnSubmit = () => {
                 </FieldArray>
               </DataDropdown>
               <DataDropdown
-                title="অননুমোদিত শিক্ষক তথ্য"
+                title="অননুমোদিত অনুপস্থিত শিক্ষক তথ্য"
                 itemKey={"absent_teacher"}
                 activeItem={activeItem}
                 setActiveItem={setActiveItem}
@@ -2393,10 +2444,10 @@ const BilReturnSubmit = () => {
                                               {dayIndex < 21
                                                 ? `পূর্ববর্তী মাসের দিন-${convertToBengaliNumber(
                                                     dayIndex + 11
-                                                  )}  এর উপস্থিতি`
-                                                : `পরবর্তী মাসের দিন-${convertToBengaliNumber(
+                                                  )}`
+                                                : `চলতি মাসের দিন-${convertToBengaliNumber(
                                                     dayIndex - 20
-                                                  )}  এর উপস্থিতি`}
+                                                  )}`}
                                             </label>
                                             <Field
                                               as="select"
@@ -2412,11 +2463,14 @@ const BilReturnSubmit = () => {
                                               <option value="absent">
                                                 অনুপস্থিত
                                               </option>
-                                              <option value="holiday">
+                                              <option value="সরকারী ছুটি">
                                                 সরকারী ছুটি
                                               </option>
-                                              <option value="reserved-vacation">
+                                              <option value="সংরক্ষিত ছুটি">
                                                 সংরক্ষিত ছুটি
+                                              </option>
+                                              <option value="সাপ্তাহিক ছুটি">
+                                                সাপ্তাহিক ছুটি
                                               </option>
                                             </Field>
                                           </div>
@@ -2431,13 +2485,7 @@ const BilReturnSubmit = () => {
                                                   className="font-semibold"
                                                   htmlFor={`teacher.attendance.${teacherIndex}.days.${dayIndex}.coming_time`}
                                                 >
-                                                  {dayIndex < 21
-                                                    ? `পূর্ববর্তী মাসের দিন-${convertToBengaliNumber(
-                                                        dayIndex + 11
-                                                      )}  এর আগমন`
-                                                    : `পরবর্তী মাসের দিন-${convertToBengaliNumber(
-                                                        dayIndex - 20
-                                                      )}  এর আগমন`}
+                                                  আগমন
                                                 </label>
                                                 <Field
                                                   name={`teacher.attendance.${teacherIndex}.days.${dayIndex}.coming_time`}
@@ -2500,13 +2548,7 @@ const BilReturnSubmit = () => {
                                                   className="font-semibold"
                                                   htmlFor={`teacher.attendance.${teacherIndex}.days.${dayIndex}.leaving_time`}
                                                 >
-                                                  {dayIndex < 21
-                                                    ? `পূর্ববর্তী মাসের দিন-${convertToBengaliNumber(
-                                                        dayIndex + 11
-                                                      )}  এর প্রস্থান`
-                                                    : `পরবর্তী মাসের দিন-${convertToBengaliNumber(
-                                                        dayIndex - 20
-                                                      )}  এর প্রস্থান`}
+                                                  প্রস্থান
                                                 </label>
                                                 <Field
                                                   name={`teacher.attendance.${teacherIndex}.days.${dayIndex}.leaving_time`}
@@ -2605,6 +2647,9 @@ const BilReturnSubmit = () => {
                                                 </option>
                                                 <option value="নৈমিত্তিক ছুটি">
                                                   নৈমিত্তিক ছুটি
+                                                </option>
+                                                <option value="অননুমোদিত ছুটি">
+                                                  অননুমোদিত ছুটি
                                                 </option>
                                               </Field>
                                             </div>

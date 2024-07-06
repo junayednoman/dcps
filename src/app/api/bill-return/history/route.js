@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 import getDb from "@/lib/db";
 import checkJwtExpirity from "@/lib/checkJwtExpirity";
 import decodeUser from "@/lib/decodeUser";
-import moment from "moment";
 
 export async function POST(req, res) {
   try {
@@ -30,7 +29,6 @@ export async function POST(req, res) {
 
     const db = await getDb();
     const { cluster, userName, targetDate, schoolName } = await req.json();
-    console.log(cluster, userName, targetDate, schoolName);
 
     const headmasterQuery = {
       submitted_by: userName,

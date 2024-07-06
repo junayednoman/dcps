@@ -23,6 +23,36 @@ import { AuthContext } from "@/authContext/AuthContext";
 import { generateUniqueId } from "@/lib/uniqueId";
 import setArrayFieldValue from "@/lib/setArrayFieldValue";
 
+export const budgetYearOptions = [
+  "2014-2015",
+  "2015-2016",
+  "2016-2017",
+  "2017-2018",
+  "2018-2019",
+  "2019-2020",
+  "2020-2021",
+  "2021-2022",
+  "2022-2023",
+  "2023-2024",
+  "2024-2025",
+  "2025-2026",
+  "2026-2027",
+  "2027-2028",
+  "2028-2029",
+  "2029-2030",
+  "2030-2031",
+  "2031-2032",
+  "2032-2033",
+  "2033-2034",
+  "2034-2035",
+  "2035-2036",
+  "2036-2037",
+  "2037-2038",
+  "2038-2039",
+  "2039-2040",
+  "2040-2041",
+];
+
 const BilReturnSubmit = ({ params }) => {
   const [activeItem, setActiveItem] = React.useState("");
   const { userName } = React.useContext(AuthContext);
@@ -31,7 +61,7 @@ const BilReturnSubmit = ({ params }) => {
   React.useEffect(() => {
     const id = params.dataId;
     setLoading(true);
-    const apiUrl = `https://dmsp.vercel.app/api/bill-return/get-single`;
+    const apiUrl = `http://localhost:3000/api/bill-return/get-single`;
     fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -418,7 +448,7 @@ const BilReturnSubmit = ({ params }) => {
         billData.student.asroyon_survey
       );
 
-      const apiUrl = `https://dmsp.vercel.app/api/bill-return/edit`;
+      const apiUrl = `http://localhost:3000/api/bill-return/edit`;
       fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -2247,15 +2277,11 @@ const BilReturnSubmit = ({ params }) => {
                                 <option className="text-gray-300" value="">
                                   একটি অপশন সিলেক্ট করুন
                                 </option>
-                                <option value={"2014-2015"}>2014-2015</option>
-                                <option value={"2015-2016"}>2015-2016</option>
-                                <option value={"2016-2017"}>2016-2017</option>
-                                <option value={"2017-2018"}>2017-2018</option>
-                                <option value={"2018-2019"}>2018-2019</option>
-                                <option value={"2019-2020"}>2019-2020</option>
-                                <option value={"2020-2021"}>2020-2021</option>
-                                <option value={"2021-2022"}>2021-2022</option>
-                                <option value={"2022-2023"}>2022-2023</option>
+                                {budgetYearOptions.map((year) => (
+                                  <option key={year} value={year}>
+                                    {year}
+                                  </option>
+                                ))}
                               </Field>
                             </div>
                             <NumberField

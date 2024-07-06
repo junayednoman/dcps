@@ -23,7 +23,7 @@ const HistoryData = ({ billData }) => {
 
   // show or hide edit option
   React.useEffect(() => {
-    if (role === "head-master" && userName === billData.submitted_by) {
+    if (role === "head-master" && userName === billData.submitted_by && !billData.isAUEOVerified && !billData.isUEOVerified) {
       setShowEdit(true);
     } else {
       setShowEdit(false);
@@ -807,7 +807,7 @@ const HistoryData = ({ billData }) => {
                                     width={80}
                                     height={20}
                                     src={
-                                      "https://i.ibb.co/yyQLBv2/04c683fbd9f24c509df57b559bdc0e91.jpg"
+                                      day.signature
                                     }
                                     alt="signature"
                                   ></Image>
@@ -825,8 +825,10 @@ const HistoryData = ({ billData }) => {
                                 value={day?.absence_reason}
                               ></PairedData>
                             </DataGrid>
-                          ) : (
+                          ) : day.status === "option" ? (
                             <p className="mt-2">কোন তথ্য পাওয়া যায়নি!</p>
+                          ) : (
+                            <p className="mt-2">{day.status}</p>
                           )}
                         </div>
                       ))}

@@ -23,16 +23,17 @@ export async function POST(req, res) {
     // verify user role
     const { role } = decodeUser(token);
     if (role !== "ueo" && role !== "aueo") {
-      return NextResponse.json({ message: "Forbidden" }, { status: 403 });
+      return NextResponse.json({ message: "Forbidden!" }, { status: 403 });
     }
 
     const db = await getDb();
     const parent = await req.json();
     const query = { parent: parent };
+    const ueoQuery = {parent: parent, role: 'aueo'};
 
     const result = await db
       .collection("users")
-      .find(role === "aueo" ? query : {}, {
+      .find(role === "aueo" ? query : ueoQuery, {
         projection: { unique_id: 0, password: 0, parent: 0 },
       })
       .sort({ created_at: -1 })
