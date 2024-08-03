@@ -53,11 +53,11 @@ export const budgetYearOptions = [
   "2040-2041",
 ];
 
-const BilReturnSubmit = ({ params }) => {
+const BilReturnEdit = ({ params }) => {
   const [activeItem, setActiveItem] = React.useState("");
   const { userName } = React.useContext(AuthContext);
   const [billData, setBillData] = React.useState(null);
-  console.log(billData?.student);
+
   React.useEffect(() => {
     const id = params.dataId;
     setLoading(true);
@@ -4290,4 +4290,4 @@ const BilReturnSubmit = ({ params }) => {
   );
 };
 
-export default BilReturnSubmit;
+export default BilReturnEdit;

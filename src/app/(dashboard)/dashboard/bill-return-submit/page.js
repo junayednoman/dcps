@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 import TextField from "@/app/components/TextField";
 import { Field, FieldArray, Form, Formik } from "formik";
@@ -29,162 +30,7 @@ import ImageInput2 from "@/app/components/ImageInput2";
 import { generateUniqueId } from "@/lib/uniqueId";
 import moment from "moment";
 import { budgetYearOptions } from "../bill-return-edit/[dataId]/page";
-
-const initialValues = {
-  unique_id: "",
-  hajira_from: "",
-  hajira_to: "",
-  submitter_info: {
-    submitted_by: "",
-  },
-  budgets: [{}],
-  school: {
-    general: {
-      name: "",
-      cluster: "",
-      village_moholla: "",
-      word_number: "",
-      post_office: "",
-      union_corporation: "",
-      emis_code: "",
-      email: "",
-      founded_date: "",
-      grade: "",
-      shifts: "",
-    },
-    infrastructure: {
-      building: {
-        buildings: "",
-        building_date_1: "",
-        building_type_1: "",
-        building_condition_1: "",
-        building_date_2: "",
-        building_type_2: "",
-        building_condition_2: "",
-        building_date_3: "",
-        building_type_3: "",
-        building_condition_3: "",
-        building_date_4: "",
-        building_type_4: "",
-        building_condition_4: "",
-      },
-      headmaster_room: "",
-      office_rooms: "",
-      class_rooms: "",
-      useable_class_rooms: "",
-      multimedia_rooms: "",
-      separated_nursery_class: "",
-      border_wall: {
-        wall: "",
-        funding_type: "",
-        founded_date: "",
-      },
-      toilets: "",
-      wash_block: "",
-      wash_block_founded_date: "",
-      others: {
-        shahid_minar: "",
-        freedom_fight_corner: "",
-        rasel_corner: "",
-        garden: "",
-        internet: "",
-        laptop: {
-          total: "",
-          actives: "",
-        },
-        multimedia: {
-          total: "",
-          actives: "",
-        },
-        piano: {
-          total: "",
-          actives: "",
-        },
-        electricity_connection: "",
-      },
-      water: {
-        tube_wells: "",
-        tube_wells_condition: "",
-        deep_tube_wells: "",
-        deep_tube_wells_condition: "",
-      },
-    },
-    land: {
-      total_amount: "",
-      take_overed: "",
-      dispossessed: "",
-      is_registered: "",
-      registration_ownership: "",
-      khatian_number: "",
-      dag_number: "",
-      dolil_number: "",
-      dolil_year: "",
-      is_namjaried: "",
-      namjari_ownership: "",
-      is_cased: "",
-      taxt_condition: "",
-    },
-    stipend: {
-      stipend_year: "",
-      total_consumer: "",
-      demand: "",
-      distributed: "",
-    },
-    conference: {
-      smc: "",
-      pta: "",
-      mother: "",
-      guardian: "",
-      yard: "",
-      staff_meeting: "",
-    },
-    development: {
-      // ...budgets
-    },
-  },
-  permitted_post: "",
-  teacher: {
-    general: {
-      permitted_post: "",
-      working_post: "",
-      vacancy: "",
-      teacher_number: "",
-      women_teacher_number: "",
-      vacation_consumers: "",
-    },
-    attendance: Array(15).fill({
-      name: "",
-      days: Array(31).fill({
-        status: "option",
-        coming_time: null,
-        leaving_time: null,
-        signature: "",
-        absence_reason: "",
-      }),
-    }),
-  },
-  students: {
-    admission: {},
-  },
-  salary: [{}],
-  vacations: [{}],
-  nursery_four_plus: [{}],
-  nursery_five_plus: [{}],
-  class_one: [{}],
-  class_two: [{}],
-  class_three: [{}],
-  class_four: [{}],
-  class_five: [{}],
-  class_six: [{}],
-  class_seven: [{}],
-  class_eight: [{}],
-  asroyon_survey: [{}],
-  survey_total: [{}],
-  survey_admitted: [{}],
-  survey_unadmitted: [{}],
-  survey_admitted_to_other_school: [{}],
-  unauthorized_teacher: [{}],
-};
+import Loading from "@/app/components/Loading";
 
 const monthOptions = [
   { value: "January", label: "জানুয়ারী" },
@@ -202,6 +48,39 @@ const monthOptions = [
 ];
 
 const BilReturnSubmit = () => {
+  const [billDataLoading, setBillDataLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const { userName } = React.useContext(AuthContext);
+  const [fetchedBillData, setFetchedBillData] = React.useState(null);
+
+  // fetch  latest bill data
+  React.useEffect(() => {
+    setBillDataLoading(true);
+    const apiUrl = `https://dmsp.vercel.app/api/bill-return/latest`;
+    fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name: userName }),
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        if (data.success) {
+          setFetchedBillData(data.data[0]);
+        }
+      })
+      .catch((error) => {
+        toast.error("একটি ইরর ঘটেছে!");
+        console.error("There was an error!", error);
+      })
+      .finally(() => {
+        setBillDataLoading(false);
+      });
+  }, []);
+
   const [monthSelectedOption, setMonthSelectedOption] = React.useState(null);
   const handleMonthSelectChange = (monthSelectedOption) => {
     setMonthSelectedOption(monthSelectedOption);
@@ -216,9 +95,7 @@ const BilReturnSubmit = () => {
     const value = e.target.value;
     setBuildingNumber(parseInt(value));
   };
-
   const [borderWall, setBorderWall] = React.useState("");
-
   // Function to handle change in the border_wall select element
   const handleBorderWallChange = (event) => {
     setBorderWall(event.target.value);
@@ -244,7 +121,9 @@ const BilReturnSubmit = () => {
     setPiano(event.target.value);
   };
 
-  const [washBlock, setWashBlock] = React.useState("");
+  const [washBlock, setWashBlock] = React.useState(
+    fetchedBillData?.school?.infrastructure?.wash_block
+  );
 
   // Function to handle change in the border_wall select element
   const handleWashBlockChange = (event) => {
@@ -338,9 +217,21 @@ const BilReturnSubmit = () => {
     setStipendYearSelectedOption(schoolSelectedOption);
   };
 
-  const [loading, setLoading] = React.useState(false);
   const [draftSubmit, setDraftSubmit] = React.useState(false);
-  const { userName } = React.useContext(AuthContext);
+
+  if (billDataLoading) {
+    return <Loading />;
+  }
+  if (!fetchedBillData) {
+    return (
+      <div className="flex justify-center items-center h-[80vh]">
+        <h3 className="text-3xl font-semibold text-center">
+          কোন তথ্য পাওয়া যাইনি!
+        </h3>
+      </div>
+    );
+  }
+
   const handleFormSubmit = async (values) => {
     setLoading(true);
     if (values) {
@@ -372,7 +263,7 @@ const BilReturnSubmit = () => {
       formData.submitted_by = userName;
       formData.isDraft = draftSubmit ? true : false;
       formData.submitted_at = currentDate;
-      formData.submitted_date = `${monthSelectedOption.value} ${moment(
+      formData.submitted_date = `${monthSelectedOption?.value} ${moment(
         formData.submitted_at
       ).format("YYYY")}`;
       formData.updated_at = "";
@@ -432,7 +323,7 @@ const BilReturnSubmit = () => {
                 return { ...item, signature: response.data.display_url };
               }
             } catch (error) {
-              setError(error.message);
+              console.log(error.message);
               return item;
             }
           }
@@ -475,7 +366,9 @@ const BilReturnSubmit = () => {
         })
         .finally(() => {
           setLoading(false);
-          window.location.reload();
+          setTimeout(() => {
+            window.location.reload();
+          }, 1800);
         });
     }
   };
@@ -485,6 +378,283 @@ const BilReturnSubmit = () => {
   };
 
   const internetTypeOptions = ["মডেম", "সিম", "রাউটার"];
+
+  const schoolData = fetchedBillData.school;
+
+  // school general data
+  const {
+    cluster,
+    email,
+    emis_code,
+    founded_date,
+    grade,
+    name: schoolName,
+    post_office,
+    shifts,
+    union_corporation,
+    village_moholla,
+    word_number,
+  } = schoolData?.general;
+  // school infrastructure data
+  const {
+    class_rooms,
+    headmaster_room,
+    multimedia_rooms,
+    office_rooms,
+    separated_nursery_class,
+    toilets,
+    useable_class_rooms,
+    wash_block,
+    wash_block_founded_date,
+  } = schoolData.infrastructure;
+  const {
+    electricity_connection,
+    freedom_fight_corner,
+    garden,
+    internet,
+    laptop: fetchedLaptop,
+    multimedia: fetchedMultimedia,
+    piano: fetchedPiano,
+    rasel_corner,
+    shahid_minar,
+  } = schoolData.infrastructure.others;
+  console.log(fetchedLaptop);
+  const {
+    deep_tube_wells,
+    deep_tube_wells_condition,
+    tube_wells,
+    tube_wells_condition,
+  } = schoolData.infrastructure.water;
+  const infrastructureBorderWall = schoolData.infrastructure.border_wall;
+  const {
+    building_condition_1,
+    building_condition_2,
+    building_condition_3,
+    building_condition_4,
+    building_date_1,
+    building_date_2,
+    building_date_3,
+    building_date_4,
+    building_type_1,
+    building_type_2,
+    building_type_3,
+    building_type_4,
+    buildings,
+  } = schoolData.infrastructure.building;
+  const {
+    dag_number,
+    dispossessed,
+    dolil_number,
+    dolil_year,
+    is_cased,
+    is_namjaried,
+    is_registered,
+    khatian_number,
+    namjari_ownership,
+    registration_ownership,
+    take_overed,
+    taxt_condition,
+    total_amount,
+  } = schoolData.land;
+
+  // school stipend data
+  const { stipend_year, latest_season, demand, distributed, total_consumer } =
+    schoolData.stipend;
+
+  // school conference data
+  const { guardian, mother, pta, smc, staff_meeting, yard } =
+    schoolData.conference;
+  const schoolDevelopment = schoolData.development;
+  // teacher data
+  const teacherData = fetchedBillData?.teacher;
+  const {
+    permitted_post,
+    teacher_number,
+    vacancy,
+    women_teacher_number,
+    vacation_consumers,
+    working_post,
+  } = teacherData.general;
+
+  const unauthorized_teacher = teacherData.unauthorized_teacher;
+  const teacherVacations = teacherData.vacation;
+  const teacherSalary = teacherData.salary;
+  // student related data
+  const studentData = fetchedBillData?.student;
+
+  const studentSurveyAdmitted = studentData.survey.survey_admitted;
+  const studentSurveyAdmittedToOthersSchool =
+    studentData.survey.survey_admitted_to_other_school;
+  const studentSurveyUnAdmitted = studentData.survey.survey_unadmitted;
+  const studentSurveyTotal = studentData.survey.survey_total;
+  const nursery_four_plus = studentData.admission.nursery_four_plus;
+  const nursery_five_plus = studentData.admission.nursery_five_plus;
+  const class_one = studentData.admission.class_one;
+  const class_two = studentData.admission.class_two;
+  const class_three = studentData.admission.class_three;
+  const class_four = studentData.admission.class_four;
+  const class_five = studentData.admission.class_five;
+  const class_six = studentData.admission.class_six;
+  const class_seven = studentData.admission.class_seven;
+  const class_eight = studentData.admission.class_eight;
+  const studentAsroyonSurvey = studentData.asroyon_survey;
+
+  const initialValues = {
+    unique_id: "",
+    hajira_from: "",
+    hajira_to: "",
+    submitter_info: {
+      submitted_by: "",
+    },
+    budgets: [{}],
+    school: {
+      general: {
+        name: schoolName,
+        cluster: cluster,
+        village_moholla: village_moholla,
+        word_number: word_number,
+        post_office: post_office,
+        union_corporation: union_corporation,
+        emis_code: emis_code,
+        email: email,
+        founded_date: founded_date,
+        grade: grade,
+        shifts: shifts,
+      },
+      infrastructure: {
+        building: {
+          buildings: buildings,
+          building_date_1: building_date_1,
+          building_type_1: building_type_1,
+          building_condition_1: building_condition_1,
+          building_date_2: building_date_2,
+          building_type_2: building_type_2,
+          building_condition_2: building_condition_2,
+          building_date_3: building_date_3,
+          building_type_3: building_type_3,
+          building_condition_3: building_condition_3,
+          building_date_4: building_date_4,
+          building_type_4: building_type_4,
+          building_condition_4: building_condition_4,
+        },
+        headmaster_room: headmaster_room,
+        office_rooms: office_rooms,
+        class_rooms: class_rooms,
+        useable_class_rooms: useable_class_rooms,
+        multimedia_rooms: multimedia_rooms,
+        separated_nursery_class: separated_nursery_class,
+        border_wall: {
+          wall: borderWall,
+          funding_type: infrastructureBorderWall.funding_type,
+          founded_date: infrastructureBorderWall.founded_date,
+        },
+        toilets: toilets,
+        wash_block: wash_block,
+        wash_block_founded_date: wash_block_founded_date,
+        others: {
+          shahid_minar: shahid_minar,
+          freedom_fight_corner: freedom_fight_corner,
+          rasel_corner: rasel_corner,
+          garden: garden,
+          internet: internet,
+          laptop: {
+            total: fetchedLaptop.total,
+            actives: fetchedLaptop.actives,
+          },
+          multimedia: {
+            total: fetchedMultimedia.total,
+            actives: fetchedMultimedia.actives,
+          },
+          piano: {
+            total: fetchedPiano.total,
+            actives: fetchedPiano.actives,
+          },
+          electricity_connection: electricity_connection,
+        },
+        water: {
+          tube_wells: tube_wells,
+          tube_wells_condition: tube_wells_condition,
+          deep_tube_wells: deep_tube_wells,
+          deep_tube_wells_condition: deep_tube_wells_condition,
+        },
+      },
+      land: {
+        total_amount: total_amount,
+        take_overed: take_overed,
+        dispossessed: dispossessed,
+        is_registered: registration,
+        registration_ownership: registration_ownership,
+        khatian_number: khatian_number,
+        dag_number: dag_number,
+        dolil_number: dolil_number,
+        dolil_year: dolil_year,
+        is_namjaried: namjari,
+        namjari_ownership: namjari_ownership,
+        is_cased: is_cased,
+        taxt_condition: taxt_condition,
+      },
+      stipend: {
+        stipend_year: stipend_year,
+        latest_season: latest_season,
+        total_consumer: total_consumer,
+        demand: demand,
+        distributed: distributed,
+      },
+      conference: {
+        smc: smc,
+        pta: pta,
+        mother: mother,
+        guardian: guardian,
+        yard: yard,
+        staff_meeting: staff_meeting,
+      },
+      development: {
+        // ...budgets
+      },
+    },
+    permitted_post: "",
+    teacher: {
+      general: {
+        permitted_post: permitted_post,
+        working_post: working_post,
+        vacancy: vacancy,
+        teacher_number: teacher_number,
+        women_teacher_number: women_teacher_number,
+        vacation_consumers: vacation_consumers,
+      },
+      attendance: Array(15).fill({
+        name: "",
+        days: Array(31).fill({
+          status: "option",
+          coming_time: null,
+          leaving_time: null,
+          signature: "",
+          absence_reason: "",
+        }),
+      }),
+    },
+    students: {
+      admission: {},
+    },
+    salary: [{}],
+    vacations: [{}],
+    nursery_four_plus: [{}],
+    nursery_five_plus: [{}],
+    class_one: [{}],
+    class_two: [{}],
+    class_three: [{}],
+    class_four: [{}],
+    class_five: [{}],
+    class_six: [{}],
+    class_seven: [{}],
+    class_eight: [{}],
+    asroyon_survey: [{}],
+    survey_total: [{}],
+    survey_admitted: [{}],
+    survey_unadmitted: [{}],
+    survey_admitted_to_other_school: [{}],
+    unauthorized_teacher: [{}],
+  };
 
   return (
     <div className="bg-[#FAFAFA] xl:w-[85%] w-full lg:mt-0 mt-4">
@@ -520,6 +690,7 @@ const BilReturnSubmit = () => {
                     />
                   </div>
                   <TextField
+                    defaultValue={schoolName}
                     name="school.general.name"
                     label="বিদ্যালয়ের নাম"
                     placeholder={"বিদ্যালয়ের নাম লিখুন"}
@@ -536,10 +707,10 @@ const BilReturnSubmit = () => {
                     >
                       <option
                         className="text-gray-300"
-                        value="Select an option"
+                        value={"ক্লাস্টার সিলেক্ট করুন"}
                         selected
                       >
-                        ক্লাস্টার সিলেক্ট করুন
+                        {"ক্লাস্টার সিলেক্ট করুন"}
                       </option>
                       <option value="সাধুহাটি ক্লাস্টার">সাধুহাটি</option>
                       <option value="কামালপুর ক্লাস্টার">কামালপুর</option>
@@ -554,16 +725,19 @@ const BilReturnSubmit = () => {
                     </Field>
                   </div>
                   <TextField
+                    defaultValue={village_moholla}
                     name="school.general.village_moholla"
                     label="গ্রাম/মহল্লার নাম"
                     placeholder={"গ্রাম/মহল্লার নাম লিখুন"}
                   />
                   <NumberField
+                    defaultValue={word_number}
                     name="school.general.word_number"
                     label="ওয়ার্ড নাম্বার"
                     placeholder={"ওয়ার্ড নাম্বার লিখুন"}
                   />
                   <TextField
+                    defaultValue={post_office}
                     name="school.general.post_office"
                     label="ডাকঘর"
                     placeholder={"ডাকঘর লিখুন"}
@@ -631,16 +805,19 @@ const BilReturnSubmit = () => {
                   </div>
 
                   <TextField
+                    defaultValue={emis_code}
                     name="school.general.emis_code"
                     label="EMIS কোড"
                     placeholder={"EMIS কোড লিখুন"}
                   />
                   <TextField
+                    defaultValue={email}
                     name="school.general.email"
                     label="বিদ্যালয়ের ইমেইল"
                     placeholder={"বিদ্যালয়ের ইমেইল লিখুন"}
                   />
                   <MyDatePicker
+                    defaultValue={founded_date}
                     name="school.general.founded_date"
                     label="প্রতিষ্ঠার সন"
                   />
@@ -968,26 +1145,31 @@ const BilReturnSubmit = () => {
                   {/* class room related data */}
                   <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-6">
                     <NumberField
+                      defaultValue={headmaster_room}
                       label="প্রধান শিক্ষকের কক্ষ"
                       placeholder="প্রধান শিক্ষকের কক্ষ সংখ্যা"
                       name="school.infrastructure.headmaster_room"
                     />
                     <NumberField
+                      defaultValue={office_rooms}
                       label="অফিস কক্ষ"
                       placeholder="অফিস কক্ষ সংখ্যা দিন"
                       name="school.infrastructure.office_rooms"
                     />
                     <NumberField
+                      defaultValue={class_rooms}
                       label="শ্রেণী কক্ষ"
                       placeholder="শ্রেণী কক্ষের সংখ্যা দিন"
                       name="school.infrastructure.class_rooms"
                     />
                     <NumberField
+                      defaultValue={useable_class_rooms}
                       label="ব্যবহারযোগ্য শ্রেণী কক্ষ"
                       placeholder="ব্যবহারযোগ্য শ্রেণী কক্ষের সংখ্যা দিন"
                       name="school.infrastructure.useable_class_rooms"
                     />
                     <NumberField
+                      defaultValue={multimedia_rooms}
                       label="মাল্টিমিডিয়া কক্ষ"
                       placeholder="মাল্টিমিডিয়া কক্ষ সংখ্যা দিন"
                       name="school.infrastructure.multimedia_rooms"
@@ -1033,16 +1215,16 @@ const BilReturnSubmit = () => {
                       >
                         <option
                           className="text-gray-300"
-                          value="Select an option"
+                          value={infrastructureBorderWall.wall}
                           selected
                         >
-                          একটি অপশন সিলেক্ট করুন
+                          {infrastructureBorderWall.wall}
                         </option>
                         <option value="আছে">আছে</option>
                         <option value="নেই">নেই</option>
                       </Field>
                     </div>
-                    {borderWall === "আছে" && (
+                    {borderWall === "আছে" ? (
                       <div className="mb-4">
                         <label className="font-semibold" htmlFor="border_wall">
                           সীমানা প্রাচীরের অর্থায়ন ধরন*
@@ -1055,37 +1237,41 @@ const BilReturnSubmit = () => {
                         >
                           <option
                             className="text-gray-300"
-                            value="Select an option"
+                            value={infrastructureBorderWall.funding_type}
                             selected
                           >
-                            একটি অপশন সিলেক্ট করুন
+                            {infrastructureBorderWall.funding_type}
                           </option>
                           <option value="ডিপিই">ডিপিই</option>
                           <option value="উপজেলা">জেলা পরিষদ</option>
                           <option value="অন্যান্য">অন্যান্য</option>
                         </Field>
                       </div>
+                    ) : (
+                      ""
                     )}
 
-                    {borderWall === "আছে" && (
+                    {borderWall === "আছে" ? (
                       <MyDatePicker
+                        defaultValue={infrastructureBorderWall.founded_date}
                         label="সীমানা প্রাচীর নির্মাণের সন"
                         name="school.infrastructure.border_wall.founded_date"
                       />
+                    ) : (
+                      ""
                     )}
 
                     <NumberField
+                      defaultValue={toilets}
                       label="টয়লেট সংখ্যা"
                       placeholder="টয়লেট সংখ্যা দিন"
                       name="school.infrastructure.toilets"
                     />
-
                     <div className="mb-4">
                       <label className="font-semibold" htmlFor="wash_block">
                         ওয়াশ ব্লক*
                       </label>
                       <Field
-                        value={washBlock}
                         onChange={handleWashBlockChange}
                         className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]"
                         as="select"
@@ -1094,10 +1280,10 @@ const BilReturnSubmit = () => {
                       >
                         <option
                           className="text-gray-300"
-                          value="Select an option"
+                          value={wash_block}
                           selected
                         >
-                          একটি অপশন সিলেক্ট করুন
+                          {wash_block}
                         </option>
                         <option value="আছে">আছে</option>
                         <option value="নেই">নেই</option>
@@ -1106,6 +1292,7 @@ const BilReturnSubmit = () => {
 
                     {washBlock === "আছে" && (
                       <MyDatePicker
+                        defaultValue={wash_block_founded_date}
                         label="ওয়াশ ব্লক নির্মাণের সন"
                         name="school.infrastructure.wash_block_founded_date"
                       />
@@ -1306,19 +1493,21 @@ const BilReturnSubmit = () => {
                               className="font-semibold"
                               htmlFor="laptop_number"
                             >
-                              ল্যাপটপ সংখ্যা*
+                              ল্যাপটপ সংখ্যা
                             </label>
                             <input
                               placeholder="ল্যাপটপ সংখ্যা দিন"
                               name="school.infrastructure.others.laptop.total"
                               id="laptop_number"
                               onChange={handleLaptopChange}
+                              defaultValue={fetchedLaptop.total}
                               type="number"
                               className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]"
                             />
                           </div>
                           {laptop >= 1 && (
                             <NumberField
+                              defaultValue={fetchedLaptop.actives}
                               placeholder={"সচল ল্যাপটপের সংখ্যা দিন"}
                               label={"সচল ল্যাপটপের সংখ্যা"}
                               name={
@@ -1337,6 +1526,7 @@ const BilReturnSubmit = () => {
                               মাল্টিমিডিয়া সংখ্যা*
                             </label>
                             <input
+                              defaultValue={fetchedMultimedia.total}
                               placeholder="মাল্টিমিডিয়া সংখ্যা দিন"
                               name="school.infrastructure.others.multimedia.total"
                               id="multimedia_number"
@@ -1347,6 +1537,7 @@ const BilReturnSubmit = () => {
                           </div>
                           {multimedia >= 1 && (
                             <NumberField
+                              defaultValue={fetchedMultimedia.actives}
                               placeholder={"সচল মাল্টিমিডিয়ার সংখ্যা দিন"}
                               label={"সচল  সংখ্যা"}
                               name={
@@ -1362,9 +1553,10 @@ const BilReturnSubmit = () => {
                               className="font-semibold"
                               htmlFor="piano_number"
                             >
-                              পিয়ানো সংখ্যা*
+                              পিয়ানো সংখ্যা
                             </label>
                             <input
+                              defaultValue={fetchedPiano.total}
                               placeholder="পিয়ানো সংখ্যা দিন"
                               name="school.infrastructure.others.piano.total"
                               id="piano_number"
@@ -1375,6 +1567,7 @@ const BilReturnSubmit = () => {
                           </div>
                           {piano >= 1 && (
                             <NumberField
+                              defaultValue={fetchedPiano.actives}
                               placeholder={"সচল পিয়ানো সংখ্যা দিন"}
                               label={"সচল পিয়ানো সংখ্যা"}
                               name={
@@ -1390,7 +1583,7 @@ const BilReturnSubmit = () => {
                               className="font-semibold"
                               htmlFor={`electricity`}
                             >
-                              বিদ্যুৎ সংযোগ*
+                              বিদ্যুৎ সংযোগ
                             </label>
                             <Field
                               className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]"
@@ -1466,9 +1659,10 @@ const BilReturnSubmit = () => {
                               className="font-semibold"
                               htmlFor="tubewell_number"
                             >
-                              টিউবওয়েল সংখ্যা*
+                              টিউবওয়েল সংখ্যা
                             </label>
                             <input
+                              defaultValue={tube_wells}
                               placeholder="টিউবওয়েল সংখ্যা দিন"
                               name="school.infrastructure.others.water.tube_wells"
                               id="tubewell_number"
@@ -1486,7 +1680,7 @@ const BilReturnSubmit = () => {
                                 className="font-semibold"
                                 htmlFor={`tubewell_condition`}
                               >
-                                টিউবওয়েল এর বর্তমান অবস্থা*
+                                টিউবওয়েল এর বর্তমান অবস্থা
                               </label>
                               <Field
                                 className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]"
@@ -1514,9 +1708,10 @@ const BilReturnSubmit = () => {
                               className="font-semibold"
                               htmlFor="deep_tubewell_number"
                             >
-                              ডিপ টিউবওয়েল সংখ্যা*
+                              ডিপ টিউবওয়েল সংখ্যা
                             </label>
                             <input
+                              defaultValue={deep_tube_wells}
                               placeholder="ডিপ টিউবওয়েল সংখ্যা দিন"
                               name="school.infrastructure.water.deep_tube_wells"
                               id="deep_tubewell_number"
@@ -1569,16 +1764,19 @@ const BilReturnSubmit = () => {
                 {/* land related data */}
                 <div className="pt-4 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4">
                   <NumberField
+                    defaultValue={total_amount}
                     name="school.land.total_amount"
                     label="ভূমির পরিমান(শতাংশ)"
                     placeholder="ভূমির পরিমান দিন"
                   />
                   <NumberField
+                    defaultValue={take_overed}
                     name="school.land.take_overed"
                     label="দখলকৃত ভূমির পরিমান(শতাংশ)"
                     placeholder="দখলকৃত ভূমির পরিমান দিন"
                   />
                   <NumberField
+                    defaultValue={dispossessed}
                     name="school.land.dispossessed"
                     label="বেদখলকৃত ভূমির পরিমান(শতাংশ)"
                     placeholder="বেদখলকৃত ভূমির পরিমান দিন"
@@ -1635,16 +1833,19 @@ const BilReturnSubmit = () => {
                     </div>
                   )}
                   <TextField
+                    defaultValue={khatian_number}
                     name="school.land.khatian_number"
                     label="খতিয়ান নং"
                     placeholder="খতিয়ান নং দিন"
                   />
                   <TextField
+                    defaultValue={dag_number}
                     name="school.land.dag_number"
                     label="দাগ নং"
                     placeholder="দাগ নং দিন"
                   />
                   <TextField
+                    defaultValue={dolil_number}
                     name="school.land.dolil_number"
                     label="দলিল নং"
                     placeholder="দলিল নং দিন"
@@ -1788,16 +1989,19 @@ const BilReturnSubmit = () => {
                     </Field>
                   </div>
                   <NumberField
+                    defaultValue={total_consumer}
                     name="school.stipend.total_consumer"
                     label="সর্বশেষ প্রান্তিকে মোট সুবিধাভোগী"
                     placeholder="সর্বশেষ প্রান্তিকে মোট সুবিধাভোগীর সংখ্যা দিন"
                   />
                   <NumberField
+                    defaultValue={demand}
                     name="school.stipend.demand"
                     label="উপবৃত্তির চাহিদা(টাকা)"
                     placeholder="উপবৃত্তির চাহিদা দিন"
                   />
                   <NumberField
+                    defaultValue={distributed}
                     name="school.stipend.distributed"
                     label="বিতরণকৃত অর্থের পরিমান "
                     placeholder="বিতরণকৃত অর্থের পরিমান দিন"
@@ -1813,31 +2017,37 @@ const BilReturnSubmit = () => {
                 {/* conference related data */}
                 <div className="pt-4 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4">
                   <NumberField
+                    defaultValue={smc}
                     name="school.conference.smc"
                     label="এসএমসি"
                     placeholder="এসএমসি সভার সংখ্যা দিন"
                   />
                   <NumberField
+                    defaultValue={pta}
                     name="school.conference.pta"
                     label="পিটিএ"
                     placeholder="পিটিএ সভার সংখ্যা দিন"
                   />
                   <NumberField
+                    defaultValue={mother}
                     name="school.conference.mother"
                     label="মা-সমাবেশ"
                     placeholder="মা-সমাবেশ এর সংখ্যা দিন"
                   />
                   <NumberField
+                    defaultValue={guardian}
                     name="school.conference.guardian"
                     label="অভিভাবক-সমাবেশ"
                     placeholder="অভিভাবক-সমাবেশ এর সংখ্যা দিন"
                   />
                   <NumberField
+                    defaultValue={yard}
                     name="school.conference.yard"
                     label="উঠান বৈঠক"
                     placeholder="উঠান বৈঠক এর সংখ্যা দিন"
                   />
                   <NumberField
+                    defaultValue={staff_meeting}
                     name="school.conference.staff_meeting"
                     label="স্টাফ মিটিং"
                     placeholder="স্টাফ মিটিং এর সংখ্যা দিন"
@@ -1965,31 +2175,37 @@ const BilReturnSubmit = () => {
               >
                 <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-6 pt-4">
                   <NumberField
+                    defaultValue={permitted_post}
                     name="teacher.general.permitted_post"
                     label="অনুমোদিত পদ"
                     placeholder={"অনুমোদিত পদের সংখ্যা দিন"}
                   />
                   <NumberField
+                    defaultValue={working_post}
                     name="teacher.general.working_post"
                     label="কর্মরত পদ"
                     placeholder={"কর্মরত পদের সংখ্যা দিন"}
                   />
                   <NumberField
+                    defaultValue={vacancy}
                     name="teacher.general.vacancy"
                     label="শূন্য পদ"
                     placeholder={"শূন্য পদের সংখ্যা দিন"}
                   />
                   <NumberField
+                    defaultValue={teacher_number}
                     name="teacher.general.teacher_number"
                     label="কর্মরত শিক্ষক(পুরুষ)"
                     placeholder={"শিক্ষক সংখ্যা দিন"}
                   />
                   <NumberField
+                    defaultValue={women_teacher_number}
                     name="teacher.general.women_teacher_number"
                     label="কর্মরত শিক্ষক(মহিলা)"
                     placeholder={"শিক্ষকা সংখ্যা দিন"}
                   />
                   <NumberField
+                    defaultValue={vacation_consumers}
                     name="teacher.general.vacation_consumers"
                     label="ছুটি ভোগরত শিক্ষক"
                     placeholder={"ছুটি ভোগরত শিক্ষক সংখ্যা দিন"}
@@ -2293,6 +2509,7 @@ const BilReturnSubmit = () => {
                             key={index}
                           >
                             <TextField
+                              defaultValue={unauthorized_teacher[0].name}
                               label={"শিক্ষকের নাম"}
                               placeholder={"শিক্ষকের নাম দিন"}
                               name={`unauthorized_teacher.${index}.name`}
@@ -3998,16 +4215,19 @@ const BilReturnSubmit = () => {
                           <div key={index}>
                             <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4">
                               <NumberField
+                                defaultValue={studentSurveyTotal}
                                 name={`asroyon_survey.${index}.survayed_students`}
                                 label="মোট জরিপকৃত শিক্ষার্থী"
                                 placeholder="শিক্ষার্থী সংখ্যা দিন"
                               />
                               <NumberField
+                                defaultValue={studentSurveyAdmitted}
                                 name={`asroyon_survey.${index}.admitted_releted_school_students`}
                                 label="সংশ্লিষ্ট বিদ্যালয়ে ভর্তিকৃত শিক্ষার্থী"
                                 placeholder="শিক্ষার্থী সংখ্যা দিন"
                               />
                               <NumberField
+                                defaultValue={studentSurveyUnAdmitted}
                                 name={`asroyon_survey.${index}.unadmitted_students`}
                                 label="অভর্তিকৃত শিক্ষার্থী"
                                 placeholder="শিক্ষার্থী সংখ্যা দিন"
