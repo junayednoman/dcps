@@ -13,7 +13,7 @@ const Settings = () => {
 
   useEffect(() => {
     setLoading(true);
-    const apiUrl = `https://dmsp.vercel.app/api/switch-status`;
+    const apiUrl = `http://localhost:3000/api/switch-status`;
     fetch(apiUrl, {
       method: "GET",
     })
@@ -45,7 +45,7 @@ const Settings = () => {
       isOpened: status,
     };
 
-    const apiUrl = `https://dmsp.vercel.app/api/switch-status/update-switch-status`;
+    const apiUrl = `http://localhost:3000/api/switch-status/update-switch-status`;
     fetch(apiUrl, {
       method: "POST",
       headers: {

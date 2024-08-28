@@ -56,7 +56,7 @@ const BilReturnSubmit = () => {
   // fetch  latest bill data
   React.useEffect(() => {
     setBillDataLoading(true);
-    const apiUrl = `https://dmsp.vercel.app/api/bill-return/latest`;
+    const apiUrl = `http://localhost:3000/api/bill-return/latest`;
     fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -222,15 +222,15 @@ const BilReturnSubmit = () => {
   if (billDataLoading) {
     return <Loading />;
   }
-  if (!fetchedBillData) {
-    return (
-      <div className="flex justify-center items-center h-[80vh]">
-        <h3 className="text-3xl font-semibold text-center">
-          কোন তথ্য পাওয়া যাইনি!
-        </h3>
-      </div>
-    );
-  }
+  // if (!fetchedBillData) {
+  //   return (
+  //     <div className="flex justify-center items-center h-[80vh]">
+  //       <h3 className="text-3xl font-semibold text-center">
+  //         কোন তথ্য পাওয়া যাইনি!
+  //       </h3>
+  //     </div>
+  //   );
+  // }
 
   const handleFormSubmit = async (values) => {
     setLoading(true);
@@ -335,7 +335,7 @@ const BilReturnSubmit = () => {
       formData.teacher.salary = updatedSalary;
 
       // API call with the updated form data
-      const apiUrl = "https://dmsp.vercel.app/api/bill-return/submit";
+      const apiUrl = "http://localhost:3000/api/bill-return/submit";
       fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -379,7 +379,7 @@ const BilReturnSubmit = () => {
 
   const internetTypeOptions = ["মডেম", "সিম", "রাউটার"];
 
-  const schoolData = fetchedBillData.school;
+  const schoolData = fetchedBillData?.school;
 
   // school general data
   const {
@@ -394,7 +394,7 @@ const BilReturnSubmit = () => {
     union_corporation,
     village_moholla,
     word_number,
-  } = schoolData?.general;
+  } = schoolData?.general || {};
   // school infrastructure data
   const {
     class_rooms,
@@ -406,7 +406,7 @@ const BilReturnSubmit = () => {
     useable_class_rooms,
     wash_block,
     wash_block_founded_date,
-  } = schoolData.infrastructure;
+  } = schoolData?.infrastructure || {};
   const {
     electricity_connection,
     freedom_fight_corner,
@@ -417,15 +417,15 @@ const BilReturnSubmit = () => {
     piano: fetchedPiano,
     rasel_corner,
     shahid_minar,
-  } = schoolData.infrastructure.others;
+  } = schoolData?.infrastructure?.others||{};
   console.log(fetchedLaptop);
   const {
     deep_tube_wells,
     deep_tube_wells_condition,
     tube_wells,
     tube_wells_condition,
-  } = schoolData.infrastructure.water;
-  const infrastructureBorderWall = schoolData.infrastructure.border_wall;
+  } = schoolData?.infrastructure?.water||{};
+  const infrastructureBorderWall = schoolData?.infrastructure?.border_wall||{};
   const {
     building_condition_1,
     building_condition_2,
@@ -440,7 +440,7 @@ const BilReturnSubmit = () => {
     building_type_3,
     building_type_4,
     buildings,
-  } = schoolData.infrastructure.building;
+  } = schoolData?.infrastructure?.building||{};
   const {
     dag_number,
     dispossessed,
@@ -455,18 +455,18 @@ const BilReturnSubmit = () => {
     take_overed,
     taxt_condition,
     total_amount,
-  } = schoolData.land;
+  } = schoolData?.land||{};
 
   // school stipend data
   const { stipend_year, latest_season, demand, distributed, total_consumer } =
-    schoolData.stipend;
+    schoolData?.stipend||{};
 
   // school conference data
   const { guardian, mother, pta, smc, staff_meeting, yard } =
-    schoolData.conference;
-  const schoolDevelopment = schoolData.development;
+    schoolData?.conference||{};
+  const schoolDevelopment = schoolData?.development||{};
   // teacher data
-  const teacherData = fetchedBillData?.teacher;
+  const teacherData = fetchedBillData?.teacher||{};
   const {
     permitted_post,
     teacher_number,
@@ -474,30 +474,30 @@ const BilReturnSubmit = () => {
     women_teacher_number,
     vacation_consumers,
     working_post,
-  } = teacherData.general;
+  } = teacherData?.general||{};
 
-  const unauthorized_teacher = teacherData.unauthorized_teacher;
-  const teacherVacations = teacherData.vacation;
-  const teacherSalary = teacherData.salary;
+  const unauthorized_teacher = teacherData?.unauthorized_teacher;
+  const teacherVacations = teacherData?.vacation;
+  const teacherSalary = teacherData?.salary;
   // student related data
   const studentData = fetchedBillData?.student;
 
-  const studentSurveyAdmitted = studentData.survey.survey_admitted;
+  const studentSurveyAdmitted = studentData?.survey?.survey_admitted;
   const studentSurveyAdmittedToOthersSchool =
-    studentData.survey.survey_admitted_to_other_school;
-  const studentSurveyUnAdmitted = studentData.survey.survey_unadmitted;
-  const studentSurveyTotal = studentData.survey.survey_total;
-  const nursery_four_plus = studentData.admission.nursery_four_plus;
-  const nursery_five_plus = studentData.admission.nursery_five_plus;
-  const class_one = studentData.admission.class_one;
-  const class_two = studentData.admission.class_two;
-  const class_three = studentData.admission.class_three;
-  const class_four = studentData.admission.class_four;
-  const class_five = studentData.admission.class_five;
-  const class_six = studentData.admission.class_six;
-  const class_seven = studentData.admission.class_seven;
-  const class_eight = studentData.admission.class_eight;
-  const studentAsroyonSurvey = studentData.asroyon_survey;
+    studentData?.survey?.survey_admitted_to_other_school;
+  const studentSurveyUnAdmitted = studentData?.survey?.survey_unadmitted;
+  const studentSurveyTotal = studentData?.survey?.survey_total;
+  const nursery_four_plus = studentData?.admission?.nursery_four_plus;
+  const nursery_five_plus = studentData?.admission?.nursery_five_plus;
+  const class_one = studentData?.admission?.class_one;
+  const class_two = studentData?.admission?.class_two;
+  const class_three = studentData?.admission?.class_three;
+  const class_four = studentData?.admission?.class_four;
+  const class_five = studentData?.admission?.class_five;
+  const class_six = studentData?.admission?.class_six;
+  const class_seven = studentData?.admission?.class_seven;
+  const class_eight = studentData?.admission?.class_eight;
+  const studentAsroyonSurvey = studentData?.asroyon_survey;
 
   const initialValues = {
     unique_id: "",
@@ -558,16 +558,16 @@ const BilReturnSubmit = () => {
           garden: garden,
           internet: internet,
           laptop: {
-            total: fetchedLaptop.total,
-            actives: fetchedLaptop.actives,
+            total: fetchedLaptop?.total,
+            actives: fetchedLaptop?.actives,
           },
           multimedia: {
-            total: fetchedMultimedia.total,
-            actives: fetchedMultimedia.actives,
+            total: fetchedMultimedia?.total,
+            actives: fetchedMultimedia?.actives,
           },
           piano: {
-            total: fetchedPiano.total,
-            actives: fetchedPiano.actives,
+            total: fetchedPiano?.total,
+            actives: fetchedPiano?.actives,
           },
           electricity_connection: electricity_connection,
         },
@@ -1500,14 +1500,14 @@ const BilReturnSubmit = () => {
                               name="school.infrastructure.others.laptop.total"
                               id="laptop_number"
                               onChange={handleLaptopChange}
-                              defaultValue={fetchedLaptop.total}
+                              defaultValue={fetchedLaptop?.total}
                               type="number"
                               className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]"
                             />
                           </div>
                           {laptop >= 1 && (
                             <NumberField
-                              defaultValue={fetchedLaptop.actives}
+                              defaultValue={fetchedLaptop?.actives}
                               placeholder={"সচল ল্যাপটপের সংখ্যা দিন"}
                               label={"সচল ল্যাপটপের সংখ্যা"}
                               name={
@@ -1526,7 +1526,7 @@ const BilReturnSubmit = () => {
                               মাল্টিমিডিয়া সংখ্যা*
                             </label>
                             <input
-                              defaultValue={fetchedMultimedia.total}
+                              defaultValue={fetchedMultimedia?.total}
                               placeholder="মাল্টিমিডিয়া সংখ্যা দিন"
                               name="school.infrastructure.others.multimedia.total"
                               id="multimedia_number"
@@ -1537,7 +1537,7 @@ const BilReturnSubmit = () => {
                           </div>
                           {multimedia >= 1 && (
                             <NumberField
-                              defaultValue={fetchedMultimedia.actives}
+                              defaultValue={fetchedMultimedia?.actives}
                               placeholder={"সচল মাল্টিমিডিয়ার সংখ্যা দিন"}
                               label={"সচল  সংখ্যা"}
                               name={
@@ -1556,7 +1556,7 @@ const BilReturnSubmit = () => {
                               পিয়ানো সংখ্যা
                             </label>
                             <input
-                              defaultValue={fetchedPiano.total}
+                              defaultValue={fetchedPiano?.total}
                               placeholder="পিয়ানো সংখ্যা দিন"
                               name="school.infrastructure.others.piano.total"
                               id="piano_number"
@@ -1567,7 +1567,7 @@ const BilReturnSubmit = () => {
                           </div>
                           {piano >= 1 && (
                             <NumberField
-                              defaultValue={fetchedPiano.actives}
+                              defaultValue={fetchedPiano?.actives}
                               placeholder={"সচল পিয়ানো সংখ্যা দিন"}
                               label={"সচল পিয়ানো সংখ্যা"}
                               name={
@@ -2509,7 +2509,7 @@ const BilReturnSubmit = () => {
                             key={index}
                           >
                             <TextField
-                              defaultValue={unauthorized_teacher[0].name}
+                              defaultValue={unauthorized_teacher?.length && unauthorized_teacher[0]?.name||''}
                               label={"শিক্ষকের নাম"}
                               placeholder={"শিক্ষকের নাম দিন"}
                               name={`unauthorized_teacher.${index}.name`}
