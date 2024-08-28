@@ -56,7 +56,7 @@ const BilReturnSubmit = () => {
   // fetch  latest bill data
   React.useEffect(() => {
     setBillDataLoading(true);
-    const apiUrl = `http://localhost:3000/api/bill-return/latest`;
+    const apiUrl = `https://dmsp.vercel.app/api/bill-return/latest`;
     fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -335,7 +335,7 @@ const BilReturnSubmit = () => {
       formData.teacher.salary = updatedSalary;
 
       // API call with the updated form data
-      const apiUrl = "http://localhost:3000/api/bill-return/submit";
+      const apiUrl = "https://dmsp.vercel.app/api/bill-return/submit";
       fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -417,15 +417,16 @@ const BilReturnSubmit = () => {
     piano: fetchedPiano,
     rasel_corner,
     shahid_minar,
-  } = schoolData?.infrastructure?.others||{};
+  } = schoolData?.infrastructure?.others || {};
   console.log(fetchedLaptop);
   const {
     deep_tube_wells,
     deep_tube_wells_condition,
     tube_wells,
     tube_wells_condition,
-  } = schoolData?.infrastructure?.water||{};
-  const infrastructureBorderWall = schoolData?.infrastructure?.border_wall||{};
+  } = schoolData?.infrastructure?.water || {};
+  const infrastructureBorderWall =
+    schoolData?.infrastructure?.border_wall || {};
   const {
     building_condition_1,
     building_condition_2,
@@ -440,7 +441,7 @@ const BilReturnSubmit = () => {
     building_type_3,
     building_type_4,
     buildings,
-  } = schoolData?.infrastructure?.building||{};
+  } = schoolData?.infrastructure?.building || {};
   const {
     dag_number,
     dispossessed,
@@ -455,18 +456,18 @@ const BilReturnSubmit = () => {
     take_overed,
     taxt_condition,
     total_amount,
-  } = schoolData?.land||{};
+  } = schoolData?.land || {};
 
   // school stipend data
   const { stipend_year, latest_season, demand, distributed, total_consumer } =
-    schoolData?.stipend||{};
+    schoolData?.stipend || {};
 
   // school conference data
   const { guardian, mother, pta, smc, staff_meeting, yard } =
-    schoolData?.conference||{};
-  const schoolDevelopment = schoolData?.development||{};
+    schoolData?.conference || {};
+  const schoolDevelopment = schoolData?.development || {};
   // teacher data
-  const teacherData = fetchedBillData?.teacher||{};
+  const teacherData = fetchedBillData?.teacher || {};
   const {
     permitted_post,
     teacher_number,
@@ -474,7 +475,7 @@ const BilReturnSubmit = () => {
     women_teacher_number,
     vacation_consumers,
     working_post,
-  } = teacherData?.general||{};
+  } = teacherData?.general || {};
 
   const unauthorized_teacher = teacherData?.unauthorized_teacher;
   const teacherVacations = teacherData?.vacation;
@@ -2509,7 +2510,11 @@ const BilReturnSubmit = () => {
                             key={index}
                           >
                             <TextField
-                              defaultValue={unauthorized_teacher?.length && unauthorized_teacher[0]?.name||''}
+                              defaultValue={
+                                (unauthorized_teacher?.length &&
+                                  unauthorized_teacher[0]?.name) ||
+                                ""
+                              }
                               label={"শিক্ষকের নাম"}
                               placeholder={"শিক্ষকের নাম দিন"}
                               name={`unauthorized_teacher.${index}.name`}
