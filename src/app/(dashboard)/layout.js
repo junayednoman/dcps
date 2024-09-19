@@ -240,7 +240,7 @@ export default function DashboardLayout({ children }) {
   React.useEffect(() => {
     // fetch the software opening status
     setStatusLoading(true);
-    const apiUrl = `http://localhost:3000/api/switch-status`;
+    const apiUrl = `https://dmsp.vercel.app/api/switch-status`;
     fetch(apiUrl, {
       method: "GET",
     })
@@ -288,7 +288,7 @@ export default function DashboardLayout({ children }) {
   const handleHistoryClick = () => {
     handleModalOpen();
     if (role === "aueo" && !schoolOptions) {
-      const apiUrl = "http://localhost:3000/api/clusters";
+      const apiUrl = "https://dmsp.vercel.app/api/clusters";
       fetch(apiUrl, {
         method: "POST",
         headers: {
