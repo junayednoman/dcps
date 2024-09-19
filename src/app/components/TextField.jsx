@@ -7,8 +7,8 @@ const TextField = ({ name, placeholder, label, value, defaultValue }) => {
         {label}
       </label>
       <Field
-        defaultValue={defaultValue}
-        value={value}
+        // defaultValue={defaultValue}
+        // value={value}
         className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]"
         type="text"
         name={name}

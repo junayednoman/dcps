@@ -1,13 +1,12 @@
 import { Field } from "formik";
-const NumberField = ({ name, label, placeholder, value, defaultValue }) => {
+
+const NumberField = ({ name, label, placeholder }) => {
   return (
     <div className="mb-4">
       <label className="font-semibold" htmlFor={name}>
         {label}
       </label>
       <Field
-        defaultValue={defaultValue}
-        value={value}
         className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]"
         type="number"
         name={name}

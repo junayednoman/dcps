@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 import TextField from "@/app/components/TextField";
 import { Field, FieldArray, Form, Formik } from "formik";
@@ -5,8 +6,9 @@ import * as React from "react";
 import NumberField from "@/app/components/NumberField";
 import MyDatePicker from "@/app/components/MyDatePicker";
 import AnimateHeight from "react-animate-height";
-import ImageInput from "@/app/components/ImageInput";
+
 import {
+  Box,
   Checkbox,
   CircularProgress,
   FormControl,
@@ -20,8 +22,15 @@ import SearchableSelect from "@/app/components/SearchableSelect";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import { AuthContext } from "@/authContext/AuthContext";
+import { LocalizationProvider, TimePicker } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import convertToBengaliNumber from "@/lib/convertToBengaliNumber";
+import dayjs from "dayjs";
+import ImageInput2 from "@/app/components/ImageInput2";
 import { generateUniqueId } from "@/lib/uniqueId";
-import setArrayFieldValue from "@/lib/setArrayFieldValue";
+import moment from "moment";
+import Loading from "@/app/components/Loading";
+import Image from "next/image";
 
 export const budgetYearOptions = [
   "2014-2015",
@@ -53,15 +62,32 @@ export const budgetYearOptions = [
   "2040-2041",
 ];
 
-const BilReturnEdit = ({ params }) => {
-  const [activeItem, setActiveItem] = React.useState("");
-  const { userName } = React.useContext(AuthContext);
-  const [billData, setBillData] = React.useState(null);
+const monthOptions = [
+  { value: "January", label: "জানুয়ারী" },
+  { value: "February", label: "ফেব্রুয়ারী" },
+  { value: "March", label: "মার্চ" },
+  { value: "April", label: "এপ্রিল" },
+  { value: "May", label: "মে" },
+  { value: "June", label: "জুন" },
+  { value: "July", label: "জুলাই" },
+  { value: "August", label: "আগস্ট" },
+  { value: "September", label: "সেপ্টেম্বর" },
+  { value: "October", label: "অক্টোবর" },
+  { value: "November", label: "নভেম্বর" },
+  { value: "December", label: "ডিসেম্বর" },
+];
 
+const BilReturnEdit = ({ params }) => {
+  const [billDataLoading, setBillDataLoading] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const { userName } = React.useContext(AuthContext);
+  const [fetchedBillData, setFetchedBillData] = React.useState(null);
+
+  // fetch  bill data
   React.useEffect(() => {
     const id = params.dataId;
-    setLoading(true);
-    const apiUrl = `https://dmsp.vercel.app/api/bill-return/get-single`;
+    setBillDataLoading(true);
+    const apiUrl = `http://localhost:3000/api/bill-return/get-single`;
     fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -74,7 +100,7 @@ const BilReturnEdit = ({ params }) => {
       })
       .then((data) => {
         if (data.success) {
-          setBillData(data.data);
+          setFetchedBillData(data.data);
         }
       })
       .catch((error) => {
@@ -82,9 +108,16 @@ const BilReturnEdit = ({ params }) => {
         console.error("There was an error!", error);
       })
       .finally(() => {
-        setLoading(false);
+        setBillDataLoading(false);
       });
   }, []);
+
+  const [monthSelectedOption, setMonthSelectedOption] = React.useState(null);
+  const handleMonthSelectChange = (monthSelectedOption) => {
+    setMonthSelectedOption(monthSelectedOption);
+  };
+
+  const [activeItem, setActiveItem] = React.useState("");
 
   const [buildingNumber, setBuildingNumber] = React.useState(0);
 
@@ -93,9 +126,7 @@ const BilReturnEdit = ({ params }) => {
     const value = e.target.value;
     setBuildingNumber(parseInt(value));
   };
-
   const [borderWall, setBorderWall] = React.useState("");
-
   // Function to handle change in the border_wall select element
   const handleBorderWallChange = (event) => {
     setBorderWall(event.target.value);
@@ -121,7 +152,9 @@ const BilReturnEdit = ({ params }) => {
     setPiano(event.target.value);
   };
 
-  const [washBlock, setWashBlock] = React.useState("");
+  const [washBlock, setWashBlock] = React.useState(
+    fetchedBillData?.school?.infrastructure?.wash_block
+  );
 
   // Function to handle change in the border_wall select element
   const handleWashBlockChange = (event) => {
@@ -165,11 +198,7 @@ const BilReturnEdit = ({ params }) => {
     setStudentAccordionActive((oldValue) => (oldValue === value ? 0 : value));
   };
 
-  const [internetType, setInternetType] = React.useState([
-    "রাউটার",
-    "সিম",
-    "রাউটার",
-  ]);
+  const [internetType, setInternetType] = React.useState([]);
 
   const [internetLabel, setInternetLabel] = React.useState(true);
   const handleChange = (event) => {
@@ -183,11 +212,33 @@ const BilReturnEdit = ({ params }) => {
   };
 
   const stipendYearOptions = [
-    { value: "2020", label: "2020" },
-    { value: "2021", label: "2021" },
-    { value: "2022", label: "2022" },
-    { value: "2023", label: "2023" },
-    { value: "2024", label: "2024" },
+    { value: "2014-2015", label: "2014-2015" },
+    { value: "2015-2016", label: "2015-2016" },
+    { value: "2016-2017", label: "2016-2017" },
+    { value: "2017-2018", label: "2017-2018" },
+    { value: "2018-2019", label: "2018-2019" },
+    { value: "2019-2020", label: "2019-2020" },
+    { value: "2020-2021", label: "2020-2021" },
+    { value: "2021-2022", label: "2021-2022" },
+    { value: "2022-2023", label: "2022-2023" },
+    { value: "2023-2024", label: "2023-2024" },
+    { value: "2024-2025", label: "2024-2025" },
+    { value: "2025-2026", label: "2025-2026" },
+    { value: "2026-2027", label: "2026-2027" },
+    { value: "2027-2028", label: "2027-2028" },
+    { value: "2028-2029", label: "2028-2029" },
+    { value: "2029-2030", label: "2029-2030" },
+    { value: "2030-2031", label: "2030-2031" },
+    { value: "2031-2032", label: "2031-2032" },
+    { value: "2032-2033", label: "2032-2033" },
+    { value: "2033-2034", label: "2033-2034" },
+    { value: "2034-2035", label: "2034-2035" },
+    { value: "2035-2036", label: "2035-2036" },
+    { value: "2036-2037", label: "2036-2037" },
+    { value: "2037-2038", label: "2037-2038" },
+    { value: "2038-2039", label: "2038-2039" },
+    { value: "2039-2040", label: "2039-2040" },
+    { value: "2040-2041", label: "2040-2041" },
   ];
 
   const [stipendYearSelectedOption, setStipendYearSelectedOption] =
@@ -196,28 +247,13 @@ const BilReturnEdit = ({ params }) => {
   const stipendYearSelectChange = (schoolSelectedOption) => {
     setStipendYearSelectedOption(schoolSelectedOption);
   };
-  const [submitLoading, setSubmitLoading] = React.useState(false);
 
-  const [loading, setLoading] = React.useState(false);
-  // destructuring all data from fetched Data
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-[80vh]">
-        <CircularProgress className="spinner" />
-      </div>
-    );
+  if (billDataLoading) {
+    return <Loading />;
   }
-  if (!billData) {
-    return (
-      <div className="flex justify-center items-center h-[80vh]">
-        <h3 className="text-3xl font-semibold text-center">
-          কোন তথ্য পাওয়া যাইনি!
-        </h3>
-      </div>
-    );
-  }
-  const handleFormSubmit = (values) => {
-    setSubmitLoading(true);
+
+  const handleFormSubmit = async (values) => {
+    setLoading(true);
     if (values) {
       const formData = {
         unique_id: "",
@@ -246,209 +282,60 @@ const BilReturnEdit = ({ params }) => {
       formData.unique_id = uniqueId;
       formData.submitted_by = userName;
       formData.isDraft = false;
-      formData.updated_at = currentDate;
+      formData.submitted_at = currentDate;
+      formData.submitted_date = `${monthSelectedOption?.value} ${moment(
+        formData.submitted_at
+      ).format("YYYY")}`;
+      formData.updated_at = "";
       formData.school.general = values.school.general;
+      formData.school.general.bill_month = monthSelectedOption?.value;
       formData.school.conference = values.school.conference;
       formData.school.development = values.budgets;
-      // set budgets
-      setArrayFieldValue(
-        values.budgets,
-        formData.school.development,
-        billData.school.development
-      );
       formData.school.infrastructure = values.school.infrastructure;
       formData.school.infrastructure.others.internet = internetType;
-      formData.school.infrastructure.others.laptop.total =
-        laptop || billData.school.infrastructure.others.laptop.total;
-      formData.school.infrastructure.others.piano.total =
-        piano || billData.school.infrastructure.others.piano.total;
-      formData.school.infrastructure.others.multimedia.total =
-        multimedia || billData.school.infrastructure.others.multimedia.total;
+      formData.school.infrastructure.others.laptop.total = laptop;
+      formData.school.infrastructure.others.piano.total = piano;
+      formData.school.infrastructure.others.multimedia.total = multimedia;
       formData.school.land = values.school.land;
       formData.school.stipend = values.school.stipend;
-      values.school.infrastructure.border_wall.wall =
-        borderWall || billData.school.infrastructure.border_wall.wall;
+      values.school.infrastructure.border_wall.wall = borderWall;
       if (borderWall === "নেই") {
         formData.school.infrastructure.border_wall.funding_type = "";
         formData.school.infrastructure.border_wall.founded_date = "";
       }
-      values.school.infrastructure.building.buildings =
-        buildingNumber || billData.school.infrastructure.building.buildings;
-      values.school.infrastructure.water.tube_wells =
-        tubeWell || billData.school.infrastructure.water.tube_wells;
-      values.school.infrastructure.water.deep_tube_wells =
-        deepTubeWell || billData.school.infrastructure.water.deep_tube_wells;
-      values.school.infrastructure.wash_block =
-        washBlock || billData.school.infrastructure.wash_block;
-      values.school.land.is_registered =
-        registration || billData.school.land.is_registered;
-      if (registration !== "হ্যাঁ") {
-        values.school.land.registration_ownership = "";
-      }
-      values.school.land.is_namjaried =
-        namjari || billData.school.land.is_namjaried;
-      if (namjari !== "হ্যাঁ") {
-        values.school.land.namjari_ownership = "";
-      }
-      values.school.stipend.stipend_year =
-        stipendYearSelectedOption.value || billData.school.stipend.stipend_year;
+      values.school.infrastructure.building.buildings = buildingNumber;
+      values.school.infrastructure.water.tube_wells = tubeWell;
+      values.school.infrastructure.water.deep_tube_wells = deepTubeWell;
+      values.school.infrastructure.wash_block = washBlock;
+      values.school.land.is_registered = registration;
+      values.school.land.is_namjaried = namjari;
+      values.school.stipend.stipend_year = stipendYearSelectedOption?.value;
       formData.teacher.general = values.teacher.general;
+      formData.teacher.attendance = values.teacher.attendance;
+      formData.teacher.hajira_from = values.hajira_from;
+      formData.teacher.hajira_to = values.hajira_to;
       formData.teacher.salary = values.salary;
-      formData.teacher.attendance = billData?.teacher?.attendance;
-      formData.teacher.hajira_from = billData?.teacher?.hajira_from;
-      formData.teacher.hajira_to = billData?.teacher?.hajira_to;
-
-      // set salary array data
-      values.salary.map((dev, idx) => {
-        let devElements = [];
-        for (const key in dev) {
-          const element = dev[key];
-          devElements.push(element);
-        }
-        if (devElements.length === 0) {
-          formData.teacher.salary = billData.teacher.salary;
-        } else {
-          const fetchedSalary = billData.teacher.salary[idx];
-          for (const key in fetchedSalary) {
-            if (Object.hasOwnProperty.call(fetchedSalary, key)) {
-              const element = fetchedSalary[key];
-              if (key === "signature") {
-                dev[key] = billData.teacher.salary.signature;
-              }
-              if (dev[key] === undefined) {
-                dev[key] = element;
-              }
-            }
-          }
-        }
-      });
-
       formData.teacher.vacation = values.vacations;
-      // set vacation array data
-      setArrayFieldValue(
-        values.vacations,
-        formData.teacher.vacation,
-        billData.teacher.vacation
-      );
-
       formData.teacher.unauthorized_teacher = values.unauthorized_teacher;
-      // set unauthorized teacher data
-      setArrayFieldValue(
-        values.unauthorized_teacher,
-        formData.teacher.unauthorized_teacher,
-        billData.teacher.unauthorized_teacher
-      );
-
       formData.student.survey.survey_admitted = values.survey_admitted;
-      // set survey_admitted data
-      setArrayFieldValue(
-        values.survey_admitted,
-        formData.student.survey.survey_admitted,
-        billData.student.survey.survey_admitted
-      );
       formData.student.survey.survey_admitted_to_other_school =
         values.survey_admitted_to_other_school;
-      // set survey_admitted_to_other_school data
-      setArrayFieldValue(
-        values.survey_admitted_to_other_school,
-        formData.student.survey.survey_admitted_to_other_school,
-        billData.student.survey.survey_admitted_to_other_school
-      );
       formData.student.survey.survey_unadmitted = values.survey_unadmitted;
-      // set survey_unadmitted data
-      setArrayFieldValue(
-        values.survey_unadmitted,
-        formData.student.survey.survey_unadmitted,
-        billData.student.survey.survey_unadmitted
-      );
       formData.student.survey.survey_total = values.survey_total;
-      // set survey_total data
-      setArrayFieldValue(
-        values.survey_total,
-        formData.student.survey.survey_total,
-        billData.student.survey.survey_total
-      );
-
       formData.student.admission.nursery_four_plus = values.nursery_four_plus;
-      // set nursery_four_plus data
-      setArrayFieldValue(
-        values.nursery_four_plus,
-        formData.student.admission.nursery_four_plus,
-        billData.student.admission.nursery_four_plus
-      );
       formData.student.admission.nursery_five_plus = values.nursery_five_plus;
-      // set nursery_five_plus data
-      setArrayFieldValue(
-        values.nursery_five_plus,
-        formData.student.admission.nursery_five_plus,
-        billData.student.admission.nursery_five_plus
-      );
       formData.student.admission.class_one = values.class_one;
-      // set class_one data
-      setArrayFieldValue(
-        values.class_one,
-        formData.student.admission.class_one,
-        billData.student.admission.class_one
-      );
       formData.student.admission.class_two = values.class_two;
-      // set class_two data
-      setArrayFieldValue(
-        values.class_two,
-        formData.student.admission.class_two,
-        billData.student.admission.class_two
-      );
       formData.student.admission.class_three = values.class_three;
-      // set class_three data
-      setArrayFieldValue(
-        values.class_three,
-        formData.student.admission.class_three,
-        billData.student.admission.class_three
-      );
       formData.student.admission.class_four = values.class_four;
-      // set nursery_four_plus data
-      setArrayFieldValue(
-        values.class_four,
-        formData.student.admission.class_four,
-        billData.student.admission.class_four
-      );
       formData.student.admission.class_five = values.class_five;
-      // set class_five data
-      setArrayFieldValue(
-        values.class_five,
-        formData.student.admission.class_five,
-        billData.student.admission.class_five
-      );
       formData.student.admission.class_six = values.class_six;
-      // set class_six data
-      setArrayFieldValue(
-        values.class_six,
-        formData.student.admission.class_six,
-        billData.student.admission.class_six
-      );
       formData.student.admission.class_seven = values.class_seven;
-      // set class_seven data
-      setArrayFieldValue(
-        values.class_seven,
-        formData.student.admission.class_seven,
-        billData.student.admission.class_seven
-      );
       formData.student.admission.class_eight = values.class_eight;
-      // set class_eight data
-      setArrayFieldValue(
-        values.class_eight,
-        formData.student.admission.class_eight,
-        billData.student.admission.class_eight
-      );
-
       formData.student.asroyon_survey = values.asroyon_survey;
-      // set asroyon_survey data
-      setArrayFieldValue(
-        values.asroyon_survey,
-        formData.student.asroyon_survey,
-        billData.student.asroyon_survey
-      );
 
-      const apiUrl = `https://dmsp.vercel.app/api/bill-return/edit`;
+      // API call with the updated form data
+      const apiUrl = `http://localhost:3000/bill-return/edit`;
       fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -479,7 +366,7 @@ const BilReturnEdit = ({ params }) => {
 
   const internetTypeOptions = ["মডেম", "সিম", "রাউটার"];
 
-  const schoolData = billData?.school;
+  const schoolData = fetchedBillData?.school;
 
   // school general data
   const {
@@ -494,9 +381,8 @@ const BilReturnEdit = ({ params }) => {
     union_corporation,
     village_moholla,
     word_number,
-  } = schoolData.general;
+  } = schoolData?.general || {};
   // school infrastructure data
-
   const {
     class_rooms,
     headmaster_room,
@@ -507,7 +393,7 @@ const BilReturnEdit = ({ params }) => {
     useable_class_rooms,
     wash_block,
     wash_block_founded_date,
-  } = schoolData.infrastructure;
+  } = schoolData?.infrastructure || {};
   const {
     electricity_connection,
     freedom_fight_corner,
@@ -518,14 +404,16 @@ const BilReturnEdit = ({ params }) => {
     piano: fetchedPiano,
     rasel_corner,
     shahid_minar,
-  } = schoolData.infrastructure.others;
+  } = schoolData?.infrastructure?.others || {};
+
   const {
     deep_tube_wells,
     deep_tube_wells_condition,
     tube_wells,
     tube_wells_condition,
-  } = schoolData.infrastructure.water;
-  const infrastructureBorderWall = schoolData.infrastructure.border_wall;
+  } = schoolData?.infrastructure?.water || {};
+  const infrastructureBorderWall =
+    schoolData?.infrastructure?.border_wall || {};
   const {
     building_condition_1,
     building_condition_2,
@@ -540,7 +428,7 @@ const BilReturnEdit = ({ params }) => {
     building_type_3,
     building_type_4,
     buildings,
-  } = schoolData.infrastructure.building;
+  } = schoolData?.infrastructure?.building || {};
   const {
     dag_number,
     dispossessed,
@@ -555,18 +443,18 @@ const BilReturnEdit = ({ params }) => {
     take_overed,
     taxt_condition,
     total_amount,
-  } = schoolData.land;
+  } = schoolData?.land || {};
 
   // school stipend data
   const { stipend_year, latest_season, demand, distributed, total_consumer } =
-    schoolData.stipend;
+    schoolData?.stipend || {};
 
   // school conference data
   const { guardian, mother, pta, smc, staff_meeting, yard } =
-    schoolData.conference;
-  const schoolDevelopment = schoolData.development;
+    schoolData?.conference || {};
+  const schoolDevelopment = schoolData?.development || {};
   // teacher data
-  const teacherData = billData?.teacher;
+  const teacherData = fetchedBillData?.teacher || {};
   const {
     permitted_post,
     teacher_number,
@@ -574,30 +462,199 @@ const BilReturnEdit = ({ params }) => {
     women_teacher_number,
     vacation_consumers,
     working_post,
-  } = teacherData.general;
+  } = teacherData?.general || {};
 
-  const unauthorized_teacher = teacherData.unauthorized_teacher;
-  const teacherVacations = teacherData.vacation;
-  const teacherSalary = teacherData.salary;
+  const unauthorized_teacher = teacherData?.unauthorized_teacher;
+  const teacherVacations = teacherData?.vacation;
+  const teacherSalary = teacherData?.salary;
   // student related data
-  const studentData = billData?.student;
+  const studentData = fetchedBillData?.student;
 
-  const studentSurveyAdmitted = studentData.survey.survey_admitted;
+  const studentSurveyAdmitted = studentData?.survey?.survey_admitted;
   const studentSurveyAdmittedToOthersSchool =
-    studentData.survey.survey_admitted_to_other_school;
-  const studentSurveyUnAdmitted = studentData.survey.survey_unadmitted;
-  const studentSurveyTotal = studentData.survey.survey_total;
-  const nursery_four_plus = studentData.admission.nursery_four_plus;
-  const nursery_five_plus = studentData.admission.nursery_five_plus;
-  const class_one = studentData.admission.class_one;
-  const class_two = studentData.admission.class_two;
-  const class_three = studentData.admission.class_three;
-  const class_four = studentData.admission.class_four;
-  const class_five = studentData.admission.class_five;
-  const class_six = studentData.admission.class_six;
-  const class_seven = studentData.admission.class_seven;
-  const class_eight = studentData.admission.class_eight;
-  const studentAsroyonSurvey = studentData.asroyon_survey;
+    studentData?.survey?.survey_admitted_to_other_school;
+  const studentSurveyUnAdmitted = studentData?.survey?.survey_unadmitted;
+  const studentSurveyTotal = studentData?.survey?.survey_total;
+  const nursery_four_plus = studentData?.admission?.nursery_four_plus;
+  const nursery_five_plus = studentData?.admission?.nursery_five_plus;
+  const class_one = studentData?.admission?.class_one;
+  const class_two = studentData?.admission?.class_two;
+  const class_three = studentData?.admission?.class_three;
+  const class_four = studentData?.admission?.class_four;
+  const class_five = studentData?.admission?.class_five;
+  const class_six = studentData?.admission?.class_six;
+  const class_seven = studentData?.admission?.class_seven;
+  const class_eight = studentData?.admission?.class_eight;
+  const studentAsroyonSurvey = studentData?.asroyon_survey;
+
+  const initialValues = {
+    unique_id: "",
+    hajira_from: teacherData?.hajira_from || "",
+    hajira_to: teacherData?.hajira_to || "",
+    submitter_info: {
+      submitted_by: "",
+    },
+    budgets: fetchedBillData?.school?.development || [{}],
+    school: {
+      general: {
+        name: schoolName,
+        cluster: cluster,
+        village_moholla: village_moholla,
+        word_number: word_number,
+        post_office: post_office,
+        union_corporation: union_corporation,
+        emis_code: emis_code,
+        email: email,
+        founded_date: founded_date,
+        grade: grade,
+        shifts: shifts,
+      },
+      infrastructure: {
+        building: {
+          buildings: buildings,
+          building_date_1: building_date_1,
+          building_type_1: building_type_1,
+          building_condition_1: building_condition_1,
+          building_date_2: building_date_2,
+          building_type_2: building_type_2,
+          building_condition_2: building_condition_2,
+          building_date_3: building_date_3,
+          building_type_3: building_type_3,
+          building_condition_3: building_condition_3,
+          building_date_4: building_date_4,
+          building_type_4: building_type_4,
+          building_condition_4: building_condition_4,
+        },
+        headmaster_room: headmaster_room,
+        office_rooms: office_rooms,
+        class_rooms: class_rooms,
+        useable_class_rooms: useable_class_rooms,
+        multimedia_rooms: multimedia_rooms,
+        separated_nursery_class: separated_nursery_class,
+        border_wall: {
+          wall: borderWall,
+          funding_type: infrastructureBorderWall.funding_type,
+          founded_date: infrastructureBorderWall.founded_date,
+        },
+        toilets: toilets,
+        wash_block: wash_block,
+        wash_block_founded_date: wash_block_founded_date,
+        others: {
+          shahid_minar: shahid_minar,
+          freedom_fight_corner: freedom_fight_corner,
+          rasel_corner: rasel_corner,
+          garden: garden,
+          internet: internet,
+          laptop: {
+            total: fetchedLaptop?.total,
+            actives: fetchedLaptop?.actives,
+          },
+          multimedia: {
+            total: fetchedMultimedia?.total,
+            actives: fetchedMultimedia?.actives,
+          },
+          piano: {
+            total: fetchedPiano?.total,
+            actives: fetchedPiano?.actives,
+          },
+          electricity_connection: electricity_connection,
+        },
+        water: {
+          tube_wells: tube_wells,
+          tube_wells_condition: tube_wells_condition,
+          deep_tube_wells: deep_tube_wells,
+          deep_tube_wells_condition: deep_tube_wells_condition,
+        },
+      },
+      land: {
+        total_amount: total_amount,
+        take_overed: take_overed,
+        dispossessed: dispossessed,
+        is_registered: registration,
+        registration_ownership: registration_ownership,
+        khatian_number: khatian_number,
+        dag_number: dag_number,
+        dolil_number: dolil_number,
+        dolil_year: dolil_year,
+        is_namjaried: namjari,
+        namjari_ownership: namjari_ownership,
+        is_cased: is_cased,
+        taxt_condition: taxt_condition,
+      },
+      stipend: {
+        stipend_year: stipend_year,
+        latest_season: latest_season,
+        total_consumer: total_consumer,
+        demand: demand,
+        distributed: distributed,
+      },
+      conference: {
+        smc: smc,
+        pta: pta,
+        mother: mother,
+        guardian: guardian,
+        yard: yard,
+        staff_meeting: staff_meeting,
+      },
+      development: {
+        // ...budgets
+      },
+    },
+    permitted_post: "",
+    teacher: {
+      general: {
+        permitted_post: permitted_post,
+        working_post: working_post,
+        vacancy: vacancy,
+        teacher_number: teacher_number,
+        women_teacher_number: women_teacher_number,
+        vacation_consumers: vacation_consumers,
+      },
+      attendance: teacherData?.attendance?.map((teacher) => ({
+        name: teacher.name || "",
+        signature: teacher.signature || "",
+        days: teacher.days.map((day) => ({
+          status: day.status || "option",
+          coming_time: day.coming_time || null,
+          leaving_time: day.leaving_time || null,
+          absence_reason: day.absence_reason || "",
+        })),
+      })),
+      // attendance: Array(15).fill({
+      //   name: "",
+      //   days: Array(31).fill({
+      //     status: "option",
+      //     coming_time: null,
+      //     leaving_time: null,
+      //     signature: "",
+      //     absence_reason: "",
+      //   }),
+      // }),
+    },
+    students: {
+      admission: {},
+    },
+    salary: teacherData?.salary || [{}],
+    vacations: teacherVacations || [{}],
+    nursery_four_plus: nursery_four_plus || [{}],
+    nursery_five_plus: nursery_five_plus || [{}],
+    class_one: class_one || [{}],
+    class_two: class_two || [{}],
+    class_three: class_three || [{}],
+    class_four: class_four || [{}],
+    class_five: class_five || [{}],
+    class_six: class_six || [{}],
+    class_seven: class_seven || [{}],
+    class_eight: class_eight || [{}],
+    asroyon_survey: studentAsroyonSurvey || [{}],
+    survey_total: studentSurveyTotal || [{}],
+    survey_admitted: studentSurveyAdmitted || [{}],
+    survey_unadmitted: studentSurveyUnAdmitted || [{}],
+    survey_admitted_to_other_school: studentSurveyAdmittedToOthersSchool || [
+      {},
+    ],
+    unauthorized_teacher: unauthorized_teacher,
+  };
 
   return (
     <div className="bg-[#FAFAFA] xl:w-[85%] w-full lg:mt-0 mt-4">
@@ -605,152 +662,11 @@ const BilReturnEdit = ({ params }) => {
         বিল রিটার্ন এডিট
       </h2>
       <Formik
-        initialValues={{
-          unique_id: "",
-          submitter_info: {
-            submitted_by: "",
-          },
-          budgets: [{}],
-          school: {
-            general: {
-              name: schoolName,
-              cluster: cluster,
-              village_moholla: village_moholla,
-              word_number: word_number,
-              post_office: post_office,
-              union_corporation: union_corporation,
-              emis_code: emis_code,
-              email: email,
-              founded_date: founded_date,
-              grade: grade,
-              shifts: shifts,
-            },
-            infrastructure: {
-              building: {
-                building_condition_1: building_condition_1,
-                building_condition_2: building_condition_2,
-                building_condition_3: building_condition_3,
-                building_condition_4: building_condition_4,
-                building_date_1: building_date_1,
-                building_date_2: building_date_2,
-                building_date_3: building_date_3,
-                building_date_4: building_date_4,
-                building_type_1: building_type_1,
-                building_type_2: building_type_2,
-                building_type_3: building_type_3,
-                building_type_4: building_type_4,
-                buildings: buildings,
-              },
-              headmaster_room: headmaster_room,
-              office_rooms: office_rooms,
-              class_rooms: class_rooms,
-              useable_class_rooms: useable_class_rooms,
-              multimedia_rooms: multimedia_rooms,
-              separated_nursery_class: separated_nursery_class,
-              border_wall: {
-                wall: borderWall,
-                funding_type: infrastructureBorderWall.funding_type,
-                founded_date: infrastructureBorderWall.founded_date,
-              },
-              toilets: toilets,
-              wash_block: wash_block,
-              wash_block_founded_date: wash_block_founded_date,
-              others: {
-                shahid_minar: shahid_minar,
-                freedom_fight_corner: freedom_fight_corner,
-                rasel_corner: rasel_corner,
-                garden: garden,
-                internet: internet,
-                laptop: {
-                  total: fetchedLaptop.total,
-                  actives: fetchedLaptop.actives,
-                },
-                multimedia: {
-                  total: fetchedMultimedia.total,
-                  actives: fetchedMultimedia.actives,
-                },
-                piano: {
-                  total: fetchedPiano.total,
-                  actives: fetchedPiano.actives,
-                },
-                electricity_connection: electricity_connection,
-              },
-              water: {
-                tube_wells: tube_wells,
-                tube_wells_condition: tube_wells_condition,
-                deep_tube_wells: deep_tube_wells,
-                deep_tube_wells_condition: deep_tube_wells_condition,
-              },
-            },
-            land: {
-              total_amount: total_amount,
-              take_overed: take_overed,
-              dispossessed: dispossessed,
-              is_registered: registration,
-              registration_ownership: registration_ownership,
-              khatian_number: khatian_number,
-              dag_number: dag_number,
-              dolil_number: dolil_number,
-              dolil_year: dolil_year,
-              is_namjaried: namjari,
-              namjari_ownership: namjari_ownership,
-              is_cased: is_cased,
-              taxt_condition: taxt_condition,
-            },
-            stipend: {
-              stipend_year: stipendYearSelectedOption.value,
-              total_consumer: total_consumer,
-              latest_season: latest_season,
-              demand: demand,
-              distributed: distributed,
-            },
-            conference: {
-              smc: smc,
-              pta: pta,
-              mother: mother,
-              guardian: guardian,
-              yard: yard,
-              staff_meeting: staff_meeting,
-            },
-            development: {},
-          },
-          permitted_post: "",
-          teacher: {
-            general: {
-              permitted_post: permitted_post,
-              working_post: working_post,
-              vacancy: vacancy,
-              teacher_number: teacher_number,
-              women_teacher_number: women_teacher_number,
-              vacation_consumers: vacation_consumers,
-            },
-          },
-          students: {
-            admission: {},
-          },
-          salary: [{}],
-          vacations: [{}],
-          nursery_four_plus: [{}],
-          nursery_five_plus: [{}],
-          class_one: [{}],
-          class_two: [{}],
-          class_three: [{}],
-          class_four: [{}],
-          class_five: [{}],
-          class_six: [{}],
-          class_seven: [{}],
-          class_eight: [{}],
-          asroyon_survey: [{}],
-          survey_total: [{}],
-          survey_admitted: [{}],
-          survey_unadmitted: [{}],
-          survey_admitted_to_other_school: [{}],
-          unauthorized_teacher: [{}],
-        }}
+        initialValues={initialValues}
+        // validationSchema={validationSchema}
         onSubmit={handleFormSubmit}
-        enableReinitialize
       >
-        {({ values }) => (
+        {({ touched, values, setFieldValue, errors }) => (
           <Form>
             {/* school related data */}
             <div className="border bg-white shadow-sm rounded-[4px] md:p-8 p-3">
@@ -764,6 +680,15 @@ const BilReturnEdit = ({ params }) => {
                 setActiveItem={setActiveItem}
               >
                 <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4 pt-4">
+                  <div className="mb-4">
+                    <h1 className="font-semibold">বিলের মাস</h1>
+                    <SearchableSelect
+                      options={monthOptions}
+                      onChange={handleMonthSelectChange}
+                      value={monthSelectedOption}
+                      placeholder={"মাস সিলেক্ট করুন"}
+                    />
+                  </div>
                   <TextField
                     defaultValue={schoolName}
                     name="school.general.name"
@@ -782,10 +707,10 @@ const BilReturnEdit = ({ params }) => {
                     >
                       <option
                         className="text-gray-300"
-                        value={cluster || "একটি অপশন সিলেক্ট করুন"}
+                        value={"ক্লাস্টার সিলেক্ট করুন"}
                         selected
                       >
-                        {cluster || "একটি অপশন সিলেক্ট করুন"}
+                        {"ক্লাস্টার সিলেক্ট করুন"}
                       </option>
                       <option value="সাধুহাটি ক্লাস্টার">সাধুহাটি</option>
                       <option value="কামালপুর ক্লাস্টার">কামালপুর</option>
@@ -825,7 +750,6 @@ const BilReturnEdit = ({ params }) => {
                       ইউনিয়ন/পৌরসভা
                     </label>
                     <Field
-                      defaultValue={union_corporation}
                       className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]"
                       as="select"
                       name="school.general.union_corporation"
@@ -833,10 +757,10 @@ const BilReturnEdit = ({ params }) => {
                     >
                       <option
                         className="text-gray-300"
-                        value={union_corporation || "একটি অপশন সিলেক্ট করুন"}
+                        value="Select an option"
                         selected
                       >
-                        {union_corporation || "একটি অপশন সিলেক্ট করুন"}
+                        একটি অপশন সিলেক্ট করুন
                       </option>
                       <option value="খলিলপুর">খলিলপুর</option>
                       <option value="মনুমুখ">মনুমুখ</option>
@@ -879,7 +803,7 @@ const BilReturnEdit = ({ params }) => {
                       </option>
                     </Field>
                   </div>
-                  {/* <TextField name="school.general.union_corporation" label="ইউনিয়ন/পৌরসভা" placeholder={"ইউনিয়ন/পৌরসভা লিখুন"} /> */}
+
                   <TextField
                     defaultValue={emis_code}
                     name="school.general.emis_code"
@@ -910,10 +834,10 @@ const BilReturnEdit = ({ params }) => {
                     >
                       <option
                         className="text-gray-300"
-                        value={grade || "একটি অপশন সিলেক্ট করুন"}
+                        value="Select an option"
                         selected
                       >
-                        {grade || "একটি অপশন সিলেক্ট করুন"}
+                        গ্রেড সিলেক্ট করুন
                       </option>
                       <option value="A">A</option>
                       <option value="B">B</option>
@@ -933,10 +857,10 @@ const BilReturnEdit = ({ params }) => {
                     >
                       <option
                         className="text-gray-300"
-                        value={shifts || "একটি অপশন সিলেক্ট করুন"}
+                        value="Select an option"
                         selected
                       >
-                        {shifts || "একটি অপশন সিলেক্ট করুন"}
+                        শিফট সিলেক্ট করুন
                       </option>
                       <option value="1">১</option>
                       <option value="2">২</option>
@@ -964,7 +888,6 @@ const BilReturnEdit = ({ params }) => {
                         placeholder="ভবন সংখ্যা দিন"
                         name="school.infrastructure.buildings"
                         id="building_number"
-                        defaultValue={buildings}
                         onChange={handleBuildingNumberChange}
                         type="number"
                         className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]"
@@ -972,10 +895,9 @@ const BilReturnEdit = ({ params }) => {
                     </div>
                   </div>
                   <div className="mt-6 mb-12">
-                    {buildings > 0 || buildingNumber > 0 ? (
+                    {buildingNumber >= 1 && (
                       <div className="mt-3 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-6">
                         <MyDatePicker
-                          defaultValue={building_date_1}
                           name={
                             "school.infrastructure.building.building_date_1"
                           }
@@ -986,7 +908,7 @@ const BilReturnEdit = ({ params }) => {
                             className="font-semibold"
                             htmlFor={`building_type_1`}
                           >
-                            ভবন ১ এর ধরন
+                            ভবন ১ এর ধরন*
                           </label>
                           <Field
                             className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]"
@@ -996,12 +918,10 @@ const BilReturnEdit = ({ params }) => {
                           >
                             <option
                               className="text-gray-300"
-                              value={
-                                building_type_1 || "একটি অপশন সিলেক্ট করুন"
-                              }
+                              value="Select an option"
                               selected
                             >
-                              {building_type_1 || "একটি অপশন সিলেক্ট করুন"}
+                              ভবনের ধরন সিলেক্ট করুন
                             </option>
                             <option value="পাকা">পাকা</option>
                             <option value="সেমিপাকা">সেমিপাকা</option>
@@ -1023,12 +943,10 @@ const BilReturnEdit = ({ params }) => {
                           >
                             <option
                               className="text-gray-300"
-                              value={
-                                building_condition_1 || "একটি অপশন সিলেক্ট করুন"
-                              }
+                              value="Select an option"
                               selected
                             >
-                              {building_condition_1 || "একটি অপশন সিলেক্ট করুন"}
+                              ভবনের অবস্থা সিলেক্ট করুন
                             </option>
                             <option value="ভালো">ভালো</option>
                             <option value="জরাজীর্ণ">জরাজীর্ণ</option>
@@ -1036,14 +954,11 @@ const BilReturnEdit = ({ params }) => {
                           </Field>
                         </div>
                       </div>
-                    ) : (
-                      ""
                     )}
 
-                    {buildings > 1 || buildingNumber > 1 ? (
+                    {buildingNumber >= 2 && (
                       <div className="mt-3 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-6">
                         <MyDatePicker
-                          defaultValue={building_date_2}
                           name={
                             "school.infrastructure.building.building_date_2"
                           }
@@ -1064,12 +979,10 @@ const BilReturnEdit = ({ params }) => {
                           >
                             <option
                               className="text-gray-300"
-                              value={
-                                building_type_2 || "একটি অপশন সিলেক্ট করুন"
-                              }
+                              value="Select an option"
                               selected
                             >
-                              {building_type_2 || "একটি অপশন সিলেক্ট করুন"}
+                              ভবনের ধরন সিলেক্ট করুন
                             </option>
                             <option value="পাকা">পাকা</option>
                             <option value="সেমিপাকা">সেমিপাকা</option>
@@ -1091,12 +1004,10 @@ const BilReturnEdit = ({ params }) => {
                           >
                             <option
                               className="text-gray-300"
-                              value={
-                                building_condition_2 || "একটি অপশন সিলেক্ট করুন"
-                              }
+                              value="Select an option"
                               selected
                             >
-                              {building_condition_2 || "একটি অপশন সিলেক্ট করুন"}
+                              ভবনের অবস্থা সিলেক্ট করুন
                             </option>
                             <option value="ভালো">ভালো</option>
                             <option value="জরাজীর্ণ">জরাজীর্ণ</option>
@@ -1104,14 +1015,11 @@ const BilReturnEdit = ({ params }) => {
                           </Field>
                         </div>
                       </div>
-                    ) : (
-                      ""
                     )}
 
-                    {buildings > 2 || buildingNumber > 2 ? (
+                    {buildingNumber >= 3 && (
                       <div className="mt-3 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-6">
                         <MyDatePicker
-                          defaultValue={building_date_3}
                           name={
                             "school.infrastructure.building.building_date_3"
                           }
@@ -1133,12 +1041,10 @@ const BilReturnEdit = ({ params }) => {
                           >
                             <option
                               className="text-gray-300"
-                              value={
-                                building_type_3 || "একটি অপশন সিলেক্ট করুন"
-                              }
+                              value="Select an option"
                               selected
                             >
-                              {building_type_3 || "একটি অপশন সিলেক্ট করুন"}
+                              ভবনের ধরন সিলেক্ট করুন
                             </option>
                             <option value="পাকা">পাকা</option>
                             <option value="সেমিপাকা">সেমিপাকা</option>
@@ -1160,12 +1066,10 @@ const BilReturnEdit = ({ params }) => {
                           >
                             <option
                               className="text-gray-300"
-                              value={
-                                building_condition_3 || "একটি অপশন সিলেক্ট করুন"
-                              }
+                              value="Select an option"
                               selected
                             >
-                              {building_condition_3 || "একটি অপশন সিলেক্ট করুন"}
+                              ভবনের অবস্থা সিলেক্ট করুন
                             </option>
                             <option value="ভালো">ভালো</option>
                             <option value="জরাজীর্ণ">জরাজীর্ণ</option>
@@ -1173,14 +1077,11 @@ const BilReturnEdit = ({ params }) => {
                           </Field>
                         </div>
                       </div>
-                    ) : (
-                      ""
                     )}
 
-                    {buildings > 3 || buildingNumber > 3 ? (
+                    {buildingNumber >= 4 && (
                       <div className="mt-3 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-6">
                         <MyDatePicker
-                          defaultValue={building_date_4}
                           name={
                             "school.infrastructure.building.building_date_4"
                           }
@@ -1202,12 +1103,10 @@ const BilReturnEdit = ({ params }) => {
                           >
                             <option
                               className="text-gray-300"
-                              value={
-                                building_type_4 || "একটি অপশন সিলেক্ট করুন"
-                              }
+                              value="Select an option"
                               selected
                             >
-                              {building_type_4 || "একটি অপশন সিলেক্ট করুন"}
+                              ভবনের ধরন সিলেক্ট করুন
                             </option>
                             <option value="পাকা">পাকা</option>
                             <option value="সেমিপাকা">সেমিপাকা</option>
@@ -1229,12 +1128,10 @@ const BilReturnEdit = ({ params }) => {
                           >
                             <option
                               className="text-gray-300"
-                              value={
-                                building_condition_4 || "একটি অপশন সিলেক্ট করুন"
-                              }
+                              value="Select an option"
                               selected
                             >
-                              {building_condition_4 || "একটি অপশন সিলেক্ট করুন"}
+                              ভবনের অবস্থা সিলেক্ট করুন
                             </option>
                             <option value="ভালো">ভালো</option>
                             <option value="জরাজীর্ণ">জরাজীর্ণ</option>
@@ -1242,8 +1139,6 @@ const BilReturnEdit = ({ params }) => {
                           </Field>
                         </div>
                       </div>
-                    ) : (
-                      ""
                     )}
                   </div>
 
@@ -1279,6 +1174,7 @@ const BilReturnEdit = ({ params }) => {
                       placeholder="মাল্টিমিডিয়া কক্ষ সংখ্যা দিন"
                       name="school.infrastructure.multimedia_rooms"
                     />
+                    {/* <NumberField label="শিশু শ্রেণী" placeholder="শিশু শ্রেণী সংখ্যা দিন" name="nursery_class" /> */}
 
                     <div className="mb-4">
                       <label
@@ -1295,12 +1191,10 @@ const BilReturnEdit = ({ params }) => {
                       >
                         <option
                           className="text-gray-300"
-                          value={
-                            separated_nursery_class || "একটি অপশন সিলেক্ট করুন"
-                          }
+                          value="Select an option"
                           selected
                         >
-                          {separated_nursery_class || "একটি অপশন সিলেক্ট করুন"}
+                          একটি অপশন সিলেক্ট করুন
                         </option>
                         <option value="আছে">আছে</option>
                         <option value="নেই">নেই</option>
@@ -1309,10 +1203,9 @@ const BilReturnEdit = ({ params }) => {
 
                     <div className="mb-4">
                       <label className="font-semibold" htmlFor="border_wall">
-                        সীমানা প্রাচীর*
+                        সীমানা প্রাচীর
                       </label>
                       <Field
-                        defaultValue={infrastructureBorderWall.wall}
                         value={borderWall}
                         onChange={handleBorderWallChange}
                         className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]"
@@ -1322,24 +1215,19 @@ const BilReturnEdit = ({ params }) => {
                       >
                         <option
                           className="text-gray-300"
-                          value={
-                            infrastructureBorderWall.wall ||
-                            "একটি অপশন সিলেক্ট করুন"
-                          }
+                          value={infrastructureBorderWall?.wall}
                           selected
                         >
-                          {infrastructureBorderWall.wall ||
-                            "একটি অপশন সিলেক্ট করুন"}
+                          {infrastructureBorderWall?.wall}
                         </option>
                         <option value="আছে">আছে</option>
                         <option value="নেই">নেই</option>
                       </Field>
                     </div>
-                    {borderWall === "আছে" ||
-                    infrastructureBorderWall.wall === "আছে" ? (
+                    {borderWall === "আছে" ? (
                       <div className="mb-4">
                         <label className="font-semibold" htmlFor="border_wall">
-                          সীমানা প্রাচীরের অর্থায়ন ধরন
+                          সীমানা প্রাচীরের অর্থায়ন ধরন*
                         </label>
                         <Field
                           className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]"
@@ -1349,14 +1237,10 @@ const BilReturnEdit = ({ params }) => {
                         >
                           <option
                             className="text-gray-300"
-                            value={
-                              infrastructureBorderWall.funding_type ||
-                              "একটি অপশন সিলেক্ট করুন"
-                            }
+                            value={infrastructureBorderWall.funding_type}
                             selected
                           >
-                            {infrastructureBorderWall.funding_type ||
-                              "একটি অপশন সিলেক্ট করুন"}
+                            {infrastructureBorderWall.funding_type}
                           </option>
                           <option value="ডিপিই">ডিপিই</option>
                           <option value="উপজেলা">জেলা পরিষদ</option>
@@ -1367,12 +1251,14 @@ const BilReturnEdit = ({ params }) => {
                       ""
                     )}
 
-                    {borderWall === "আছে" && (
+                    {borderWall === "আছে" ? (
                       <MyDatePicker
                         defaultValue={infrastructureBorderWall.founded_date}
                         label="সীমানা প্রাচীর নির্মাণের সন"
                         name="school.infrastructure.border_wall.founded_date"
                       />
+                    ) : (
+                      ""
                     )}
 
                     <NumberField
@@ -1381,7 +1267,6 @@ const BilReturnEdit = ({ params }) => {
                       placeholder="টয়লেট সংখ্যা দিন"
                       name="school.infrastructure.toilets"
                     />
-
                     <div className="mb-4">
                       <label className="font-semibold" htmlFor="wash_block">
                         ওয়াশ ব্লক*
@@ -1395,24 +1280,22 @@ const BilReturnEdit = ({ params }) => {
                       >
                         <option
                           className="text-gray-300"
-                          value={wash_block || "একটি অপশন সিলেক্ট করুন"}
+                          value={wash_block}
                           selected
                         >
-                          {wash_block || "একটি অপশন সিলেক্ট করুন"}
+                          {wash_block}
                         </option>
                         <option value="আছে">আছে</option>
                         <option value="নেই">নেই</option>
                       </Field>
                     </div>
 
-                    {washBlock === "আছে" || wash_block === "আছে" ? (
+                    {washBlock === "আছে" && (
                       <MyDatePicker
                         defaultValue={wash_block_founded_date}
                         label="ওয়াশ ব্লক নির্মাণের সন"
                         name="school.infrastructure.wash_block_founded_date"
                       />
-                    ) : (
-                      ""
                     )}
                   </div>
 
@@ -1477,10 +1360,10 @@ const BilReturnEdit = ({ params }) => {
                             >
                               <option
                                 className="text-gray-300"
-                                value={shahid_minar || "একটি অপশন সিলেক্ট করুন"}
+                                value="একটি অপশন সিলেক্ট করুন"
                                 selected
                               >
-                                {shahid_minar || "একটি অপশন সিলেক্ট করুন"}
+                                একটি অপশন সিলেক্ট করুন
                               </option>
                               <option value="আছে">আছে</option>
                               <option value="নেই">নেই</option>
@@ -1502,14 +1385,10 @@ const BilReturnEdit = ({ params }) => {
                             >
                               <option
                                 className="text-gray-300"
-                                value={
-                                  freedom_fight_corner ||
-                                  "একটি অপশন সিলেক্ট করুন"
-                                }
+                                value="একটি অপশন সিলেক্ট করুন"
                                 selected
                               >
-                                {freedom_fight_corner ||
-                                  "একটি অপশন সিলেক্ট করুন"}
+                                একটি অপশন সিলেক্ট করুন
                               </option>
                               <option value="আছে">আছে</option>
                               <option value="নেই">নেই</option>
@@ -1531,10 +1410,10 @@ const BilReturnEdit = ({ params }) => {
                             >
                               <option
                                 className="text-gray-300"
-                                value={rasel_corner || "একটি অপশন সিলেক্ট করুন"}
+                                value="একটি অপশন সিলেক্ট করুন"
                                 selected
                               >
-                                {rasel_corner || "একটি অপশন সিলেক্ট করুন"}
+                                একটি অপশন সিলেক্ট করুন
                               </option>
                               <option value="আছে">আছে</option>
                               <option value="নেই">নেই</option>
@@ -1556,10 +1435,10 @@ const BilReturnEdit = ({ params }) => {
                             >
                               <option
                                 className="text-gray-300"
-                                value={garden || "একটি অপশন সিলেক্ট করুন"}
+                                value="একটি অপশন সিলেক্ট করুন"
                                 selected
                               >
-                                {garden || "একটি অপশন সিলেক্ট করুন"}
+                                একটি অপশন সিলেক্ট করুন
                               </option>
                               <option value="আছে">আছে</option>
                               <option value="নেই">নেই</option>
@@ -1587,9 +1466,11 @@ const BilReturnEdit = ({ params }) => {
                                 labelId="demo-multiple-checkbox-label"
                                 id="demo-multiple-checkbox"
                                 multiple
-                                value={internet}
+                                value={internetType}
                                 onChange={handleChange}
+                                // input={<OutlinedInput label="ইন্টারনেট" />}
                                 renderValue={(selected) => selected.join(", ")}
+                                // MenuProps={MenuProps}
                               >
                                 {internetTypeOptions.map((option) => (
                                   <MenuItem key={option} value={option}>
@@ -1612,29 +1493,27 @@ const BilReturnEdit = ({ params }) => {
                               className="font-semibold"
                               htmlFor="laptop_number"
                             >
-                              ল্যাপটপ সংখ্যা*
+                              ল্যাপটপ সংখ্যা
                             </label>
                             <input
                               placeholder="ল্যাপটপ সংখ্যা দিন"
-                              defaultValue={fetchedLaptop.total}
                               name="school.infrastructure.others.laptop.total"
                               id="laptop_number"
                               onChange={handleLaptopChange}
+                              defaultValue={fetchedLaptop?.total}
                               type="number"
                               className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]"
                             />
                           </div>
-                          {laptop > 1 || fetchedLaptop.total > 1 ? (
+                          {laptop >= 1 && (
                             <NumberField
-                              defaultValue={fetchedLaptop.actives}
+                              defaultValue={fetchedLaptop?.actives}
                               placeholder={"সচল ল্যাপটপের সংখ্যা দিন"}
                               label={"সচল ল্যাপটপের সংখ্যা"}
                               name={
                                 "school.infrastructure.others.laptop.actives"
                               }
                             />
-                          ) : (
-                            ""
                           )}
                         </div>
 
@@ -1647,26 +1526,24 @@ const BilReturnEdit = ({ params }) => {
                               মাল্টিমিডিয়া সংখ্যা*
                             </label>
                             <input
+                              defaultValue={fetchedMultimedia?.total}
                               placeholder="মাল্টিমিডিয়া সংখ্যা দিন"
                               name="school.infrastructure.others.multimedia.total"
                               id="multimedia_number"
                               onChange={handleMultimediaChange}
-                              defaultValue={fetchedMultimedia.total}
                               type="number"
                               className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]"
                             />
                           </div>
-                          {multimedia > 1 || fetchedMultimedia.total > 1 ? (
+                          {multimedia >= 1 && (
                             <NumberField
+                              defaultValue={fetchedMultimedia?.actives}
                               placeholder={"সচল মাল্টিমিডিয়ার সংখ্যা দিন"}
                               label={"সচল  সংখ্যা"}
-                              defaultValue={fetchedMultimedia.actives}
                               name={
                                 "school.infrastructure.others.multimedia.actives"
                               }
                             />
-                          ) : (
-                            ""
                           )}
                         </div>
 
@@ -1676,29 +1553,27 @@ const BilReturnEdit = ({ params }) => {
                               className="font-semibold"
                               htmlFor="piano_number"
                             >
-                              পিয়ানো সংখ্যা*
+                              পিয়ানো সংখ্যা
                             </label>
                             <input
+                              defaultValue={fetchedPiano?.total}
                               placeholder="পিয়ানো সংখ্যা দিন"
                               name="school.infrastructure.others.piano.total"
                               id="piano_number"
                               onChange={handlePianoChange}
-                              defaultValue={fetchedPiano.total}
                               type="number"
                               className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]"
                             />
                           </div>
-                          {piano > 1 || fetchedPiano.total > 1 ? (
+                          {piano >= 1 && (
                             <NumberField
-                              defaultValue={fetchedPiano.actives}
+                              defaultValue={fetchedPiano?.actives}
                               placeholder={"সচল পিয়ানো সংখ্যা দিন"}
                               label={"সচল পিয়ানো সংখ্যা"}
                               name={
                                 "school.infrastructure.others.piano.actives"
                               }
                             />
-                          ) : (
-                            ""
                           )}
                         </div>
 
@@ -1708,7 +1583,7 @@ const BilReturnEdit = ({ params }) => {
                               className="font-semibold"
                               htmlFor={`electricity`}
                             >
-                              বিদ্যুৎ সংযোগ*
+                              বিদ্যুৎ সংযোগ
                             </label>
                             <Field
                               className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]"
@@ -1718,14 +1593,10 @@ const BilReturnEdit = ({ params }) => {
                             >
                               <option
                                 className="text-gray-300"
-                                value={
-                                  electricity_connection ||
-                                  "একটি অপশন সিলেক্ট করুন"
-                                }
+                                value="একটি অপশন সিলেক্ট করুন"
                                 selected
                               >
-                                {electricity_connection ||
-                                  "একটি অপশন সিলেক্ট করুন"}
+                                একটি অপশন সিলেক্ট করুন
                               </option>
                               <option value="আছে">আছে</option>
                               <option value="নেই">নেই</option>
@@ -1788,7 +1659,7 @@ const BilReturnEdit = ({ params }) => {
                               className="font-semibold"
                               htmlFor="tubewell_number"
                             >
-                              টিউবওয়েল সংখ্যা*
+                              টিউবওয়েল সংখ্যা
                             </label>
                             <input
                               defaultValue={tube_wells}
@@ -1802,14 +1673,14 @@ const BilReturnEdit = ({ params }) => {
                           </div>
                         </div>
 
-                        {tubeWell >= 1 || tube_wells >= 1 ? (
+                        {tubeWell >= 1 && (
                           <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-6">
                             <div className="mb-4">
                               <label
                                 className="font-semibold"
                                 htmlFor={`tubewell_condition`}
                               >
-                                টিউবওয়েল এর বর্তমান অবস্থা*
+                                টিউবওয়েল এর বর্তমান অবস্থা
                               </label>
                               <Field
                                 className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]"
@@ -1819,22 +1690,16 @@ const BilReturnEdit = ({ params }) => {
                               >
                                 <option
                                   className="text-gray-300"
-                                  value={
-                                    tube_wells_condition ||
-                                    "একটি অপশন সিলেক্ট করুন"
-                                  }
+                                  value="একটি অপশন সিলেক্ট করুন"
                                   selected
                                 >
-                                  {tube_wells_condition ||
-                                    "একটি অপশন সিলেক্ট করুন"}
+                                  একটি অপশন সিলেক্ট করুন
                                 </option>
                                 <option value="ভালো">ভালো</option>
                                 <option value="মেরামতযোগ্য">মেরামতযোগ্য</option>
                               </Field>
                             </div>
                           </div>
-                        ) : (
-                          ""
                         )}
 
                         <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4 mt-4">
@@ -1843,7 +1708,7 @@ const BilReturnEdit = ({ params }) => {
                               className="font-semibold"
                               htmlFor="deep_tubewell_number"
                             >
-                              ডিপ টিউবওয়েল সংখ্যা*
+                              ডিপ টিউবওয়েল সংখ্যা
                             </label>
                             <input
                               defaultValue={deep_tube_wells}
@@ -1857,7 +1722,7 @@ const BilReturnEdit = ({ params }) => {
                           </div>
                         </div>
 
-                        {deepTubeWell >= 1 || deep_tube_wells >= 1 ? (
+                        {deepTubeWell >= 1 && (
                           <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-6">
                             <div className="mb-4">
                               <label
@@ -1867,7 +1732,6 @@ const BilReturnEdit = ({ params }) => {
                                 ডিপ টিউবওয়েল এর বর্তমান অবস্থা*
                               </label>
                               <Field
-                                defaultValue={deep_tube_wells_condition}
                                 className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]"
                                 as="select"
                                 name={`school.infrastructure.water.deep_tube_wells_condition`}
@@ -1875,22 +1739,16 @@ const BilReturnEdit = ({ params }) => {
                               >
                                 <option
                                   className="text-gray-300"
-                                  value={
-                                    deep_tube_wells_condition ||
-                                    "একটি অপশন সিলেক্ট করুন"
-                                  }
+                                  value="একটি অপশন সিলেক্ট করুন"
                                   selected
                                 >
-                                  {deep_tube_wells_condition ||
-                                    "একটি অপশন সিলেক্ট করুন"}
+                                  একটি অপশন সিলেক্ট করুন
                                 </option>
                                 <option value="ভালো">ভালো</option>
                                 <option value="মেরামতযোগ্য">মেরামতযোগ্য</option>
                               </Field>
                             </div>
                           </div>
-                        ) : (
-                          ""
                         )}
                       </ul>
                     </AnimateHeight>
@@ -1938,17 +1796,17 @@ const BilReturnEdit = ({ params }) => {
                     >
                       <option
                         className="text-gray-300"
-                        value={is_registered || "একটি অপশন সিলেক্ট করুন"}
+                        value="একটি অপশন সিলেক্ট করুন"
                         selected
                       >
-                        {is_registered || "একটি অপশন সিলেক্ট করুন"}
+                        একটি অপশন সিলেক্ট করুন
                       </option>
                       <option value="হ্যাঁ">হ্যাঁ</option>
                       <option value="না">না</option>
                     </Field>
                   </div>
 
-                  {registration === "হ্যাঁ" || is_registered === "হ্যাঁ" ? (
+                  {registration === "হ্যাঁ" && (
                     <div className="mb-4">
                       <label
                         className="font-semibold"
@@ -1964,33 +1822,29 @@ const BilReturnEdit = ({ params }) => {
                       >
                         <option
                           className="text-gray-300"
-                          value={
-                            registration_ownership || "একটি অপশন সিলেক্ট করুন"
-                          }
+                          value="একটি অপশন সিলেক্ট করুন"
                           selected
                         >
-                          {registration_ownership || "একটি অপশন সিলেক্ট করুন"}
+                          একটি অপশন সিলেক্ট করুন
                         </option>
                         <option value="ডিপিই">ডিপিই</option>
                         <option value="অন্যান্য">অন্যান্য</option>
                       </Field>
                     </div>
-                  ) : (
-                    ""
                   )}
-                  <NumberField
+                  <TextField
                     defaultValue={khatian_number}
                     name="school.land.khatian_number"
                     label="খতিয়ান নং"
                     placeholder="খতিয়ান নং দিন"
                   />
-                  <NumberField
+                  <TextField
                     defaultValue={dag_number}
                     name="school.land.dag_number"
                     label="দাগ নং"
                     placeholder="দাগ নং দিন"
                   />
-                  <NumberField
+                  <TextField
                     defaultValue={dolil_number}
                     name="school.land.dolil_number"
                     label="দলিল নং"
@@ -2015,16 +1869,16 @@ const BilReturnEdit = ({ params }) => {
                     >
                       <option
                         className="text-gray-300"
-                        value={is_namjaried || "একটি অপশন সিলেক্ট করুন"}
+                        value="একটি অপশন সিলেক্ট করুন"
                         selected
                       >
-                        {is_namjaried || "একটি অপশন সিলেক্ট করুন"}
+                        একটি অপশন সিলেক্ট করুন
                       </option>
                       <option value="হ্যাঁ">হ্যাঁ</option>
                       <option value="না">না</option>
                     </Field>
                   </div>
-                  {namjari === "হ্যাঁ" || is_namjaried === "হ্যাঁ" ? (
+                  {namjari === "হ্যাঁ" && (
                     <div className="mb-4">
                       <label
                         className="font-semibold"
@@ -2040,17 +1894,15 @@ const BilReturnEdit = ({ params }) => {
                       >
                         <option
                           className="text-gray-300"
-                          value={namjari_ownership || "একটি অপশন সিলেক্ট করুন"}
+                          value="একটি অপশন সিলেক্ট করুন"
                           selected
                         >
-                          {namjari_ownership || "একটি অপশন সিলেক্ট করুন"}
+                          একটি অপশন সিলেক্ট করুন
                         </option>
                         <option value="ডিপিই">ডিপিই</option>
                         <option value="অন্যান্য">অন্যান্য</option>
                       </Field>
                     </div>
-                  ) : (
-                    ""
                   )}
                   <div className="mb-4">
                     <label className="font-semibold" htmlFor={"is_cased"}>
@@ -2064,10 +1916,10 @@ const BilReturnEdit = ({ params }) => {
                     >
                       <option
                         className="text-gray-300"
-                        value={is_cased || "একটি অপশন সিলেক্ট করুন"}
+                        value="একটি অপশন সিলেক্ট করুন"
                         selected
                       >
-                        {is_cased || "একটি অপশন সিলেক্ট করুন"}
+                        একটি অপশন সিলেক্ট করুন
                       </option>
                       <option value="হ্যাঁ">হ্যাঁ</option>
                       <option value="না">না</option>
@@ -2088,10 +1940,10 @@ const BilReturnEdit = ({ params }) => {
                     >
                       <option
                         className="text-gray-300"
-                        value={taxt_condition || "একটি অপশন সিলেক্ট করুন"}
+                        value="একটি অপশন সিলেক্ট করুন"
                         selected
                       >
-                        {taxt_condition || "একটি অপশন সিলেক্ট করুন"}
+                        একটি অপশন সিলেক্ট করুন
                       </option>
                       <option value="পরিশোধিত">পরিশোধিত</option>
                       <option value="অপরিশোধিত">অপরিশোধিত</option>
@@ -2108,17 +1960,16 @@ const BilReturnEdit = ({ params }) => {
                 {/* stipend related data */}
                 <div className="pt-4 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4">
                   <SearchableSelect
-                    defaultValue={stipend_year}
                     className="h-[44px]"
                     options={stipendYearOptions}
-                    label={"সর্বশেষ প্রান্তিকের বছর"}
-                    placeholder={"একটি বছর সিলেক্ট করুন"}
+                    label={"অর্থ বছর"}
+                    placeholder={"একটি অর্থ বছর সিলেক্ট করুন"}
                     onChange={stipendYearSelectChange}
                     value={stipendYearSelectedOption}
                   />
                   <div className="mb-4">
                     <label className="font-semibold" htmlFor={"latest_season"}>
-                      সর্বশেষ প্রান্তিকের মৌসুম
+                      সর্বশেষ প্রান্তিক
                     </label>
                     <Field
                       className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]"
@@ -2128,10 +1979,10 @@ const BilReturnEdit = ({ params }) => {
                     >
                       <option
                         className="text-gray-300"
-                        value={latest_season || "একটি অপশন সিলেক্ট করুন"}
+                        value="একটি অপশন সিলেক্ট করুন"
                         selected
                       >
-                        {latest_season || "একটি অপশন সিলেক্ট করুন"}
+                        একটি অপশন সিলেক্ট করুন
                       </option>
                       <option value="প্রথম প্রান্তিক(জানুয়ারি-জুন)">
                         প্রথম প্রান্তিক(জানুয়ারি-জুন)
@@ -2150,7 +2001,7 @@ const BilReturnEdit = ({ params }) => {
                   <NumberField
                     defaultValue={demand}
                     name="school.stipend.demand"
-                    label="উপবৃত্তির চাহিদা"
+                    label="উপবৃত্তির চাহিদা(টাকা)"
                     placeholder="উপবৃত্তির চাহিদা দিন"
                   />
                   <NumberField
@@ -2217,7 +2068,7 @@ const BilReturnEdit = ({ params }) => {
                 <FieldArray name="budgets">
                   {(arrayHelpers) => (
                     <div>
-                      {schoolDevelopment.map((budget, index) => (
+                      {values?.budgets?.map((budget, index) => (
                         <div key={index}>
                           <div className="pt-4 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4">
                             <div className="mb-4">
@@ -2232,11 +2083,12 @@ const BilReturnEdit = ({ params }) => {
                                 as="select"
                                 name={`budgets.${index}.name`}
                                 id={`budgets.${index}.name`}
-                                defaultValue={
-                                  budget.name || "একটি অপশন সিলেক্ট করুন"
-                                }
                               >
-                                <option className="text-gray-300" value="">
+                                <option
+                                  className="text-gray-300"
+                                  value="একটি অপশন সিলেক্ট করুন"
+                                  selected
+                                >
                                   একটি অপশন সিলেক্ট করুন
                                 </option>
                                 <option value="স্লিপ">স্লিপ</option>
@@ -2270,11 +2122,12 @@ const BilReturnEdit = ({ params }) => {
                                 as="select"
                                 name={`budgets.${index}.year`}
                                 id={`budgets.${index}.year`}
-                                defaultValue={
-                                  budget.year || "একটি অপশন সিলেক্ট করুন"
-                                }
                               >
-                                <option className="text-gray-300" value="">
+                                <option
+                                  className="text-gray-300"
+                                  value="একটি অপশন সিলেক্ট করুন"
+                                  selected
+                                >
                                   একটি অপশন সিলেক্ট করুন
                                 </option>
                                 {budgetYearOptions.map((year) => (
@@ -2286,11 +2139,17 @@ const BilReturnEdit = ({ params }) => {
                             </div>
                             <NumberField
                               name={`budgets.${index}.amount`}
-                              label="অর্থের পরিমান"
-                              placeholder="অর্থের পরিমান লিখুন"
-                              defaultValue={budget.amount}
+                              label="বরাদ্দকৃত অর্থ"
+                              placeholder="বরাদ্দকৃত অর্থের পরিমান লিখুন"
                             />
                           </div>
+                          <button
+                            className={`text-[#ED1C24] font-semibold`}
+                            type="button"
+                            onClick={() => arrayHelpers.remove(index)}
+                          >
+                            ডিলিট করুন
+                          </button>
                         </div>
                       ))}
                       <button
@@ -2367,7 +2226,7 @@ const BilReturnEdit = ({ params }) => {
                   <FieldArray name="salary">
                     {(arrayHelpers1) => (
                       <div>
-                        {teacherSalary.map((teacher, index) => (
+                        {values.salary.map((teacher, index) => (
                           <div key={index}>
                             <h3 className="mt-8 text-lg text-[#008B4C] font-semibold">
                               শিক্ষক {index + 1}
@@ -2377,7 +2236,6 @@ const BilReturnEdit = ({ params }) => {
                                 name={`salary.${index}.name`}
                                 label="শিক্ষকের নাম"
                                 placeholder="শিক্ষকের নাম লিখুন"
-                                defaultValue={teacher.name}
                               />
                               <div className="mb-4">
                                 <label
@@ -2391,12 +2249,12 @@ const BilReturnEdit = ({ params }) => {
                                   as="select"
                                   name={`salary.${index}.designation`}
                                   id={`salary.${index}.designation`}
-                                  defaultValue={
-                                    teacher.designation ||
-                                    "একটি অপশন সিলেক্ট করুন"
-                                  }
                                 >
-                                  <option className="text-gray-300" value="">
+                                  <option
+                                    className="text-gray-300"
+                                    value="একটি অপশন সিলেক্ট করুন"
+                                    selected
+                                  >
                                     একটি অপশন সিলেক্ট করুন
                                   </option>
                                   <option value="প্রধান শিক্ষক">
@@ -2417,7 +2275,6 @@ const BilReturnEdit = ({ params }) => {
                                 name={`salary.${index}.educational_qualification`}
                                 label="সর্বশেষ শিক্ষাগত যোগ্যতা"
                                 placeholder="সর্বশেষ শিক্ষাগত যোগ্যতা লিখুন"
-                                defaultValue={teacher.educational_qualification}
                               />
                               <div className="mb-4">
                                 <label
@@ -2431,12 +2288,12 @@ const BilReturnEdit = ({ params }) => {
                                   as="select"
                                   name={`salary.${index}.divisional_training`}
                                   id={`salary.${index}.divisional_training`}
-                                  defaultValue={
-                                    teacher.divisional_training ||
-                                    "একটি অপশন সিলেক্ট করুন"
-                                  }
                                 >
-                                  <option className="text-gray-300" value="">
+                                  <option
+                                    className="text-gray-300"
+                                    value="একটি অপশন সিলেক্ট করুন"
+                                    selected
+                                  >
                                     একটি অপশন সিলেক্ট করুন
                                   </option>
                                   <option value="ডিপিএড">ডিপিএড</option>
@@ -2446,78 +2303,107 @@ const BilReturnEdit = ({ params }) => {
                               </div>
                               <MyDatePicker
                                 name={`salary.${index}.date_of_birth`}
-                                label="জন্ম তারিখ"
-                                defaultValue={teacher.date_of_birth}
+                                label={"জন্ম তারিখ"}
                               />
                               <MyDatePicker
                                 name={`salary.${index}.first_joining_date`}
-                                label="প্রথম যোগদানের তারিখ"
-                                defaultValue={teacher.first_joining_date}
+                                label={"প্রথম যোগদানের তারিখ"}
                               />
                               <MyDatePicker
                                 name={`salary.${index}.mentioned_post_joining_date`}
-                                label="উক্ত পদে যোগদানের তারিখ"
-                                defaultValue={
-                                  teacher.mentioned_post_joining_date
-                                }
+                                label={"উক্ত পদে যোগদানের তারিখ"}
                               />
                               <MyDatePicker
                                 name={`salary.${index}.this_school_joining_date`}
-                                label="এই বিদ্যালয়ে যোগদানের তারিখ"
-                                defaultValue={teacher.this_school_joining_date}
+                                label={"এই বিদ্যালয়ে যোগদানের তারিখ"}
                               />
+
                               <NumberField
                                 name={`salary.${index}.sallary_scale`}
                                 label="বেতন স্কেল"
                                 placeholder="বেতন স্কেল দিন"
-                                defaultValue={teacher.sallary_scale}
                               />
                               <NumberField
                                 name={`salary.${index}.main_sallary`}
                                 label="মূল বেতন"
                                 placeholder="মূল বেতন দিন"
-                                defaultValue={teacher.main_sallary}
                               />
                               <NumberField
                                 name={`salary.${index}.educational_allowance`}
                                 label="শিক্ষা ভাতা"
                                 placeholder="শিক্ষা ভাতার পরিমান দিন"
-                                defaultValue={teacher.educational_allowance}
                               />
-                              <NumberField
+                              {/* <NumberField name={`salary.${index}.educational_allowance`} label="শিক্ষা ভাতা" placeholder="শিক্ষা ভাতার পরিমান দিন" /> */}
+                              <TextField
                                 name={`salary.${index}.bank_account_no`}
                                 label="ব্যাংক হিসাব নং"
                                 placeholder="ব্যাংক হিসাব নং দিন"
-                                defaultValue={teacher.bank_account_no}
                               />
                               <NumberField
                                 name={`salary.${index}.gpf`}
                                 label="জিপিএফ নং"
                                 placeholder="জিপিএফ নং দিন"
-                                defaultValue={teacher.gpf}
                               />
                               <NumberField
                                 name={`salary.${index}.mobile_number`}
                                 label="সক্রিয় মোবাইল নং"
                                 placeholder="সক্রিয় মোবাইল নং দিন"
-                                defaultValue={teacher.mobile_number}
                               />
                               <NumberField
                                 name={`salary.${index}.current_year_occasional_vacation`}
                                 label="চলতি বছরে মোট নৈমিত্তিক ছুটি"
                                 placeholder="চলতি বছরে মোট নৈমিত্তিক ছুটি সংখ্যা দিন"
-                                defaultValue={
-                                  teacher.current_year_occasional_vacation
-                                }
                               />
-                              <ImageInput
+                              <ImageInput2
+                                label={"সাক্ষর"}
                                 name={`salary.${index}.signature`}
-                                label="স্বাক্ষর"
-                                placeholder="সাক্ষর দিন"
                               />
+                              <div className="flex items-center">
+                                {teacher?.signature && (
+                                  <Image
+                                    src={teacher.signature}
+                                    alt="signature"
+                                    width={150}
+                                    height={100}
+                                  />
+                                )}
+                              </div>
                             </div>
+                            <button
+                              className={`text-[#ED1C24] font-semibold`}
+                              type="button"
+                              onClick={() => arrayHelpers1.remove(index)}
+                            >
+                              ডিলিট করুন
+                            </button>
                           </div>
                         ))}
+                        <button
+                          className="mt-3 text-[#008B4C] underline font-semibold"
+                          type="button"
+                          onClick={() =>
+                            arrayHelpers1.push({
+                              name: "",
+                              designation: "",
+                              educational_qualification: "",
+                              divisional_training: "",
+                              date_of_birth: "",
+                              first_joining_date: "",
+                              mentioned_post_joining_date: "",
+                              this_school_joining_date: "",
+                              educational_allowance: "",
+                              signature: "",
+                              current_year_occasional_vacation: "",
+                              mobile_number: "",
+                              gpf: "",
+                              bank_account_no: "",
+                              main_sallary: "",
+                              sallary_scale: "",
+                            })
+                          }
+                        >
+                          আরও যোগ করুন
+                        </button>
                       </div>
                     )}
                   </FieldArray>
@@ -2532,14 +2418,13 @@ const BilReturnEdit = ({ params }) => {
                 <FieldArray name="vacations">
                   {(arrayHelpers) => (
                     <div>
-                      {teacherVacations.map((vacation, index) => (
+                      {values.vacations.map((vacation, index) => (
                         <div key={index}>
                           <div className="pt-4 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4">
                             <TextField
                               name={`vacations.${index}.teacher_name`}
                               label="শিক্ষকের নাম"
                               placeholder="শিক্ষকের নাম লিখুন"
-                              defaultValue={vacation.teacher_name}
                             />
                             <div className="mb-4">
                               <label
@@ -2556,11 +2441,10 @@ const BilReturnEdit = ({ params }) => {
                               >
                                 <option
                                   className="text-gray-300"
-                                  value={
-                                    vacation.type || "একটি অপশন সিলেক্ট করুন"
-                                  }
+                                  value="একটি অপশন সিলেক্ট করুন"
+                                  selected
                                 >
-                                  {vacation.type || "একটি অপশন সিলেক্ট করুন"}
+                                  একটি অপশন সিলেক্ট করুন
                                 </option>
                                 <option value="চিকিৎসা">চিকিৎসা</option>
                                 <option value="বহিঃবাংলাদেশ">
@@ -2573,22 +2457,41 @@ const BilReturnEdit = ({ params }) => {
                             <MyDatePicker
                               name={`vacations.${index}.start_date`}
                               label="ছুটি শুরু"
-                              defaultValue={vacation.start_date}
                             />
                             <MyDatePicker
                               name={`vacations.${index}.end_date`}
                               label="ছুটি শেষ"
-                              defaultValue={vacation.end_date}
                             />
                           </div>
+                          <button
+                            className={`text-[#ED1C24] font-semibold`}
+                            type="button"
+                            onClick={() => arrayHelpers.remove(index)}
+                          >
+                            ডিলিট করুন
+                          </button>
                         </div>
                       ))}
+                      <button
+                        className="mt-3 text-[#008B4C] underline font-semibold"
+                        type="button"
+                        onClick={() =>
+                          arrayHelpers.push({
+                            teacher_name: "",
+                            type: "",
+                            start_date: "",
+                            end_date: "",
+                          })
+                        }
+                      >
+                        আরও যোগ করুন
+                      </button>
                     </div>
                   )}
                 </FieldArray>
               </DataDropdown>
               <DataDropdown
-                title="অননুমোদিত শিক্ষক তথ্য"
+                title="অননুমোদিত অনুপস্থিত শিক্ষক তথ্য"
                 itemKey={"absent_teacher"}
                 activeItem={activeItem}
                 setActiveItem={setActiveItem}
@@ -2597,13 +2500,17 @@ const BilReturnEdit = ({ params }) => {
                   <FieldArray name="unauthorized_teacher">
                     {(arrayHelpers) => (
                       <>
-                        {unauthorized_teacher.map((teacher, index) => (
+                        {values?.unauthorized_teacher?.map((teacher, index) => (
                           <div
-                            className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4"
+                            className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4 mb-4"
                             key={index}
                           >
                             <TextField
-                              defaultValue={teacher.name}
+                              defaultValue={
+                                (unauthorized_teacher?.length &&
+                                  unauthorized_teacher[0]?.name) ||
+                                ""
+                              }
                               label={"শিক্ষকের নাম"}
                               placeholder={"শিক্ষকের নাম দিন"}
                               name={`unauthorized_teacher.${index}.name`}
@@ -2622,14 +2529,11 @@ const BilReturnEdit = ({ params }) => {
                                 id={`unauthorized_teacher.${index}.designation`}
                               >
                                 <option
+                                  className="text-gray-300"
+                                  value="একটি অপশন সিলেক্ট করুন"
                                   selected
-                                  value={
-                                    teacher.designation ||
-                                    "একটি অপশন সিলেক্ট করুন"
-                                  }
                                 >
-                                  {teacher.designation ||
-                                    "একটি অপশন সিলেক্ট করুন"}
+                                  একটি অপশন সিলেক্ট করুন
                                 </option>
                                 <option value="প্রধান শিক্ষক(চলতি দায়িত্ব)">
                                   প্রধান শিক্ষক(চলতি দায়িত্ব)
@@ -2645,14 +2549,369 @@ const BilReturnEdit = ({ params }) => {
                             <MyDatePicker
                               label={"সর্বশেষ উপস্থিতির তারিখ"}
                               name={`unauthorized_teacher.${index}.last_present_date`}
-                              defaultValue={teacher.last_present_date}
                             />
+                            <button
+                              className={`text-[#ED1C24] font-semibold text-left`}
+                              type="button"
+                              onClick={() => arrayHelpers.remove(index)}
+                            >
+                              ডিলিট করুন
+                            </button>
                           </div>
                         ))}
+                        <button
+                          className="mt-3 text-[#008B4C] underline font-semibold"
+                          type="button"
+                          onClick={() =>
+                            arrayHelpers.push({
+                              name: "",
+                              designation: "",
+                              last_present_date: "",
+                            })
+                          }
+                        >
+                          আরও যোগ করুন
+                        </button>
                       </>
                     )}
                   </FieldArray>
                 </div>
+              </DataDropdown>
+              <DataDropdown
+                title="হাজিরা সংক্রান্ত তথ্য"
+                itemKey={"hajira"}
+                activeItem={activeItem}
+                setActiveItem={setActiveItem}
+              >
+                <div className="pt-4 grid md:grid-cols-2 grid-cols-1 w-full gap-x-4">
+                  <MyDatePicker
+                    name={"hajira_from"}
+                    label={"হাজিরা শুরুর তারিখ"}
+                  />
+                  <MyDatePicker
+                    name={"hajira_to"}
+                    label={"হাজিরা শেষের তারিখ"}
+                  />
+                </div>
+                {values?.teacher?.attendance?.map((teacher, teacherIndex) => (
+                  <div key={teacherIndex}>
+                    <div className="mt-4">
+                      <button
+                        type="button"
+                        className={`relative border-gray-300 flex justify-between items-center w-full px-4 py-3 text-sm font-medium text-left rounded-lg border ${
+                          schoolAccordionActive === `teacher_${teacherIndex}`
+                            ? " bg-slate-200"
+                            : "  bg-slate-100"
+                        } ${
+                          schoolAccordionActive === `teacher_${teacherIndex}`
+                            ? "active"
+                            : ""
+                        }`}
+                        onClick={() =>
+                          schoolTogglePara(`teacher_${teacherIndex}`)
+                        }
+                      >
+                        <h5 className="text-gray-900 text-[16px]">
+                          {teacherIndex === 0
+                            ? "প্রধান শিক্ষক"
+                            : `সহকারী শিক্ষক ${convertToBengaliNumber(
+                                teacherIndex
+                              )}`}
+                        </h5>
+                        <svg
+                          className={`w-4 h-4 ml-2 duration-500 ${
+                            schoolAccordionActive === `teacher_${teacherIndex}`
+                              ? "rotate-180"
+                              : ""
+                          }`}
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M19 9l-7 7-7-7"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </button>
+
+                      <AnimateHeight
+                        duration={300}
+                        height={
+                          schoolAccordionActive === `teacher_${teacherIndex}`
+                            ? "auto"
+                            : 0
+                        }
+                      >
+                        <ul className="p-5">
+                          {/* here shoudl have a field for taking every teacher name */}
+                          <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 w-full gap-x-6 pt-4">
+                            <TextField
+                              label={"শিক্ষকের নাম"}
+                              placeholder={"শিক্ষকের নাম লিখুন"}
+                              name={`teacher.attendance.${teacherIndex}.name`}
+                            />
+                            <ImageInput2
+                              label={"সাক্ষর দিন"}
+                              name={`teacher.attendance.${teacherIndex}.signature`}
+                            />
+                            <div className="flex items-center">
+                              {teacher?.signature && (
+                                <Image
+                                  src={teacher.signature}
+                                  alt="signature"
+                                  width={150}
+                                  height={100}
+                                />
+                              )}
+                            </div>
+                          </div>
+                          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <Box key={teacherIndex} sx={{ mb: 4 }}>
+                              <FieldArray
+                                name={`teacher.attendance.${teacherIndex}.days`}
+                              >
+                                {() => (
+                                  <>
+                                    {teacher.days.map((day, dayIndex) => (
+                                      <Box
+                                        key={dayIndex}
+                                        sx={{
+                                          display: "flex",
+                                          gap: 2,
+                                          mb: 2,
+                                        }}
+                                      >
+                                        <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 w-full gap-x-6 pt-4">
+                                          <div>
+                                            <label
+                                              className="font-semibold"
+                                              htmlFor={`teacher.attendance.${teacherIndex}.days.${dayIndex}.status`}
+                                            >
+                                              {dayIndex < 21
+                                                ? `পূর্ববর্তী মাসের দিন-${convertToBengaliNumber(
+                                                    dayIndex + 11
+                                                  )}`
+                                                : `চলতি মাসের দিন-${convertToBengaliNumber(
+                                                    dayIndex - 20
+                                                  )}`}
+                                            </label>
+                                            <Field
+                                              as="select"
+                                              name={`teacher.attendance.${teacherIndex}.days.${dayIndex}.status`}
+                                              className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]"
+                                            >
+                                              <option value="option">
+                                                একটি অপশন সিলেক্ট করুন
+                                              </option>
+                                              <option value="present">
+                                                উপস্থিত
+                                              </option>
+                                              <option value="absent">
+                                                অনুপস্থিত
+                                              </option>
+                                              <option value="সরকারী ছুটি">
+                                                সরকারী ছুটি
+                                              </option>
+                                              <option value="সংরক্ষিত ছুটি">
+                                                সংরক্ষিত ছুটি
+                                              </option>
+                                              <option value="সাপ্তাহিক ছুটি">
+                                                সাপ্তাহিক ছুটি
+                                              </option>
+                                            </Field>
+                                          </div>
+
+                                          {values.teacher.attendance[
+                                            teacherIndex
+                                          ].days[dayIndex].status ===
+                                            "present" && (
+                                            <>
+                                              <div>
+                                                <label
+                                                  className="font-semibold"
+                                                  htmlFor={`teacher.attendance.${teacherIndex}.days.${dayIndex}.coming_time`}
+                                                >
+                                                  আগমন
+                                                </label>
+                                                <Field
+                                                  name={`teacher.attendance.${teacherIndex}.days.${dayIndex}.coming_time`}
+                                                >
+                                                  {({ field }) => (
+                                                    <TimePicker
+                                                      value={
+                                                        field.value
+                                                          ? dayjs(
+                                                              field.value,
+                                                              "HH:mm A"
+                                                            )
+                                                          : null
+                                                      }
+                                                      onChange={(newValue) =>
+                                                        setFieldValue(
+                                                          field.name,
+                                                          dayjs(
+                                                            newValue
+                                                          ).format("hh:mm A")
+                                                        )
+                                                      }
+                                                      renderInput={(params) => (
+                                                        <TextField
+                                                          {...params}
+                                                          id={`teacher.attendance.${teacherIndex}.days.${dayIndex}.coming_time`}
+                                                          error={
+                                                            touched.teacher
+                                                              ?.attendance?.[
+                                                              teacherIndex
+                                                            ]?.days?.[dayIndex]
+                                                              ?.coming_time &&
+                                                            !!errors.teacher
+                                                              ?.attendance?.[
+                                                              teacherIndex
+                                                            ]?.days?.[dayIndex]
+                                                              ?.coming_time
+                                                          }
+                                                          helperText={
+                                                            touched.teacher
+                                                              ?.attendance?.[
+                                                              teacherIndex
+                                                            ]?.days?.[dayIndex]
+                                                              ?.coming_time &&
+                                                            errors.teacher
+                                                              ?.attendance?.[
+                                                              teacherIndex
+                                                            ]?.days?.[dayIndex]
+                                                              ?.coming_time
+                                                          }
+                                                        />
+                                                      )}
+                                                    />
+                                                  )}
+                                                </Field>
+                                              </div>
+
+                                              <div>
+                                                <label
+                                                  className="font-semibold"
+                                                  htmlFor={`teacher.attendance.${teacherIndex}.days.${dayIndex}.leaving_time`}
+                                                >
+                                                  প্রস্থান
+                                                </label>
+                                                <Field
+                                                  name={`teacher.attendance.${teacherIndex}.days.${dayIndex}.leaving_time`}
+                                                >
+                                                  {({ field }) => (
+                                                    <TimePicker
+                                                      value={
+                                                        field.value
+                                                          ? dayjs(
+                                                              field.value,
+                                                              "HH:mm A"
+                                                            )
+                                                          : null
+                                                      }
+                                                      onChange={(newValue) =>
+                                                        setFieldValue(
+                                                          field.name,
+                                                          dayjs(
+                                                            newValue
+                                                          ).format("hh:mm A")
+                                                        )
+                                                      }
+                                                      renderInput={(params) => (
+                                                        <TextField
+                                                          {...params}
+                                                          id={`teacher.attendance.${teacherIndex}.days.${dayIndex}.leaving_time`}
+                                                          error={
+                                                            touched.teacher
+                                                              ?.attendance?.[
+                                                              teacherIndex
+                                                            ]?.days?.[dayIndex]
+                                                              ?.leaving_time &&
+                                                            !!errors.teacher
+                                                              ?.attendance?.[
+                                                              teacherIndex
+                                                            ]?.days?.[dayIndex]
+                                                              ?.leaving_time
+                                                          }
+                                                          helperText={
+                                                            touched.teacher
+                                                              ?.attendance?.[
+                                                              teacherIndex
+                                                            ]?.days?.[dayIndex]
+                                                              ?.leaving_time &&
+                                                            errors.teacher
+                                                              ?.attendance?.[
+                                                              teacherIndex
+                                                            ]?.days?.[dayIndex]
+                                                              ?.leaving_time
+                                                          }
+                                                        />
+                                                      )}
+                                                    />
+                                                  )}
+                                                </Field>
+                                              </div>
+                                            </>
+                                          )}
+
+                                          {values.teacher.attendance[
+                                            teacherIndex
+                                          ].days[dayIndex].status ===
+                                            "absent" && (
+                                            <div>
+                                              <label
+                                                className="font-semibold"
+                                                htmlFor={`teacher.attendance.${teacherIndex}.days.${dayIndex}.absence_reason`}
+                                              >
+                                                অনুপস্থিতির কারণ
+                                              </label>
+                                              <Field
+                                                as="select"
+                                                name={`teacher.attendance.${teacherIndex}.days.${dayIndex}.absence_reason`}
+                                                className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[2px]"
+                                              >
+                                                <option
+                                                  className="text-gray-300"
+                                                  value="একটি অপশন সিলেক্ট করুন"
+                                                  selected
+                                                >
+                                                  একটি অপশন সিলেক্ট করুন
+                                                </option>
+                                                <option value="চিকিৎসা">
+                                                  চিকিৎসা
+                                                </option>
+                                                <option value="বহিঃবাংলাদেশ">
+                                                  বহিঃবাংলাদেশ
+                                                </option>
+                                                <option value="মাতৃত্ত্ব">
+                                                  মাতৃত্ব
+                                                </option>
+                                                <option value="নৈমিত্তিক ছুটি">
+                                                  নৈমিত্তিক ছুটি
+                                                </option>
+                                                <option value="অননুমোদিত ছুটি">
+                                                  অননুমোদিত ছুটি
+                                                </option>
+                                              </Field>
+                                            </div>
+                                          )}
+                                        </div>
+                                      </Box>
+                                    ))}
+                                  </>
+                                )}
+                              </FieldArray>
+                            </Box>
+                          </LocalizationProvider>
+                        </ul>
+                      </AnimateHeight>
+                    </div>
+                  </div>
+                ))}
               </DataDropdown>
             </div>
 
@@ -2674,7 +2933,7 @@ const BilReturnEdit = ({ params }) => {
                         <h3 className="mb-4 text-lg text-[#008B4C] font-semibold">
                           মোট
                         </h3>
-                        {studentSurveyTotal.map((survey_total, index) => (
+                        {values.survey_total.map((survey_total, index) => (
                           <div
                             key={index}
                             className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4"
@@ -2683,19 +2942,16 @@ const BilReturnEdit = ({ params }) => {
                               name={`survey_total.${index}.boys`}
                               label={"বালক"}
                               placeholder={"বালক সংখ্যা দিন"}
-                              defaultValue={survey_total.boys}
                             />
                             <NumberField
                               name={`survey_total.${index}.girls`}
                               label={"বালিকা"}
                               placeholder={"বালিকা সংখ্যা দিন"}
-                              defaultValue={survey_total.girls}
                             />
                             <NumberField
                               name={`survey_total.${index}.total`}
                               label={"মোট শিক্ষার্থী"}
                               placeholder={"মোট শিক্ষার্থী সংখ্যা দিন"}
-                              defaultValue={survey_total.total}
                             />
                           </div>
                         ))}
@@ -2709,31 +2965,30 @@ const BilReturnEdit = ({ params }) => {
                         <h3 className="mb-4 mt-6 text-lg text-[#008B4C] font-semibold">
                           সংশ্লিষ্ট বিদ্যালয়ে ভর্তিকৃত
                         </h3>
-                        {studentSurveyAdmitted.map((survey_admitted, index) => (
-                          <div
-                            key={index}
-                            className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4"
-                          >
-                            <NumberField
-                              name={`survey_admitted.${index}.boys`}
-                              label={"বালক"}
-                              placeholder={"বালক সংখ্যা দিন"}
-                              defaultValue={survey_admitted.boys}
-                            />
-                            <NumberField
-                              name={`survey_admitted.${index}.girls`}
-                              label={"বালিকা"}
-                              placeholder={"বালিকা সংখ্যা দিন"}
-                              defaultValue={survey_admitted.girls}
-                            />
-                            <NumberField
-                              name={`survey_admitted.${index}.total`}
-                              label={"মোট শিক্ষার্থী"}
-                              placeholder={"মোট শিক্ষার্থী সংখ্যা দিন"}
-                              defaultValue={survey_admitted.total}
-                            />
-                          </div>
-                        ))}
+                        {values.survey_admitted.map(
+                          (survey_admitted, index) => (
+                            <div
+                              key={index}
+                              className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4"
+                            >
+                              <NumberField
+                                name={`survey_admitted.${index}.boys`}
+                                label={"বালক"}
+                                placeholder={"বালক সংখ্যা দিন"}
+                              />
+                              <NumberField
+                                name={`survey_admitted.${index}.girls`}
+                                label={"বালিকা"}
+                                placeholder={"বালিকা সংখ্যা দিন"}
+                              />
+                              <NumberField
+                                name={`survey_admitted.${index}.total`}
+                                label={"মোট শিক্ষার্থী"}
+                                placeholder={"মোট শিক্ষার্থী সংখ্যা দিন"}
+                              />
+                            </div>
+                          )
+                        )}
                       </div>
                     )}
                   </FieldArray>
@@ -2744,7 +2999,7 @@ const BilReturnEdit = ({ params }) => {
                         <h3 className="mb-4 mt-6 text-lg text-[#008B4C] font-semibold">
                           অন্যান্য বিদ্যালয়ে ভর্তিকৃত
                         </h3>
-                        {studentSurveyAdmittedToOthersSchool.map(
+                        {values.survey_admitted_to_other_school.map(
                           (survey_admitted_to_other_school, index) => (
                             <div
                               key={index}
@@ -2754,25 +3009,16 @@ const BilReturnEdit = ({ params }) => {
                                 name={`survey_admitted_to_other_school.${index}.boys`}
                                 label={"বালক"}
                                 placeholder={"বালক সংখ্যা দিন"}
-                                defaultValue={
-                                  survey_admitted_to_other_school.boys
-                                }
                               />
                               <NumberField
                                 name={`survey_admitted_to_other_school.${index}.girls`}
                                 label={"বালিকা"}
                                 placeholder={"বালিকা সংখ্যা দিন"}
-                                defaultValue={
-                                  survey_admitted_to_other_school.girls
-                                }
                               />
                               <NumberField
                                 name={`survey_admitted_to_other_school.${index}.total`}
                                 label={"মোট শিক্ষার্থী"}
                                 placeholder={"মোট শিক্ষার্থী সংখ্যা দিন"}
-                                defaultValue={
-                                  survey_admitted_to_other_school.total
-                                }
                               />
                             </div>
                           )
@@ -2787,7 +3033,7 @@ const BilReturnEdit = ({ params }) => {
                         <h3 className="mb-4 mt-6 text-lg text-[#008B4C] font-semibold">
                           অভর্তিকৃত
                         </h3>
-                        {studentSurveyUnAdmitted.map(
+                        {values.survey_unadmitted.map(
                           (survey_unadmitted, index) => (
                             <div
                               key={index}
@@ -2797,19 +3043,16 @@ const BilReturnEdit = ({ params }) => {
                                 name={`survey_unadmitted.${index}.boys`}
                                 label={"বালক"}
                                 placeholder={"বালক সংখ্যা দিন"}
-                                defaultValue={survey_unadmitted.boys}
                               />
                               <NumberField
                                 name={`survey_unadmitted.${index}.girls`}
                                 label={"বালিকা"}
                                 placeholder={"বালিকা সংখ্যা দিন"}
-                                defaultValue={survey_unadmitted.girls}
                               />
                               <NumberField
                                 name={`survey_unadmitted.${index}.total`}
                                 label={"মোট শিক্ষার্থী"}
                                 placeholder={"মোট শিক্ষার্থী সংখ্যা দিন"}
-                                defaultValue={survey_unadmitted.total}
                               />
                             </div>
                           )
@@ -2877,7 +3120,7 @@ const BilReturnEdit = ({ params }) => {
                         <FieldArray name="nursery_four_plus">
                           {() => (
                             <div>
-                              {nursery_four_plus.map(
+                              {values.nursery_four_plus.map(
                                 (nursery_four_plus, index) => (
                                   <div key={index}>
                                     <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4">
@@ -2886,51 +3129,33 @@ const BilReturnEdit = ({ params }) => {
                                         name={`nursery_four_plus.${index}.muslim_boy_student`}
                                         label="মুসলিম ছাত্র"
                                         placeholder="ছাত্র সংখ্যা দিন"
-                                        defaultValue={
-                                          nursery_four_plus.muslim_boy_student
-                                        }
                                       />
                                       <NumberField
                                         name={`nursery_four_plus.${index}.muslim_girl_student`}
                                         label="মুসলিম ছাত্রী"
                                         placeholder="ছাত্রী সংখ্যা দিন"
-                                        defaultValue={
-                                          nursery_four_plus.muslim_girl_student
-                                        }
                                       />
                                       <NumberField
                                         name={`nursery_four_plus.${index}.muslim_total_student`}
                                         label="মোট মুসলিম শিক্ষার্থী"
                                         placeholder="মোট সংখ্যা দিন"
-                                        defaultValue={
-                                          nursery_four_plus.muslim_total_student
-                                        }
                                       />
 
-                                      {/* data for hindu students */}
+                                      {/* data for hidu students */}
                                       <NumberField
                                         name={`nursery_four_plus.${index}.hindu_boy_student`}
                                         label="হিন্দু ছাত্র"
                                         placeholder="ছাত্র সংখ্যা দিন"
-                                        defaultValue={
-                                          nursery_four_plus.hindu_boy_student
-                                        }
                                       />
                                       <NumberField
                                         name={`nursery_four_plus.${index}.hindu_girl_student`}
                                         label="হিন্দু ছাত্রী"
                                         placeholder="ছাত্রী সংখ্যা দিন"
-                                        defaultValue={
-                                          nursery_four_plus.hindu_girl_student
-                                        }
                                       />
                                       <NumberField
                                         name={`nursery_four_plus.${index}.hindu_total_student`}
                                         label="মোট হিন্দু শিক্ষার্থী"
                                         placeholder="মোট সংখ্যা দিন"
-                                        defaultValue={
-                                          nursery_four_plus.hindu_total_student
-                                        }
                                       />
 
                                       {/* data for total students */}
@@ -2938,34 +3163,22 @@ const BilReturnEdit = ({ params }) => {
                                         name={`nursery_four_plus.${index}.total_boy_student`}
                                         label="মোট ছাত্র"
                                         placeholder="ছাত্র সংখ্যা দিন"
-                                        defaultValue={
-                                          nursery_four_plus.total_boy_student
-                                        }
                                       />
                                       <NumberField
                                         name={`nursery_four_plus.${index}.total_girl_student`}
                                         label="মোট ছাত্রী"
                                         placeholder="ছাত্রী সংখ্যা দিন"
-                                        defaultValue={
-                                          nursery_four_plus.total_girl_student
-                                        }
                                       />
                                       <NumberField
                                         name={`nursery_four_plus.${index}.total_student`}
                                         label="মোট শিক্ষার্থী"
                                         placeholder="মোট সংখ্যা দিন"
-                                        defaultValue={
-                                          nursery_four_plus.total_student
-                                        }
                                       />
 
                                       <NumberField
                                         name={`nursery_four_plus.${index}.special_demanded_student`}
                                         label="বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী"
                                         placeholder="মোট সংখ্যা দিন"
-                                        defaultValue={
-                                          nursery_four_plus.special_demanded_student
-                                        }
                                       />
                                     </div>
                                   </div>
@@ -3028,82 +3241,70 @@ const BilReturnEdit = ({ params }) => {
                         <FieldArray name="nursery_five_plus">
                           {() => (
                             <div>
-                              {nursery_five_plus.map((nursery, index) => (
-                                <div key={index}>
-                                  <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4">
-                                    {/* data for muslim students */}
-                                    <NumberField
-                                      name={`nursery_five_plus.${index}.muslim_boy_student`}
-                                      label="মুসলিম ছাত্র"
-                                      placeholder="ছাত্র সংখ্যা দিন"
-                                      defaultValue={nursery.muslim_boy_student}
-                                    />
-                                    <NumberField
-                                      name={`nursery_five_plus.${index}.muslim_girl_student`}
-                                      label="মুসলিম ছাত্রী"
-                                      placeholder="ছাত্রী সংখ্যা দিন"
-                                      defaultValue={nursery.muslim_girl_student}
-                                    />
-                                    <NumberField
-                                      name={`nursery_five_plus.${index}.muslim_total_student`}
-                                      label="মোট মুসলিম শিক্ষার্থী"
-                                      placeholder="মোট শিক্ষার্থী সংখ্যা দিন"
-                                      defaultValue={
-                                        nursery.muslim_total_student
-                                      }
-                                    />
+                              {values.nursery_five_plus.map(
+                                (nursery_five_plus, index) => (
+                                  <div key={index}>
+                                    <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4">
+                                      {/* data for muslim students */}
+                                      <NumberField
+                                        name={`nursery_five_plus.${index}.muslim_boy_student`}
+                                        label="মুসলিম ছাত্র"
+                                        placeholder="ছাত্র সংখ্যা দিন"
+                                      />
+                                      <NumberField
+                                        name={`nursery_five_plus.${index}.muslim_girl_student`}
+                                        label="মুসলিম ছাত্রী"
+                                        placeholder="ছাত্রী সংখ্যা দিন"
+                                      />
+                                      <NumberField
+                                        name={`nursery_five_plus.${index}.muslim_total_student`}
+                                        label="মোট মুসলিম শিক্ষার্থী"
+                                        placeholder="মোট শিক্ষার্থী সংখ্যা দিন"
+                                      />
 
-                                    {/* data for hindu students */}
-                                    <NumberField
-                                      name={`nursery_five_plus.${index}.hindu_boy_student`}
-                                      label="হিন্দু ছাত্র"
-                                      placeholder="ছাত্র সংখ্যা দিন"
-                                      defaultValue={nursery.hindu_boy_student}
-                                    />
-                                    <NumberField
-                                      name={`nursery_five_plus.${index}.hindu_girl_student`}
-                                      label="হিন্দু ছাত্রী"
-                                      placeholder="ছাত্রী সংখ্যা দিন"
-                                      defaultValue={nursery.hindu_girl_student}
-                                    />
-                                    <NumberField
-                                      name={`nursery_five_plus.${index}.hindu_total_student`}
-                                      label="মোট হিন্দু শিক্ষার্থী"
-                                      placeholder="মোট শিক্ষার্থী সংখ্যা দিন"
-                                      defaultValue={nursery.hindu_total_student}
-                                    />
+                                      {/* data for hidu students */}
+                                      <NumberField
+                                        name={`nursery_five_plus.${index}.hindu_boy_student`}
+                                        label="হিন্দু ছাত্র"
+                                        placeholder="ছাত্র সংখ্যা দিন"
+                                      />
+                                      <NumberField
+                                        name={`nursery_five_plus.${index}.hindu_girl_student`}
+                                        label="হিন্দু ছাত্রী"
+                                        placeholder="ছাত্রী সংখ্যা দিন"
+                                      />
+                                      <NumberField
+                                        name={`nursery_five_plus.${index}.hindu_total_student`}
+                                        label="মোট হিন্দু শিক্ষার্থী"
+                                        placeholder="মোট শিক্ষার্থী সংখ্যা দিন"
+                                      />
 
-                                    {/* data for total students */}
-                                    <NumberField
-                                      name={`nursery_five_plus.${index}.total_boy_student`}
-                                      label="মোট ছাত্র"
-                                      placeholder="ছাত্র সংখ্যা দিন"
-                                      defaultValue={nursery.total_boy_student}
-                                    />
-                                    <NumberField
-                                      name={`nursery_five_plus.${index}.total_girl_student`}
-                                      label="মোট ছাত্রী"
-                                      placeholder="ছাত্রী সংখ্যা দিন"
-                                      defaultValue={nursery.total_girl_student}
-                                    />
-                                    <NumberField
-                                      name={`nursery_five_plus.${index}.total_student`}
-                                      label="মোট শিক্ষার্থী"
-                                      placeholder="মোট শিক্ষার্থী সংখ্যা দিন"
-                                      defaultValue={nursery.total_student}
-                                    />
+                                      {/* data for total students */}
+                                      <NumberField
+                                        name={`nursery_five_plus.${index}.total_boy_student`}
+                                        label="মোট ছাত্র"
+                                        placeholder="ছাত্র সংখ্যা দিন"
+                                      />
+                                      <NumberField
+                                        name={`nursery_five_plus.${index}.total_girl_student`}
+                                        label="মোট ছাত্রী"
+                                        placeholder="ছাত্রী সংখ্যা দিন"
+                                      />
+                                      <NumberField
+                                        name={`nursery_five_plus.${index}.total_student`}
+                                        label="মোট শিক্ষার্থী"
+                                        placeholder="মোট শিক্ষার্থী সংখ্যা দিন"
+                                      />
 
-                                    <NumberField
-                                      name={`nursery_five_plus.${index}.special_demanded_student`}
-                                      label="বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী"
-                                      placeholder="মোট শিক্ষার্থী সংখ্যা দিন"
-                                      defaultValue={
-                                        nursery.special_demanded_student
-                                      }
-                                    />
+                                      <NumberField
+                                        name={`nursery_five_plus.${index}.special_demanded_student`}
+                                        label="বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী"
+                                        placeholder="মোট শিক্ষার্থী সংখ্যা দিন"
+                                      />
+                                    </div>
                                   </div>
-                                </div>
-                              ))}
+                                )
+                              )}
                             </div>
                           )}
                         </FieldArray>
@@ -3155,9 +3356,9 @@ const BilReturnEdit = ({ params }) => {
                     >
                       <ul className="p-5">
                         <FieldArray name="class_one">
-                          {({}) => (
+                          {() => (
                             <div>
-                              {class_one.map((classItem, index) => (
+                              {values.class_one.map((class_one, index) => (
                                 <div key={index}>
                                   <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4">
                                     {/* data for muslim students */}
@@ -3165,49 +3366,33 @@ const BilReturnEdit = ({ params }) => {
                                       name={`class_one.${index}.muslim_boy_student`}
                                       label="মুসলিম ছাত্র"
                                       placeholder="ছাত্র সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.muslim_boy_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_one.${index}.muslim_girl_student`}
                                       label="মুসলিম ছাত্রী"
                                       placeholder="ছাত্রী সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.muslim_girl_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_one.${index}.muslim_total_student`}
                                       label="মোট মুসলিম শিক্ষার্থী"
                                       placeholder="মোট শিক্ষার্থী সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.muslim_total_student
-                                      }
                                     />
 
-                                    {/* data for hindu students */}
+                                    {/* data for hidu students */}
                                     <NumberField
                                       name={`class_one.${index}.hindu_boy_student`}
                                       label="হিন্দু ছাত্র"
                                       placeholder="ছাত্র সংখ্যা দিন"
-                                      defaultValue={classItem.hindu_boy_student}
                                     />
                                     <NumberField
                                       name={`class_one.${index}.hindu_girl_student`}
                                       label="হিন্দু ছাত্রী"
                                       placeholder="ছাত্রী সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.hindu_girl_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_one.${index}.hindu_total_student`}
                                       label="মোট হিন্দু শিক্ষার্থী"
                                       placeholder="মোট শিক্ষার্থী সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.hindu_total_student
-                                      }
                                     />
 
                                     {/* data for total students */}
@@ -3215,30 +3400,22 @@ const BilReturnEdit = ({ params }) => {
                                       name={`class_one.${index}.total_boy_student`}
                                       label="মোট ছাত্র"
                                       placeholder="ছাত্র সংখ্যা দিন"
-                                      defaultValue={classItem.total_boy_student}
                                     />
                                     <NumberField
                                       name={`class_one.${index}.total_girl_student`}
                                       label="মোট ছাত্রী"
                                       placeholder="ছাত্রী সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.total_girl_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_one.${index}.total_student`}
                                       label="মোট শিক্ষার্থী"
                                       placeholder="মোট শিক্ষার্থী সংখ্যা দিন"
-                                      defaultValue={classItem.total_student}
                                     />
 
                                     <NumberField
                                       name={`class_one.${index}.special_demanded_student`}
                                       label="বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী"
                                       placeholder="মোট শিক্ষার্থী সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.special_demanded_student
-                                      }
                                     />
                                   </div>
                                 </div>
@@ -3294,9 +3471,9 @@ const BilReturnEdit = ({ params }) => {
                     >
                       <ul className="p-5">
                         <FieldArray name="class_two">
-                          {({}) => (
+                          {() => (
                             <div>
-                              {class_two.map((classItem, index) => (
+                              {values.class_two.map((class_two, index) => (
                                 <div key={index}>
                                   <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4">
                                     {/* data for muslim students */}
@@ -3304,49 +3481,33 @@ const BilReturnEdit = ({ params }) => {
                                       name={`class_two.${index}.muslim_boy_student`}
                                       label="মুসলিম ছাত্র"
                                       placeholder="ছাত্র সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.muslim_boy_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_two.${index}.muslim_girl_student`}
                                       label="মুসলিম ছাত্রী"
                                       placeholder="ছাত্রী সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.muslim_girl_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_two.${index}.muslim_total_student`}
                                       label="মোট মুসলিম শিক্ষার্থী"
                                       placeholder="মোট সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.muslim_total_student
-                                      }
                                     />
 
-                                    {/* data for hindu students */}
+                                    {/* data for hidu students */}
                                     <NumberField
                                       name={`class_two.${index}.hindu_boy_student`}
                                       label="হিন্দু ছাত্র"
                                       placeholder="ছাত্র সংখ্যা দিন"
-                                      defaultValue={classItem.hindu_boy_student}
                                     />
                                     <NumberField
                                       name={`class_two.${index}.hindu_girl_student`}
                                       label="হিন্দু ছাত্রী"
                                       placeholder="ছাত্রী সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.hindu_girl_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_two.${index}.hindu_total_student`}
                                       label="মোট হিন্দু শিক্ষার্থী"
                                       placeholder="মোট সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.hindu_total_student
-                                      }
                                     />
 
                                     {/* data for total students */}
@@ -3354,30 +3515,22 @@ const BilReturnEdit = ({ params }) => {
                                       name={`class_two.${index}.total_boy_student`}
                                       label="মোট ছাত্র"
                                       placeholder="ছাত্র সংখ্যা দিন"
-                                      defaultValue={classItem.total_boy_student}
                                     />
                                     <NumberField
                                       name={`class_two.${index}.total_girl_student`}
                                       label="মোট ছাত্রী"
                                       placeholder="ছাত্রী সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.total_girl_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_two.${index}.total_student`}
                                       label="মোট শিক্ষার্থী"
                                       placeholder="মোট সংখ্যা দিন"
-                                      defaultValue={classItem.total_student}
                                     />
 
                                     <NumberField
                                       name={`class_two.${index}.special_demanded_student`}
                                       label="বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী"
                                       placeholder="মোট সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.special_demanded_student
-                                      }
                                     />
                                   </div>
                                 </div>
@@ -3433,9 +3586,9 @@ const BilReturnEdit = ({ params }) => {
                     >
                       <ul className="p-5">
                         <FieldArray name="class_three">
-                          {({}) => (
+                          {() => (
                             <div>
-                              {class_three.map((classItem, index) => (
+                              {values.class_three.map((class_three, index) => (
                                 <div key={index}>
                                   <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4">
                                     {/* data for muslim students */}
@@ -3443,49 +3596,33 @@ const BilReturnEdit = ({ params }) => {
                                       name={`class_three.${index}.muslim_boy_student`}
                                       label="মুসলিম ছাত্র"
                                       placeholder="ছাত্র সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.muslim_boy_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_three.${index}.muslim_girl_student`}
                                       label="মুসলিম ছাত্রী"
                                       placeholder="ছাত্রী সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.muslim_girl_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_three.${index}.muslim_total_student`}
                                       label="মোট মুসলিম শিক্ষার্থী"
                                       placeholder="মোট সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.muslim_total_student
-                                      }
                                     />
 
-                                    {/* data for hindu students */}
+                                    {/* data for hidu students */}
                                     <NumberField
                                       name={`class_three.${index}.hindu_boy_student`}
                                       label="হিন্দু ছাত্র"
                                       placeholder="ছাত্র সংখ্যা দিন"
-                                      defaultValue={classItem.hindu_boy_student}
                                     />
                                     <NumberField
                                       name={`class_three.${index}.hindu_girl_student`}
                                       label="হিন্দু ছাত্রী"
                                       placeholder="ছাত্রী সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.hindu_girl_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_three.${index}.hindu_total_student`}
                                       label="মোট হিন্দু শিক্ষার্থী"
                                       placeholder="মোট সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.hindu_total_student
-                                      }
                                     />
 
                                     {/* data for total students */}
@@ -3493,30 +3630,22 @@ const BilReturnEdit = ({ params }) => {
                                       name={`class_three.${index}.total_boy_student`}
                                       label="মোট ছাত্র"
                                       placeholder="ছাত্র সংখ্যা দিন"
-                                      defaultValue={classItem.total_boy_student}
                                     />
                                     <NumberField
                                       name={`class_three.${index}.total_girl_student`}
                                       label="মোট ছাত্রী"
                                       placeholder="ছাত্রী সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.total_girl_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_three.${index}.total_student`}
                                       label="মোট শিক্ষার্থী"
                                       placeholder="মোট সংখ্যা দিন"
-                                      defaultValue={classItem.total_student}
                                     />
 
                                     <NumberField
                                       name={`class_three.${index}.special_demanded_student`}
                                       label="বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী"
                                       placeholder="মোট সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.special_demanded_student
-                                      }
                                     />
                                   </div>
                                 </div>
@@ -3574,7 +3703,7 @@ const BilReturnEdit = ({ params }) => {
                         <FieldArray name="class_four">
                           {() => (
                             <div>
-                              {class_four.map((classItem, index) => (
+                              {values.class_four.map((class_four, index) => (
                                 <div key={index}>
                                   <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4">
                                     {/* data for muslim students */}
@@ -3582,49 +3711,33 @@ const BilReturnEdit = ({ params }) => {
                                       name={`class_four.${index}.muslim_boy_student`}
                                       label="মুসলিম ছাত্র"
                                       placeholder="ছাত্র সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.muslim_boy_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_four.${index}.muslim_girl_student`}
                                       label="মুসলিম ছাত্রী"
                                       placeholder="ছাত্রী সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.muslim_girl_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_four.${index}.muslim_total_student`}
                                       label="মোট মুসলিম শিক্ষার্থী"
                                       placeholder="মোট সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.muslim_total_student
-                                      }
                                     />
 
-                                    {/* data for hindu students */}
+                                    {/* data for hidu students */}
                                     <NumberField
                                       name={`class_four.${index}.hindu_boy_student`}
                                       label="হিন্দু ছাত্র"
                                       placeholder="ছাত্র সংখ্যা দিন"
-                                      defaultValue={classItem.hindu_boy_student}
                                     />
                                     <NumberField
                                       name={`class_four.${index}.hindu_girl_student`}
                                       label="হিন্দু ছাত্রী"
                                       placeholder="ছাত্রী সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.hindu_girl_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_four.${index}.hindu_total_student`}
                                       label="মোট হিন্দু শিক্ষার্থী"
                                       placeholder="মোট সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.hindu_total_student
-                                      }
                                     />
 
                                     {/* data for total students */}
@@ -3632,30 +3745,22 @@ const BilReturnEdit = ({ params }) => {
                                       name={`class_four.${index}.total_boy_student`}
                                       label="মোট ছাত্র"
                                       placeholder="ছাত্র সংখ্যা দিন"
-                                      defaultValue={classItem.total_boy_student}
                                     />
                                     <NumberField
                                       name={`class_four.${index}.total_girl_student`}
                                       label="মোট ছাত্রী"
                                       placeholder="ছাত্রী সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.total_girl_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_four.${index}.total_student`}
                                       label="মোট শিক্ষার্থী"
                                       placeholder="মোট সংখ্যা দিন"
-                                      defaultValue={classItem.total_student}
                                     />
 
                                     <NumberField
                                       name={`class_four.${index}.special_demanded_student`}
                                       label="বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী"
                                       placeholder="মোট সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.special_demanded_student
-                                      }
                                     />
                                   </div>
                                 </div>
@@ -3713,7 +3818,7 @@ const BilReturnEdit = ({ params }) => {
                         <FieldArray name="class_five">
                           {() => (
                             <div>
-                              {class_five.map((classItem, index) => (
+                              {values.class_five.map((class_five, index) => (
                                 <div key={index}>
                                   <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4">
                                     {/* data for muslim students */}
@@ -3721,49 +3826,33 @@ const BilReturnEdit = ({ params }) => {
                                       name={`class_five.${index}.muslim_boy_student`}
                                       label="মুসলিম ছাত্র"
                                       placeholder="ছাত্র সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.muslim_boy_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_five.${index}.muslim_girl_student`}
                                       label="মুসলিম ছাত্রী"
                                       placeholder="ছাত্রী সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.muslim_girl_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_five.${index}.muslim_total_student`}
                                       label="মোট মুসলিম শিক্ষার্থী"
                                       placeholder="মোট সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.muslim_total_student
-                                      }
                                     />
 
-                                    {/* data for hindu students */}
+                                    {/* data for hidu students */}
                                     <NumberField
                                       name={`class_five.${index}.hindu_boy_student`}
                                       label="হিন্দু ছাত্র"
                                       placeholder="ছাত্র সংখ্যা দিন"
-                                      defaultValue={classItem.hindu_boy_student}
                                     />
                                     <NumberField
                                       name={`class_five.${index}.hindu_girl_student`}
                                       label="হিন্দু ছাত্রী"
                                       placeholder="ছাত্রী সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.hindu_girl_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_five.${index}.hindu_total_student`}
                                       label="মোট হিন্দু শিক্ষার্থী"
                                       placeholder="মোট সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.hindu_total_student
-                                      }
                                     />
 
                                     {/* data for total students */}
@@ -3771,30 +3860,22 @@ const BilReturnEdit = ({ params }) => {
                                       name={`class_five.${index}.total_boy_student`}
                                       label="মোট ছাত্র"
                                       placeholder="ছাত্র সংখ্যা দিন"
-                                      defaultValue={classItem.total_boy_student}
                                     />
                                     <NumberField
                                       name={`class_five.${index}.total_girl_student`}
                                       label="মোট ছাত্রী"
                                       placeholder="ছাত্রী সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.total_girl_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_five.${index}.total_student`}
                                       label="মোট শিক্ষার্থী"
                                       placeholder="মোট সংখ্যা দিন"
-                                      defaultValue={classItem.total_student}
                                     />
 
                                     <NumberField
                                       name={`class_five.${index}.special_demanded_student`}
                                       label="বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী"
                                       placeholder="মোট সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.special_demanded_student
-                                      }
                                     />
                                   </div>
                                 </div>
@@ -3850,7 +3931,7 @@ const BilReturnEdit = ({ params }) => {
                         <FieldArray name="class_six">
                           {() => (
                             <div>
-                              {class_six.map((classItem, index) => (
+                              {values.class_six.map((class_six, index) => (
                                 <div key={index}>
                                   <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4">
                                     {/* data for muslim students */}
@@ -3858,49 +3939,33 @@ const BilReturnEdit = ({ params }) => {
                                       name={`class_six.${index}.muslim_boy_student`}
                                       label="মুসলিম ছাত্র"
                                       placeholder="ছাত্র সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.muslim_boy_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_six.${index}.muslim_girl_student`}
                                       label="মুসলিম ছাত্রী"
                                       placeholder="ছাত্রী সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.muslim_girl_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_six.${index}.muslim_total_student`}
                                       label="মোট মুসলিম শিক্ষার্থী"
                                       placeholder="মোট সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.muslim_total_student
-                                      }
                                     />
 
-                                    {/* data for hindu students */}
+                                    {/* data for hidu students */}
                                     <NumberField
                                       name={`class_six.${index}.hindu_boy_student`}
                                       label="হিন্দু ছাত্র"
                                       placeholder="ছাত্র সংখ্যা দিন"
-                                      defaultValue={classItem.hindu_boy_student}
                                     />
                                     <NumberField
                                       name={`class_six.${index}.hindu_girl_student`}
                                       label="হিন্দু ছাত্রী"
                                       placeholder="ছাত্রী সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.hindu_girl_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_six.${index}.hindu_total_student`}
                                       label="মোট হিন্দু শিক্ষার্থী"
                                       placeholder="মোট সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.hindu_total_student
-                                      }
                                     />
 
                                     {/* data for total students */}
@@ -3908,30 +3973,22 @@ const BilReturnEdit = ({ params }) => {
                                       name={`class_six.${index}.total_boy_student`}
                                       label="মোট ছাত্র"
                                       placeholder="ছাত্র সংখ্যা দিন"
-                                      defaultValue={classItem.total_boy_student}
                                     />
                                     <NumberField
                                       name={`class_six.${index}.total_girl_student`}
                                       label="মোট ছাত্রী"
                                       placeholder="ছাত্রী সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.total_girl_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_six.${index}.total_student`}
                                       label="মোট শিক্ষার্থী"
                                       placeholder="মোট সংখ্যা দিন"
-                                      defaultValue={classItem.total_student}
                                     />
 
                                     <NumberField
                                       name={`class_six.${index}.special_demanded_student`}
                                       label="বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী"
                                       placeholder="মোট সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.special_demanded_student
-                                      }
                                     />
                                   </div>
                                 </div>
@@ -3989,7 +4046,7 @@ const BilReturnEdit = ({ params }) => {
                         <FieldArray name="class_seven">
                           {() => (
                             <div>
-                              {class_seven.map((classItem, index) => (
+                              {values.class_seven.map((class_seven, index) => (
                                 <div key={index}>
                                   <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4">
                                     {/* data for muslim students */}
@@ -3997,49 +4054,33 @@ const BilReturnEdit = ({ params }) => {
                                       name={`class_seven.${index}.muslim_boy_student`}
                                       label="মুসলিম ছাত্র"
                                       placeholder="ছাত্র সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.muslim_boy_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_seven.${index}.muslim_girl_student`}
                                       label="মুসলিম ছাত্রী"
                                       placeholder="ছাত্রী সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.muslim_girl_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_seven.${index}.muslim_total_student`}
                                       label="মোট মুসলিম শিক্ষার্থী"
                                       placeholder="মোট সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.muslim_total_student
-                                      }
                                     />
 
-                                    {/* data for hindu students */}
+                                    {/* data for hidu students */}
                                     <NumberField
                                       name={`class_seven.${index}.hindu_boy_student`}
                                       label="হিন্দু ছাত্র"
                                       placeholder="ছাত্র সংখ্যা দিন"
-                                      defaultValue={classItem.hindu_boy_student}
                                     />
                                     <NumberField
                                       name={`class_seven.${index}.hindu_girl_student`}
                                       label="হিন্দু ছাত্রী"
                                       placeholder="ছাত্রী সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.hindu_girl_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_seven.${index}.hindu_total_student`}
                                       label="মোট হিন্দু শিক্ষার্থী"
                                       placeholder="মোট সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.hindu_total_student
-                                      }
                                     />
 
                                     {/* data for total students */}
@@ -4047,30 +4088,22 @@ const BilReturnEdit = ({ params }) => {
                                       name={`class_seven.${index}.total_boy_student`}
                                       label="মোট ছাত্র"
                                       placeholder="ছাত্র সংখ্যা দিন"
-                                      defaultValue={classItem.total_boy_student}
                                     />
                                     <NumberField
                                       name={`class_seven.${index}.total_girl_student`}
                                       label="মোট ছাত্রী"
                                       placeholder="ছাত্রী সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.total_girl_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_seven.${index}.total_student`}
                                       label="মোট শিক্ষার্থী"
                                       placeholder="মোট সংখ্যা দিন"
-                                      defaultValue={classItem.total_student}
                                     />
 
                                     <NumberField
                                       name={`class_seven.${index}.special_demanded_student`}
                                       label="বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী"
                                       placeholder="মোট সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.special_demanded_student
-                                      }
                                     />
                                   </div>
                                 </div>
@@ -4128,7 +4161,7 @@ const BilReturnEdit = ({ params }) => {
                         <FieldArray name="class_eight">
                           {() => (
                             <div>
-                              {class_eight.map((classItem, index) => (
+                              {values.class_eight.map((class_eight, index) => (
                                 <div key={index}>
                                   <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4">
                                     {/* data for muslim students */}
@@ -4136,49 +4169,33 @@ const BilReturnEdit = ({ params }) => {
                                       name={`class_eight.${index}.muslim_boy_student`}
                                       label="মুসলিম ছাত্র"
                                       placeholder="ছাত্র সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.muslim_boy_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_eight.${index}.muslim_girl_student`}
                                       label="মুসলিম ছাত্রী"
                                       placeholder="ছাত্রী সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.muslim_girl_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_eight.${index}.muslim_total_student`}
                                       label="মোট মুসলিম শিক্ষার্থী"
                                       placeholder="মোট সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.muslim_total_student
-                                      }
                                     />
 
-                                    {/* data for hindu students */}
+                                    {/* data for hidu students */}
                                     <NumberField
                                       name={`class_eight.${index}.hindu_boy_student`}
                                       label="হিন্দু ছাত্র"
                                       placeholder="ছাত্র সংখ্যা দিন"
-                                      defaultValue={classItem.hindu_boy_student}
                                     />
                                     <NumberField
                                       name={`class_eight.${index}.hindu_girl_student`}
                                       label="হিন্দু ছাত্রী"
                                       placeholder="ছাত্রী সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.hindu_girl_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_eight.${index}.hindu_total_student`}
                                       label="মোট হিন্দু শিক্ষার্থী"
                                       placeholder="মোট সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.hindu_total_student
-                                      }
                                     />
 
                                     {/* data for total students */}
@@ -4186,30 +4203,22 @@ const BilReturnEdit = ({ params }) => {
                                       name={`class_eight.${index}.total_boy_student`}
                                       label="মোট ছাত্র"
                                       placeholder="ছাত্র সংখ্যা দিন"
-                                      defaultValue={classItem.total_boy_student}
                                     />
                                     <NumberField
                                       name={`class_eight.${index}.total_girl_student`}
                                       label="মোট ছাত্রী"
                                       placeholder="ছাত্রী সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.total_girl_student
-                                      }
                                     />
                                     <NumberField
                                       name={`class_eight.${index}.total_student`}
                                       label="মোট শিক্ষার্থী"
                                       placeholder="মোট সংখ্যা দিন"
-                                      defaultValue={classItem.total_student}
                                     />
 
                                     <NumberField
                                       name={`class_eight.${index}.special_demanded_student`}
                                       label="বিশেষ চাহিদা সম্পন্ন শিক্ষার্থী"
                                       placeholder="মোট সংখ্যা দিন"
-                                      defaultValue={
-                                        classItem.special_demanded_student
-                                      }
                                     />
                                   </div>
                                 </div>
@@ -4232,25 +4241,23 @@ const BilReturnEdit = ({ params }) => {
                   <FieldArray name="asroyon_survey">
                     {() => (
                       <div>
-                        {studentAsroyonSurvey.map((survery, index) => (
+                        {values.asroyon_survey.map((survery, index) => (
                           <div key={index}>
                             <div className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4">
                               <NumberField
-                                defaultValue={survery.survayed_students}
+                                defaultValue={studentSurveyTotal}
                                 name={`asroyon_survey.${index}.survayed_students`}
                                 label="মোট জরিপকৃত শিক্ষার্থী"
                                 placeholder="শিক্ষার্থী সংখ্যা দিন"
                               />
                               <NumberField
-                                defaultValue={
-                                  survery.admitted_releted_school_students
-                                }
+                                defaultValue={studentSurveyAdmitted}
                                 name={`asroyon_survey.${index}.admitted_releted_school_students`}
                                 label="সংশ্লিষ্ট বিদ্যালয়ে ভর্তিকৃত শিক্ষার্থী"
                                 placeholder="শিক্ষার্থী সংখ্যা দিন"
                               />
                               <NumberField
-                                defaultValue={survery.unadmitted_students}
+                                defaultValue={studentSurveyUnAdmitted}
                                 name={`asroyon_survey.${index}.unadmitted_students`}
                                 label="অভর্তিকৃত শিক্ষার্থী"
                                 placeholder="শিক্ষার্থী সংখ্যা দিন"
@@ -4267,14 +4274,14 @@ const BilReturnEdit = ({ params }) => {
 
             <div className="flex items-center justify-between">
               <button
-                disabled={submitLoading}
+                disabled={loading}
                 type="submit"
                 className="px-6 md:py-[10px] py-[6px] md:pt-[15px] pt-[10px] bg-[#008B4C] border border-[#008B4C] hover:bg-[#006f3d] text-white rounded-md font-semibold capitalize mt-5"
               >
-                {submitLoading ? (
+                {loading ? (
                   <p className="text-white flex items-center gap-2">
                     <CircularProgress className="btnSpinner" />
-                    <span>লোড হচ্ছে...</span>
+                    <span>আপডেট হচ্ছে...</span>
                   </p>
                 ) : (
                   "আপডেট করুন"

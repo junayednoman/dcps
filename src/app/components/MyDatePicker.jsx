@@ -8,8 +8,6 @@ const MyDatePicker = ({ name, label, value, defaultValue }) => {
         {label}
       </label>
       <Field
-        defaultValue={defaultValue}
-        value={value}
         id={name}
         name={name}
         type="date"

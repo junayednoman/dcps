@@ -31,6 +31,7 @@ import { generateUniqueId } from "@/lib/uniqueId";
 import moment from "moment";
 import { budgetYearOptions } from "../bill-return-edit/[dataId]/page";
 import Loading from "@/app/components/Loading";
+import Image from "next/image";
 
 const monthOptions = [
   { value: "January", label: "জানুয়ারী" },
@@ -56,7 +57,7 @@ const BilReturnSubmit = () => {
   // fetch  latest bill data
   React.useEffect(() => {
     setBillDataLoading(true);
-    const apiUrl = `https://dmsp.vercel.app/api/bill-return/latest`;
+    const apiUrl = `http://localhost:3000/api/bill-return/latest`;
     fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -314,28 +315,8 @@ const BilReturnSubmit = () => {
       formData.student.admission.class_eight = values.class_eight;
       formData.student.asroyon_survey = values.asroyon_survey;
 
-      const updatedSalary = await Promise.all(
-        formData.teacher.salary.map(async (item) => {
-          if (item.signature) {
-            try {
-              const response = await uploadImageToImageBB(item.signature);
-              if (response.success) {
-                return { ...item, signature: response.data.display_url };
-              }
-            } catch (error) {
-              console.log(error.message);
-              return item;
-            }
-          }
-          return item;
-        })
-      );
-
-      // Set the updated values back to Formik state
-      formData.teacher.salary = updatedSalary;
-
       // API call with the updated form data
-      const apiUrl = "https://dmsp.vercel.app/api/bill-return/submit";
+      const apiUrl = "http://localhost:3000/api/bill-return/submit";
       fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -370,6 +351,7 @@ const BilReturnSubmit = () => {
             window.location.reload();
           }, 1800);
         });
+      console.log("inside submit", formData.teacher);
     }
   };
 
@@ -418,7 +400,7 @@ const BilReturnSubmit = () => {
     rasel_corner,
     shahid_minar,
   } = schoolData?.infrastructure?.others || {};
-  console.log(fetchedLaptop);
+
   const {
     deep_tube_wells,
     deep_tube_wells_condition,
@@ -502,12 +484,12 @@ const BilReturnSubmit = () => {
 
   const initialValues = {
     unique_id: "",
-    hajira_from: "",
-    hajira_to: "",
+    hajira_from: teacherData?.hajira_from || "",
+    hajira_to: teacherData?.hajira_to || "",
     submitter_info: {
       submitted_by: "",
     },
-    budgets: [{}],
+    budgets: fetchedBillData?.school?.development || [{}],
     school: {
       general: {
         name: schoolName,
@@ -623,38 +605,50 @@ const BilReturnSubmit = () => {
         women_teacher_number: women_teacher_number,
         vacation_consumers: vacation_consumers,
       },
-      attendance: Array(15).fill({
-        name: "",
-        days: Array(31).fill({
-          status: "option",
-          coming_time: null,
-          leaving_time: null,
-          signature: "",
-          absence_reason: "",
-        }),
-      }),
+      attendance: teacherData?.attendance?.map((teacher) => ({
+        name: teacher.name || "",
+        signature: teacher.signature || "",
+        days: teacher.days.map((day) => ({
+          status: day.status || "option",
+          coming_time: day.coming_time || null,
+          leaving_time: day.leaving_time || null,
+          absence_reason: day.absence_reason || "",
+        })),
+      })),
+      // attendance: Array(15).fill({
+      //   name: "",
+      //   days: Array(31).fill({
+      //     status: "option",
+      //     coming_time: null,
+      //     leaving_time: null,
+      //     signature: "",
+      //     absence_reason: "",
+      //   }),
+      // }),
     },
     students: {
       admission: {},
     },
-    salary: [{}],
-    vacations: [{}],
-    nursery_four_plus: [{}],
-    nursery_five_plus: [{}],
-    class_one: [{}],
-    class_two: [{}],
-    class_three: [{}],
-    class_four: [{}],
-    class_five: [{}],
-    class_six: [{}],
-    class_seven: [{}],
-    class_eight: [{}],
-    asroyon_survey: [{}],
-    survey_total: [{}],
-    survey_admitted: [{}],
-    survey_unadmitted: [{}],
-    survey_admitted_to_other_school: [{}],
-    unauthorized_teacher: [{}],
+    salary: teacherData?.salary || [{}],
+    vacations: teacherVacations || [{}],
+    nursery_four_plus: nursery_four_plus || [{}],
+    nursery_five_plus: nursery_five_plus || [{}],
+    class_one: class_one || [{}],
+    class_two: class_two || [{}],
+    class_three: class_three || [{}],
+    class_four: class_four || [{}],
+    class_five: class_five || [{}],
+    class_six: class_six || [{}],
+    class_seven: class_seven || [{}],
+    class_eight: class_eight || [{}],
+    asroyon_survey: studentAsroyonSurvey || [{}],
+    survey_total: studentSurveyTotal || [{}],
+    survey_admitted: studentSurveyAdmitted || [{}],
+    survey_unadmitted: studentSurveyUnAdmitted || [{}],
+    survey_admitted_to_other_school: studentSurveyAdmittedToOthersSchool || [
+      {},
+    ],
+    unauthorized_teacher: unauthorized_teacher,
   };
 
   return (
@@ -1204,7 +1198,7 @@ const BilReturnSubmit = () => {
 
                     <div className="mb-4">
                       <label className="font-semibold" htmlFor="border_wall">
-                        সীমানা প্রাচীর*
+                        সীমানা প্রাচীর
                       </label>
                       <Field
                         value={borderWall}
@@ -1216,10 +1210,10 @@ const BilReturnSubmit = () => {
                       >
                         <option
                           className="text-gray-300"
-                          value={infrastructureBorderWall.wall}
+                          value={infrastructureBorderWall?.wall}
                           selected
                         >
-                          {infrastructureBorderWall.wall}
+                          {infrastructureBorderWall?.wall}
                         </option>
                         <option value="আছে">আছে</option>
                         <option value="নেই">নেই</option>
@@ -1851,7 +1845,11 @@ const BilReturnSubmit = () => {
                     label="দলিল নং"
                     placeholder="দলিল নং দিন"
                   />
-                  <MyDatePicker label="দলিল সন" name="school.land.dolil_year" />
+                  <MyDatePicker
+                    defaultValue={dolil_year}
+                    label="দলিল সন"
+                    name="school.land.dolil_year"
+                  />
                   <div className="mb-4">
                     <label className="font-semibold" htmlFor={"is_namjaried"}>
                       নামজারি আছে কিনা*
@@ -2065,7 +2063,7 @@ const BilReturnSubmit = () => {
                 <FieldArray name="budgets">
                   {(arrayHelpers) => (
                     <div>
-                      {values.budgets.map((budget, index) => (
+                      {values?.budgets?.map((budget, index) => (
                         <div key={index}>
                           <div className="pt-4 grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4">
                             <div className="mb-4">
@@ -2351,26 +2349,19 @@ const BilReturnSubmit = () => {
                                 label="চলতি বছরে মোট নৈমিত্তিক ছুটি"
                                 placeholder="চলতি বছরে মোট নৈমিত্তিক ছুটি সংখ্যা দিন"
                               />
-                              <div className="mb-4">
-                                <label
-                                  className="font-semibold"
-                                  htmlFor={`salary.${index}.signature`}
-                                >
-                                  স্বাক্ষর
-                                </label>
-                                <input
-                                  className="md:h-[44px] h-[40px] px-3 border border-textColor rounded-md w-full mt-1 pt-[6px]"
-                                  type="file"
-                                  name={`salary.${index}.signature`}
-                                  id={`salary.${index}.signature`}
-                                  onChange={(event) => {
-                                    const file = event.currentTarget.files[0];
-                                    setFieldValue(
-                                      `salary.${index}.signature`,
-                                      file
-                                    );
-                                  }}
-                                />
+                              <ImageInput2
+                                label={"সাক্ষর"}
+                                name={`salary.${index}.signature`}
+                              />
+                              <div className="flex items-center">
+                                {teacher?.signature && (
+                                  <Image
+                                    src={teacher.signature}
+                                    alt="signature"
+                                    width={150}
+                                    height={100}
+                                  />
+                                )}
                               </div>
                             </div>
                             <button
@@ -2504,9 +2495,9 @@ const BilReturnSubmit = () => {
                   <FieldArray name="unauthorized_teacher">
                     {(arrayHelpers) => (
                       <>
-                        {values.unauthorized_teacher.map((teacher, index) => (
+                        {values?.unauthorized_teacher?.map((teacher, index) => (
                           <div
-                            className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4"
+                            className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 w-full gap-x-4 mb-4"
                             key={index}
                           >
                             <TextField
@@ -2554,8 +2545,28 @@ const BilReturnSubmit = () => {
                               label={"সর্বশেষ উপস্থিতির তারিখ"}
                               name={`unauthorized_teacher.${index}.last_present_date`}
                             />
+                            <button
+                              className={`text-[#ED1C24] font-semibold text-left`}
+                              type="button"
+                              onClick={() => arrayHelpers.remove(index)}
+                            >
+                              ডিলিট করুন
+                            </button>
                           </div>
                         ))}
+                        <button
+                          className="mt-3 text-[#008B4C] underline font-semibold"
+                          type="button"
+                          onClick={() =>
+                            arrayHelpers.push({
+                              name: "",
+                              designation: "",
+                              last_present_date: "",
+                            })
+                          }
+                        >
+                          আরও যোগ করুন
+                        </button>
                       </>
                     )}
                   </FieldArray>
@@ -2577,7 +2588,7 @@ const BilReturnSubmit = () => {
                     label={"হাজিরা শেষের তারিখ"}
                   />
                 </div>
-                {values.teacher.attendance.map((teacher, teacherIndex) => (
+                {values?.teacher?.attendance?.map((teacher, teacherIndex) => (
                   <div key={teacherIndex}>
                     <div className="mt-4">
                       <button
@@ -2638,6 +2649,20 @@ const BilReturnSubmit = () => {
                               placeholder={"শিক্ষকের নাম লিখুন"}
                               name={`teacher.attendance.${teacherIndex}.name`}
                             />
+                            <ImageInput2
+                              label={"সাক্ষর দিন"}
+                              name={`teacher.attendance.${teacherIndex}.signature`}
+                            />
+                            <div className="flex items-center">
+                              {teacher?.signature && (
+                                <Image
+                                  src={teacher.signature}
+                                  alt="signature"
+                                  width={150}
+                                  height={100}
+                                />
+                              )}
+                            </div>
                           </div>
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <Box key={teacherIndex} sx={{ mb: 4 }}>
@@ -2825,11 +2850,6 @@ const BilReturnSubmit = () => {
                                                   )}
                                                 </Field>
                                               </div>
-
-                                              <ImageInput2
-                                                label={"সাক্ষর দিন"}
-                                                name={`teacher.attendance.${teacherIndex}.days.${dayIndex}.signature`}
-                                              />
                                             </>
                                           )}
 

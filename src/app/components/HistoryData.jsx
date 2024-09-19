@@ -13,7 +13,6 @@ import convertToBengaliMonth from "@/lib/englishMonthConverter";
 import Image from "next/image";
 import Link from "next/link";
 import { AuthContext } from "@/authContext/AuthContext";
-import { PaidRounded } from "@mui/icons-material";
 import DataGridForAttendance from "./DataGridForAttendance";
 
 const HistoryData = ({ billData }) => {
@@ -192,7 +191,6 @@ const HistoryData = ({ billData }) => {
   const class_six = studentData?.admission?.class_six[0];
   const class_seven = studentData?.admission?.class_seven[0];
   const class_eight = studentData?.admission?.class_eight[0];
-  console.log("class_seven, ", class_seven);
   const studentAsroyonSurvey = studentData?.asroyon_survey[0];
 
   moment.locale("bn");
@@ -202,6 +200,8 @@ const HistoryData = ({ billData }) => {
   const billMonth = convertToBengaliMonth(
     moment(billData.submitted_at).format("MMMM")
   );
+
+  console.log('history', teacherData);
 
   return (
     <div id="print-content" className="bg-[#FAFAFA] xl:w-[80%] w-full">
@@ -807,7 +807,7 @@ const HistoryData = ({ billData }) => {
                                     width={80}
                                     height={20}
                                     src={
-                                      day.signature
+                                      attendance?.signature
                                     }
                                     alt="signature"
                                   ></Image>
