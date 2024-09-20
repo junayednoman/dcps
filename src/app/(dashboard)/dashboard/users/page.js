@@ -13,19 +13,20 @@ import Swal from "sweetalert2";
 import Loading from "@/app/components/Loading";
 import { AuthContext } from "@/authContext/AuthContext";
 import UserNames from "@/app/components/UserNames";
+import { axiosInstance } from "@/lib/axiosInstance";
 
 const Users = () => {
   const { userName, role } = useContext(AuthContext);
   const [users, setUsers] = useState([]);
   const [dataLoading, setDataLoading] = useState(true);
   const [mutated, setMutated] = useState(false);
-
   const [schoolOptions, setSchoolOptions] = useState(null);
+  const [userId, setUserId] = useState("");
 
   const handleBtnClick = () => {
     handleModalOpen();
     if (role === "aueo" && !schoolOptions) {
-      const apiUrl = "https://dmsp.vercel.app/api/clusters";
+      const apiUrl = "http://localhost:3000/api/clusters";
       fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -37,7 +38,6 @@ const Users = () => {
           return response.json();
         })
         .then((data) => {
-          console.log(data.data);
           if (data.success) {
             const schoolOptions = data.data.schools.map((school) => ({
               value: school.name,
@@ -58,7 +58,7 @@ const Users = () => {
 
   useEffect(() => {
     setDataLoading(true);
-    const apiUrl = "https://dmsp.vercel.app/api/users";
+    const apiUrl = "http://localhost:3000/api/users";
     fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -152,7 +152,10 @@ const Users = () => {
 
   // update user modal
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
-  const handleUpdateModalOpen = () => setUpdateModalOpen(true);
+  const handleUpdateModalOpen = (id) => {
+    setUpdateModalOpen(true);
+    setUserId(id);
+  };
   const handleUpdateModalClose = () => {
     setUpdateModalOpen(false);
     setSelectedUserName(null);
@@ -177,7 +180,7 @@ const Users = () => {
     values.created_at = currentDate;
     values.parent = userName;
 
-    const apiUrl = "https://dmsp.vercel.app/api/users/add";
+    const apiUrl = "http://localhost:3000/api/users/add";
     fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -242,7 +245,7 @@ const Users = () => {
       cancelButtonText: "বাতিল করুন",
     }).then((result) => {
       if (result.isConfirmed) {
-        const apiUrl = "https://dmsp.vercel.app/api/users/delete";
+        const apiUrl = "http://localhost:3000/api/users/delete";
         fetch(apiUrl, {
           method: "DELETE",
           headers: {
@@ -281,8 +284,29 @@ const Users = () => {
       }
     });
   };
-  console.log(users);
-  const handleUserUpdate = (id) => {};
+
+  // change password
+  const handleChangePassword = async ({ password }) => {
+    const updteData = {
+      userId,
+      newPassword: password,
+    };
+    try {
+      const res = await axiosInstance.post(
+        `/auth/${
+          role === "aueo" ? "reset-school-password" : "reset-cluster-password"
+        }`,
+        updteData
+      );
+      if (res?.data?.success) {
+        toast.success("পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে!");
+        setUpdateModalOpen(false);
+      }
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Something went wrong!");
+    }
+  };
+
   if (dataLoading) {
     return <Loading />;
   }
@@ -411,7 +435,7 @@ const Users = () => {
                   password: "",
                 }}
                 validationSchema={updateShema}
-                onSubmit={handleUserUpdate}
+                onSubmit={handleChangePassword}
               >
                 {({ isValid }) => (
                   <Form>
@@ -435,7 +459,7 @@ const Users = () => {
                               <CircularProgress className="btnSpinner" />
                             </p>
                           ) : (
-                            "যোগ করুন"
+                            "আপডেট"
                           )}
                         </button>
                       </div>
@@ -450,7 +474,7 @@ const Users = () => {
       <div className="p-6 shadow-sm rounded-md bg-white">
         <div className="flex items-center md:flex-row flex-col justify-between mb-4">
           <h3 className="text-lg font-semibold md:mb-0 mb-3">
-            ব্যবহারকারীঃ{" "}
+            {role === "aueo" ? "বিদ্যালয়ঃ " : "ক্লাস্টারঃ "}
             <span className="text-xl">
               {convertToBengaliNumber(users.length)}
             </span>
@@ -492,7 +516,7 @@ const Users = () => {
                       <div>
                         <div className="flex items-center gap-4 text-xl">
                           <div
-                            onClick={handleUpdateModalOpen}
+                            onClick={() => handleUpdateModalOpen(item._id)}
                             className="tooltip tooltip-left cursor-pointer"
                             data-tip="Edit user"
                           >
@@ -514,7 +538,7 @@ const Users = () => {
             </table>
           ) : (
             <p className="py-20 text-center text-xl font-semibold">
-              কোন তথ্য পাওয়া যাইনি!
+              কোন তথ্য পাওয়া যায়নি!
             </p>
           )}
         </div>

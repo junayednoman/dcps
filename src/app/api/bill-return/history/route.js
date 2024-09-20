@@ -64,7 +64,7 @@ export async function POST(req, res) {
       return NextResponse.json(
         {
           success: false,
-          message: "কোন তথ্য পাওয়া যাইনি!",
+          message: "কোন তথ্য পাওয়া যায়নি!",
         },
         { status: 404 }
       );

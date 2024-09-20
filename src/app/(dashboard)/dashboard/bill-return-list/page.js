@@ -14,7 +14,7 @@ const BillList = () => {
   useEffect(() => {
     if (userName) {
       setLoading(true);
-      const apiUrl = "https://dmsp.vercel.app/api/bill-return/list";
+      const apiUrl = "http://localhost:3000/api/bill-return/list";
       fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -228,7 +228,7 @@ const BillList = () => {
         ) : (
           <div className="flex flex-col gap-6 justify-center">
             <p className="py-20 text-center text-xl font-semibold">
-              কোন তথ্য পাওয়া যাইনি!
+              কোন তথ্য পাওয়া যায়নি!
             </p>
           </div>
         )}

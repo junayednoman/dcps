@@ -57,7 +57,7 @@ const BilReturnSubmit = () => {
   // fetch  latest bill data
   React.useEffect(() => {
     setBillDataLoading(true);
-    const apiUrl = `https://dmsp.vercel.app/api/bill-return/latest`;
+    const apiUrl = `http://localhost:3000/api/bill-return/latest`;
     fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -227,7 +227,7 @@ const BilReturnSubmit = () => {
   //   return (
   //     <div className="flex justify-center items-center h-[80vh]">
   //       <h3 className="text-3xl font-semibold text-center">
-  //         কোন তথ্য পাওয়া যাইনি!
+  //         কোন তথ্য পাওয়া যায়নি!
   //       </h3>
   //     </div>
   //   );
@@ -316,7 +316,7 @@ const BilReturnSubmit = () => {
       formData.student.asroyon_survey = values.asroyon_survey;
 
       // API call with the updated form data
-      const apiUrl = "https://dmsp.vercel.app/api/bill-return/submit";
+      const apiUrl = "http://localhost:3000/api/bill-return/submit";
       fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -351,7 +351,6 @@ const BilReturnSubmit = () => {
             window.location.reload();
           }, 1800);
         });
-      console.log("inside submit", formData.teacher);
     }
   };
 
@@ -605,16 +604,38 @@ const BilReturnSubmit = () => {
         women_teacher_number: women_teacher_number,
         vacation_consumers: vacation_consumers,
       },
-      attendance: teacherData?.attendance?.map((teacher) => ({
-        name: teacher.name || "",
-        signature: teacher.signature || "",
-        days: teacher.days.map((day) => ({
-          status: day.status || "option",
-          coming_time: day.coming_time || null,
-          leaving_time: day.leaving_time || null,
-          absence_reason: day.absence_reason || "",
-        })),
-      })),
+      // attendance: teacherData?.attendance?.map((teacher) => ({
+      //   name: teacher.name || "",
+      //   signature: teacher.signature || "",
+      //   days: teacher.days.map((day) => ({
+      //     status: day.status || "option",
+      //     coming_time: day.coming_time || null,
+      //     leaving_time: day.leaving_time || null,
+      //     absence_reason: day.absence_reason || "",
+      //   })),
+      // })),
+      attendance: teacherData?.attendance?.length
+        ? teacherData?.attendance?.map((teacher) => ({
+            name: teacher.name || "",
+            signature: teacher.signature || "",
+            days: teacher.days.map((day) => ({
+              status: day.status || "option",
+              coming_time: day.coming_time || null,
+              leaving_time: day.leaving_time || null,
+              absence_reason: day.absence_reason || "",
+            })),
+          }))
+        : Array(15).fill({
+            name: "",
+            days: Array(31).fill({
+              status: "option",
+              coming_time: null,
+              leaving_time: null,
+              signature: "",
+              absence_reason: "",
+            }),
+          }),
+
       // attendance: Array(15).fill({
       //   name: "",
       //   days: Array(31).fill({

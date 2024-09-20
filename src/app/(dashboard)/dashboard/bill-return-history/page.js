@@ -18,7 +18,7 @@ const HistoryPage = () => {
   useEffect(() => {
     setLoading(true);
     if (userName && date && school) {
-      const apiUrl = "https://dmsp.vercel.app/api/bill-return/history";
+      const apiUrl = "http://localhost:3000/api/bill-return/history";
       fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -36,7 +36,7 @@ const HistoryPage = () => {
           return response.json();
         })
         .then((data) => {
-          if (data.success && data.message !== "কোন তথ্য পাওয়া যাইনি!") {
+          if (data.success && data.message !== "কোন তথ্য পাওয়া যায়নি!") {
             setBillData(data.data);
           } else {
             setBillData(null);

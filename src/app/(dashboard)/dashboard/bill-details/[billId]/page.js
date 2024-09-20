@@ -68,13 +68,12 @@ const BillDetails = ({ params }) => {
       setShowVerify(false);
     }
   }, [role, billData]);
-  console.log(showVerify);
 
   React.useEffect(() => {
     const id = params.billId;
     if (userName) {
       setLoading(true);
-      const apiUrl = `https://dmsp.vercel.app/api/bill-return/get-single`;
+      const apiUrl = `http://localhost:3000/api/bill-return/get-single`;
       fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -111,7 +110,7 @@ const BillDetails = ({ params }) => {
     return (
       <div className="flex justify-center flex-col gap-6 items-center h-[80vh]">
         <h3 className="text-3xl font-semibold text-center">
-          কোন তথ্য পাওয়া যাইনি!
+          কোন তথ্য পাওয়া যায়নি!
         </h3>
         <button
           onClick={() => window.location.reload()}
@@ -253,7 +252,7 @@ const BillDetails = ({ params }) => {
     const aueoUpdateData = { isAUEOVerified: true, updatedDate: currentDate };
     const ueoUpdateData = { isUEOVerified: true, updatedDate: currentDate };
     setLoading(true);
-    const apiUrl = "https://dmsp.vercel.app/api/bill-return/update";
+    const apiUrl = "http://localhost:3000/api/bill-return/update";
     fetch(apiUrl, {
       method: "PATCH",
       headers: {
@@ -755,15 +754,24 @@ const BillDetails = ({ params }) => {
               <DataGrid>
                 <PairedData
                   label={"শিক্ষকের নাম"}
-                  value={unauthorized_teacher[0].name}
+                  value={
+                    unauthorized_teacher?.length &&
+                    unauthorized_teacher[0]?.name
+                  }
                 />
                 <PairedData
                   label={"শিক্ষকের পদবি"}
-                  value={unauthorized_teacher[0].designation}
+                  value={
+                    unauthorized_teacher?.length &&
+                    unauthorized_teacher[0]?.designation
+                  }
                 />
                 <PairedData
                   label={"সর্বশেষ উপস্থিতির তারিখ"}
-                  value={unauthorized_teacher[0].last_present_date}
+                  value={
+                    unauthorized_teacher?.length &&
+                    unauthorized_teacher[0]?.last_present_date
+                  }
                 />
               </DataGrid>
             </CustomTabPanel>
@@ -825,9 +833,7 @@ const BillDetails = ({ params }) => {
                                 className="inline-block ml-3"
                                 width={80}
                                 height={20}
-                                src={
-                                  "https://i.ibb.co/yyQLBv2/04c683fbd9f24c509df57b559bdc0e91.jpg"
-                                }
+                                src={attendance?.signature}
                                 alt="signature"
                               ></Image>
                             </div>

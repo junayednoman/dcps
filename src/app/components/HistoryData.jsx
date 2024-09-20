@@ -22,7 +22,12 @@ const HistoryData = ({ billData }) => {
 
   // show or hide edit option
   React.useEffect(() => {
-    if (role === "head-master" && userName === billData.submitted_by && !billData.isAUEOVerified && !billData.isUEOVerified) {
+    if (
+      role === "head-master" &&
+      userName === billData.submitted_by &&
+      !billData.isAUEOVerified &&
+      !billData.isUEOVerified
+    ) {
       setShowEdit(true);
     } else {
       setShowEdit(false);
@@ -201,7 +206,7 @@ const HistoryData = ({ billData }) => {
     moment(billData.submitted_at).format("MMMM")
   );
 
-  console.log('history', teacherData);
+  console.log("history", teacherData);
 
   return (
     <div id="print-content" className="bg-[#FAFAFA] xl:w-[80%] w-full">
@@ -226,7 +231,7 @@ const HistoryData = ({ billData }) => {
       {!billData ? (
         <div className="flex justify-center items-center h-[80vh]">
           <h3 className="text-3xl font-semibold text-center">
-            কোন তথ্য পাওয়া যাইনি!
+            কোন তথ্য পাওয়া যায়নি!
           </h3>
         </div>
       ) : (
@@ -733,15 +738,24 @@ const HistoryData = ({ billData }) => {
                   <DataGrid>
                     <PairedData
                       label={"শিক্ষকের নাম"}
-                      value={unauthorized_teacher[0].name}
+                      value={
+                        unauthorized_teacher?.length &&
+                        unauthorized_teacher[0].name
+                      }
                     />
                     <PairedData
                       label={"শিক্ষকের পদবি"}
-                      value={unauthorized_teacher[0].designation}
+                      value={
+                        unauthorized_teacher?.length &&
+                        unauthorized_teacher[0].designation
+                      }
                     />
                     <PairedData
                       label={"সর্বশেষ উপস্থিতির তারিখ"}
-                      value={unauthorized_teacher[0].last_present_date}
+                      value={
+                        unauthorized_teacher?.length &&
+                        unauthorized_teacher[0].last_present_date
+                      }
                     />
                   </DataGrid>
                 </CustomTabPanel>
@@ -763,7 +777,9 @@ const HistoryData = ({ billData }) => {
                       title={
                         index === 0
                           ? `প্রধান শিক্ষক (${attendance.name})`
-                          : `সহকারী শিক্ষক-${convertToBengaliNumber(index)} (${attendance.name})`
+                          : `সহকারী শিক্ষক-${convertToBengaliNumber(index)} (${
+                              attendance.name
+                            })`
                       }
                       itemKey={`attendance-${index}`}
                       activeItem={activeItem}
@@ -806,9 +822,7 @@ const HistoryData = ({ billData }) => {
                                     className="inline-block ml-3"
                                     width={80}
                                     height={20}
-                                    src={
-                                      attendance?.signature
-                                    }
+                                    src={attendance?.signature}
                                     alt="signature"
                                   ></Image>
                                 </div>

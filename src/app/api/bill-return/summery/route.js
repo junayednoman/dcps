@@ -49,7 +49,7 @@ export async function POST(req, res) {
 
     if (result.length < 1) {
       return NextResponse.json(
-        { message: "কোন তথ্য পাওয়া যাইনি!" },
+        { message: "কোন তথ্য পাওয়া যায়নি!" },
         { status: 404 }
       );
     }

@@ -87,7 +87,7 @@ const BilReturnEdit = ({ params }) => {
   React.useEffect(() => {
     const id = params.dataId;
     setBillDataLoading(true);
-    const apiUrl = `https://dmsp.vercel.app/api/bill-return/get-single`;
+    const apiUrl = `http://localhost:3000/api/bill-return/get-single`;
     fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -282,7 +282,7 @@ const BilReturnEdit = ({ params }) => {
       formData.unique_id = uniqueId;
       formData.submitted_by = userName;
       formData.isDraft = false;
-      formData.submitted_at = currentDate;
+      formData.updated_at = currentDate;
       formData.submitted_date = `${monthSelectedOption?.value} ${moment(
         formData.submitted_at
       ).format("YYYY")}`;
@@ -335,13 +335,17 @@ const BilReturnEdit = ({ params }) => {
       formData.student.asroyon_survey = values.asroyon_survey;
 
       // API call with the updated form data
-      const apiUrl = `https://dmsp.vercel.app/bill-return/edit`;
+      const apiUrl = `http://localhost:3000/api/bill-return/edit`;
       fetch(apiUrl, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ...billData, formData, _id: params.dataId }),
+        body: JSON.stringify({
+          ...fetchedBillData,
+          formData,
+          _id: params.dataId,
+        }),
       })
         .then((response) => {
           return response.json();
@@ -359,7 +363,7 @@ const BilReturnEdit = ({ params }) => {
           console.error("There was an error!", error);
         })
         .finally(() => {
-          setSubmitLoading(false);
+          setLoading(false);
         });
     }
   };

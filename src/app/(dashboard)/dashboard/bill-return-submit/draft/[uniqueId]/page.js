@@ -19,7 +19,7 @@ const DataDraft = ({ params }) => {
   const [loading, setLoading] = useState();
   useEffect(() => {
     setLoading(true);
-    const apiUrl = "https://dmsp.vercel.app/api/bill-return/get-draft";
+    const apiUrl = "http://localhost:3000/api/bill-return/get-draft";
     fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -201,7 +201,7 @@ const DataDraft = ({ params }) => {
     const currentDate = new Date().toISOString();
     const updateData = { isDraft: false, updatedDate: currentDate };
     setLoading(true);
-    const apiUrl = "https://dmsp.vercel.app/api/bill-return/update";
+    const apiUrl = "http://localhost:3000/api/bill-return/update";
     fetch(apiUrl, {
       method: "PATCH",
       headers: {
@@ -239,7 +239,7 @@ const DataDraft = ({ params }) => {
                 ""
               ) : (
                 <Link
-                  href={`https://dmsp.vercel.app/dashboard/bill-return-edit/${billData._id}`}
+                  href={`http://localhost:3000/dashboard/bill-return-edit/${billData._id}`}
                   className="text-lg font-semibold underline"
                 >
                   Edit
@@ -950,8 +950,8 @@ const DataDraft = ({ params }) => {
                   <h4 className="md:text-[17px] text-lg font-semibold md:mb-5 mb-4 print:mb-4 print:text-xl text-[#008B4C]">
                     অননুমোদিত শিক্ষক তথ্য
                   </h4>
-                  {teacherData.unauthorized_teacher.length > 0 ? (
-                    teacherData.unauthorized_teacher.map((item, index) => (
+                  {teacherData?.unauthorized_teacher?.length > 0 ? (
+                    teacherData?.unauthorized_teacher?.map((item, index) => (
                       <div
                         key={index}
                         className="flex flex-wrap gap-x-12 gap-y-4 md:flex-row flex-col"
