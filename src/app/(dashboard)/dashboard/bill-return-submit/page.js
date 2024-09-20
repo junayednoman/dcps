@@ -57,7 +57,7 @@ const BilReturnSubmit = () => {
   // fetch  latest bill data
   React.useEffect(() => {
     setBillDataLoading(true);
-    const apiUrl = `http://localhost:3000/api/bill-return/latest`;
+    const apiUrl = `https://dmsp.vercel.app/api/bill-return/latest`;
     fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -316,7 +316,7 @@ const BilReturnSubmit = () => {
       formData.student.asroyon_survey = values.asroyon_survey;
 
       // API call with the updated form data
-      const apiUrl = "http://localhost:3000/api/bill-return/submit";
+      const apiUrl = "https://dmsp.vercel.app/api/bill-return/submit";
       fetch(apiUrl, {
         method: "POST",
         headers: {

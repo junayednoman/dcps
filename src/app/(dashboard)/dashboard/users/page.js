@@ -26,7 +26,7 @@ const Users = () => {
   const handleBtnClick = () => {
     handleModalOpen();
     if (role === "aueo" && !schoolOptions) {
-      const apiUrl = "http://localhost:3000/api/clusters";
+      const apiUrl = "https://dmsp.vercel.app/api/clusters";
       fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -58,7 +58,7 @@ const Users = () => {
 
   useEffect(() => {
     setDataLoading(true);
-    const apiUrl = "http://localhost:3000/api/users";
+    const apiUrl = "https://dmsp.vercel.app/api/users";
     fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -180,7 +180,7 @@ const Users = () => {
     values.created_at = currentDate;
     values.parent = userName;
 
-    const apiUrl = "http://localhost:3000/api/users/add";
+    const apiUrl = "https://dmsp.vercel.app/api/users/add";
     fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -245,7 +245,7 @@ const Users = () => {
       cancelButtonText: "বাতিল করুন",
     }).then((result) => {
       if (result.isConfirmed) {
-        const apiUrl = "http://localhost:3000/api/users/delete";
+        const apiUrl = "https://dmsp.vercel.app/api/users/delete";
         fetch(apiUrl, {
           method: "DELETE",
           headers: {
