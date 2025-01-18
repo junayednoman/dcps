@@ -5,8 +5,7 @@ import * as Yup from "yup";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 import { LiaEyeSlash, LiaEyeSolid } from "react-icons/lia";
-import { Checkbox, FormControlLabel } from "@mui/material";
-import Link from "next/link";
+import { Checkbox, FormControlLabel, Popover } from "@mui/material";
 
 const validationSchema = Yup.object().shape({
   unique_id: Yup.string().required("ইউজার আইডি আবশ্যক"),
@@ -14,6 +13,19 @@ const validationSchema = Yup.object().shape({
 });
 
 const LoginForm = () => {
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
+
   const [passwordType, setPasswordType] = useState(true);
   const [loading, setLoading] = useState(false);
   const handleSubmit = async (values) => {
@@ -59,8 +71,8 @@ const LoginForm = () => {
   };
 
   const checkBoxColor = {
-    unchecked: "#000", // tomato color for unchecked state
-    checked: "#008B4C", // limegreen color for checked state
+    unchecked: "#000",
+    checked: "#008B4C",
   };
 
   return (
@@ -139,12 +151,35 @@ const LoginForm = () => {
                 }
                 label="Remember me"
               />
-              <Link
-                href={"/forget-password"}
-                className="font-semibold text-[#008B4C]"
+              <p
+                aria-describedby={id}
+                variant="contained"
+                onClick={handleClick}
+                className="font-semibold text-[#008B4C] cursor-pointer"
               >
                 পাসওয়ার্ড ভুলে গেছেন?
-              </Link>
+              </p>
+
+              <Popover
+                id={id}
+                open={open}
+                anchorEl={anchorEl}
+                onClose={handleClose}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "left",
+                }}
+              >
+                <div className="px-5 py-2 pt-[14px] rounded-md sm:w-[450px] w-[300px]">
+                  <p className="font-medium text-black">
+                    আপনার ঊর্ধ্বতন কর্মকর্তার সাথে যোগাযোগ করুন।
+                  </p>
+                  <p className="text-sm mt-1">
+                    আপনি head-master হলে আপনার পাসওয়ার্ড পরিবর্তন করতে AUEO এর
+                    সাথে, আর AUEO হলে UEO এর সাথে যোগাযোগ করুন।
+                  </p>
+                </div>
+              </Popover>
             </div>
 
             <div>
