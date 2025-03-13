@@ -18,7 +18,7 @@ const HistoryPage = () => {
   useEffect(() => {
     setLoading(true);
     if (userName && date && school) {
-      const apiUrl = "https://dmsp.vercel.app/api/bill-return/history";
+      const apiUrl = "https://billreturnmanagement.com/api/bill-return/history";
       fetch(apiUrl, {
         method: "POST",
         headers: {

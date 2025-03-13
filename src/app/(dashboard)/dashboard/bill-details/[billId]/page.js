@@ -73,7 +73,7 @@ const BillDetails = ({ params }) => {
     const id = params.billId;
     if (userName) {
       setLoading(true);
-      const apiUrl = `https://dmsp.vercel.app/api/bill-return/get-single`;
+      const apiUrl = `https://billreturnmanagement.com/api/bill-return/get-single`;
       fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -252,7 +252,7 @@ const BillDetails = ({ params }) => {
     const aueoUpdateData = { isAUEOVerified: true, updatedDate: currentDate };
     const ueoUpdateData = { isUEOVerified: true, updatedDate: currentDate };
     setLoading(true);
-    const apiUrl = "https://dmsp.vercel.app/api/bill-return/update";
+    const apiUrl = "https://billreturnmanagement.com/api/bill-return/update";
     fetch(apiUrl, {
       method: "PATCH",
       headers: {

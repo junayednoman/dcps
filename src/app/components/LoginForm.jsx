@@ -30,7 +30,7 @@ const LoginForm = () => {
   const [loading, setLoading] = useState(false);
   const handleSubmit = async (values) => {
     setLoading(true);
-    const apiUrl = "https://dmsp.vercel.app/api/auth/sign-in";
+    const apiUrl = "https://billreturnmanagement.com/api/auth/sign-in";
     fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -39,7 +39,7 @@ const LoginForm = () => {
       body: JSON.stringify(values),
     })
       .then((response) => {
-        console.log(response);
+        console.log("response", response);
         if (response.ok) {
         } else {
           throw new Error("Network response was not ok");
@@ -63,7 +63,7 @@ const LoginForm = () => {
       })
       .catch((error) => {
         toast.error("There was an error!");
-        console.error("There was an error!", error);
+        console.log("There was an error!", error);
       })
       .finally(() => {
         setLoading(false);

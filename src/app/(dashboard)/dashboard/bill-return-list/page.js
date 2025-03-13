@@ -14,7 +14,7 @@ const BillList = () => {
   useEffect(() => {
     if (userName) {
       setLoading(true);
-      const apiUrl = "https://dmsp.vercel.app/api/bill-return/list";
+      const apiUrl = "https://billreturnmanagement.com/api/bill-return/list";
       fetch(apiUrl, {
         method: "POST",
         headers: {

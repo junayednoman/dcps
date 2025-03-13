@@ -19,7 +19,7 @@ const DataDraft = ({ params }) => {
   const [loading, setLoading] = useState();
   useEffect(() => {
     setLoading(true);
-    const apiUrl = "https://dmsp.vercel.app/api/bill-return/get-draft";
+    const apiUrl = "https://billreturnmanagement.com/api/bill-return/get-draft";
     fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -201,7 +201,7 @@ const DataDraft = ({ params }) => {
     const currentDate = new Date().toISOString();
     const updateData = { isDraft: false, updatedDate: currentDate };
     setLoading(true);
-    const apiUrl = "https://dmsp.vercel.app/api/bill-return/update";
+    const apiUrl = "https://billreturnmanagement.com/api/bill-return/update";
     fetch(apiUrl, {
       method: "PATCH",
       headers: {
@@ -239,7 +239,7 @@ const DataDraft = ({ params }) => {
                 ""
               ) : (
                 <Link
-                  href={`https://dmsp.vercel.app/dashboard/bill-return-edit/${billData._id}`}
+                  href={`https://billreturnmanagement.com/dashboard/bill-return-edit/${billData._id}`}
                   className="text-lg font-semibold underline"
                 >
                   Edit

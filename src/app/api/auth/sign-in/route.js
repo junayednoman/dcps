@@ -1,5 +1,5 @@
 import getDb from "@/lib/db";
-import bcrypt from 'bcrypt'
+import bcrypt from "bcrypt";
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 
@@ -8,7 +8,12 @@ export async function POST(req, res) {
     const { unique_id, password } = await req.json();
     try {
       const db = await getDb();
-      const user = await db.collection("users").findOne({ unique_id: unique_id }, {projection: {_id: 0, created_at: 0}});
+      const user = await db
+        .collection("users")
+        .findOne(
+          { unique_id: unique_id },
+          { projection: { _id: 0, created_at: 0 } }
+        );
       console.log(user);
       if (user) {
         const isPasswordMatch = await bcrypt.compare(password, user.password);
@@ -42,8 +47,11 @@ export async function POST(req, res) {
         return NextResponse.json({ message: "Invalid credentials!" });
       }
     } catch (error) {
-      console.error(error);
-      return NextResponse.json({ message: "Server Error" }, { status: 500 });
+      console.log(error);
+      return NextResponse.json(
+        { message: error.message || "Server Error" },
+        { status: 500 }
+      );
     }
   } else {
     return NextResponse.json({ error: "Method Not Allowed" }, { status: 405 });
