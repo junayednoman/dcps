@@ -13,7 +13,7 @@ export async function GET(req, res) {
       );
     }
 
-    const token = cookies().get("authToken").value;
+    const token = cookies()?.get("authToken")?.value;
     const checkExpirity = checkJwtExpirity(token);
 
     // verify token
