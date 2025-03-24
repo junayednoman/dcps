@@ -29,7 +29,7 @@ export async function POST(req, res) {
     const db = await getDb();
     const parent = await req.json();
     const query = { parent: parent };
-    const ueoQuery = {parent: parent, role: 'aueo'};
+    const ueoQuery = { parent: parent, role: "aueo" };
 
     const result = await db
       .collection("users")
@@ -38,6 +38,7 @@ export async function POST(req, res) {
       })
       .sort({ created_at: -1 })
       .toArray();
+
     console.log(result);
 
     if (!result) {
@@ -45,7 +46,7 @@ export async function POST(req, res) {
     }
 
     return NextResponse.json(
-      { success: true, message: "User created successfully", data: result },
+      { success: true, message: "User retrieve successfully", data: result },
       { status: 200 }
     );
   } catch (error) {

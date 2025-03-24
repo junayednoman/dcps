@@ -39,7 +39,6 @@ const LoginForm = () => {
       body: JSON.stringify(values),
     })
       .then((response) => {
-        console.log("response", response);
         if (response.ok) {
         } else {
           throw new Error("Network response was not ok");
@@ -47,7 +46,6 @@ const LoginForm = () => {
         return response.json();
       })
       .then((data) => {
-        console.log(data);
         if (data && data.message === "Logged in successfully") {
           localStorage.setItem(
             "userInfo",

@@ -1,3 +1,5 @@
+import { allClusterList } from "./allClusters";
+import { createCluster } from "./createClusters";
 import { createUeo } from "./createUeo";
 
 const { MongoClient } = require("mongodb");
@@ -17,7 +19,11 @@ async function connect() {
     console.log("connected to database");
 
     const db = client.db(dbName);
+    // create admin and cluster
     createUeo(db);
+    allClusterList?.map((cluster) => {
+      createCluster(db, cluster.cluster_name, cluster.schools);
+    });
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
   }

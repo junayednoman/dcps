@@ -1,6 +1,5 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import decodeUser from "@/lib/decodeUser";
 import getDb from "@/lib/db";
 import checkJwtExpirity from "@/lib/checkJwtExpirity";
 

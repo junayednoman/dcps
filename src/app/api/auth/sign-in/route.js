@@ -14,7 +14,7 @@ export async function POST(req, res) {
           { unique_id: unique_id },
           { projection: { _id: 0, created_at: 0 } }
         );
-      console.log(user);
+
       if (user) {
         const isPasswordMatch = await bcrypt.compare(password, user.password);
         if (!isPasswordMatch) {

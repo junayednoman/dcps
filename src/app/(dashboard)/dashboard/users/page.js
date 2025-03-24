@@ -22,7 +22,6 @@ const Users = () => {
   const [mutated, setMutated] = useState(false);
   const [schoolOptions, setSchoolOptions] = useState(null);
   const [userId, setUserId] = useState("");
-
   const handleBtnClick = () => {
     handleModalOpen();
     if (role === "aueo" && !schoolOptions) {
@@ -38,6 +37,7 @@ const Users = () => {
           return response.json();
         })
         .then((data) => {
+          console.log("data, ", data);
           if (data.success) {
             const schoolOptions = data.data.schools.map((school) => ({
               value: school.name,

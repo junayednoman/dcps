@@ -6,7 +6,6 @@ export async function createUeo(db) {
   const existingUeo = await usersCollection.findOne({ role: "ueo" });
 
   if (existingUeo) {
-    console.log("Admin already exists.");
     return;
   }
 
@@ -15,11 +14,10 @@ export async function createUeo(db) {
   const adminUser = {
     unique_id: "ueo", // Set a default email
     password: hashedPassword,
+    user_name: "ueo",
     role: "ueo", // You can adjust the roles as needed
     createdAt: new Date(),
   };
 
-  // Insert the admin user into the collection
   await usersCollection.insertOne(adminUser);
-  console.log("Admin created successfully!");
 }

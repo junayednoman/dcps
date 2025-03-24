@@ -37,7 +37,6 @@ import handleLogout from "@/lib/handleLogout";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
-
 // font
 const notoBengali = localFont({
   src: [
@@ -301,7 +300,6 @@ export default function DashboardLayout({ children }) {
           return response.json();
         })
         .then((data) => {
-          console.log(data.data);
           if (data.success) {
             const schoolOptions = data.data.schools.map((school) => ({
               value: school.name,
